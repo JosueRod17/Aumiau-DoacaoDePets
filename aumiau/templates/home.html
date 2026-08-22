@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuMiau | Adoção de Pets</title>
+
+    <link rel="stylesheet" href="{% static  'css/home.css' %}">
+</head>
+<body>
+    <header class="site-header">
+        <a class="logo-horizontal" href="/"><img src="{% static 'img/aumiau-logo-horizontal.png' %}" alt="AuMiau - adoção de pets"></a>
+
+        <nav class="main-nav" aria-label="Navegação principal">
+            <a href="#adocao">Adoção</a>
+            <a href="#anunciar">Anunciar ⌄</a>
+            <a href="#ongs">ONGs ⌄</a>
+            <a href="#ajuda">Ajuda</a>
+        </nav>
+
+        <div class="acoes-header">
+            <a class="botao-entrar" href="#">Entrar</a>
+            <a class="botao-cadastrar" href="#">Cadastrar</a>
+            <a class="botao-anunciar" href="#">Anunciar Pet</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero" aria-labelledby="hero-title">
+            <div class="hero-conteudo">
+                <p class="hero-frase">🐾 Seja o primeiro a realizar uma adoção!</p>
+
+                <h1 id="hero-titulo">
+                    Encontre seu <span>melhor amigo</span><br>
+                    para sempre
+                    <span class="hero-emojis" role="img" aria-label="cachorro e gato">🐶 🐱</span>
+                </h1>
+
+                <p class="hero-descricao">
+                    Conectamos quem quer adotar a ONGs e protetores de animais perto de você.
+                    Cada adoção é uma vida transformada.
+                </p>
+
+                <form class="pesquisar-modo" method="get">
+                    <div class="pesquisar-cidade">
+                        <span class="pesquisar-cidade-icon" aria-hidden="true">📍</span>
+
+                        <label class="cidade-estado" for="localizacao">Sua cidade ou estado</label>
+
+                        <input id="localizacao" name="localizacao" type="text" placeholder="Sua cidade ou estado..." autocomplete="address-level2">
+                    </div>
+
+                <button type="submit">Buscar Pets</button>
+                </form>
+
+                <ul class="estatisticas" aria-label="Números da AuMiau">
+                    <li>
+                        <strong>0</strong>
+                        <span>Pets Adotados</span>
+                    </li>
+
+                    <li>
+                        <span>Seja o</span>
+                        <strong>PRIMEIRO</strong>
+                        <span>a virar uma ONG Parceira</span>
+                    </li>
+
+                    <li>
+                        <strong>0</strong>
+                        <span>Pets cadastrados</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="hero-visual">
+                <div class="hero-foto-de-fundo" role="img" aria-label="Espaço da foto de um cachorro e um gato">Foto principal dos pets</div>
+        </section>
+    </main>
+</body>
+</html>

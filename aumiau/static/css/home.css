@@ -1,0 +1,208 @@
+:root {
+  --bg-page: #fff5e7;
+  --bg-header: #fffdfa;
+  --text: #2b190f;
+  --text-muted: #8e6548;
+  --orange: #ff9200;
+  --purple: #8048c4;
+  --border: #eee1d4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-page);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+}
+
+
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.site-header {
+  min-height: 104px;
+  padding: 0 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-header);
+  border-bottom: 1px solid var(--border);
+}
+
+.logo-horizontal {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.logo-horizontal img {
+    display: block;
+    width: 250px;
+    height: auto;
+}
+
+.main-nav {
+  display: flex;
+  gap: 38px;
+  font-weight: 600;
+}
+
+.main-nav a:hover {
+  color: var(--orange);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.button {
+  padding: 11px 22px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.button--outline {
+  color: var(--purple);
+  border: 2px solid var(--purple);
+}
+
+.button--orange {
+  color: white;
+  background: var(--orange);
+}
+
+.button--purple {
+  color: white;
+  background: var(--purple);
+}
+
+main {
+  overflow: hidden;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 1fr);
+  align-items: center;
+  gap: 64px;
+  min-height: calc(100vh - 104px);
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 72px 64px;
+}
+
+.hero__content {
+  max-width: 540px;
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: clamp(2.8rem, 4.6vw, 4.7rem);
+  line-height: 1.12;
+  letter-spacing: -0.04em;
+}
+
+.highlight {
+  color: var(--orange);
+}
+
+.hero__emojis {
+  white-space: nowrap;
+  font-size: 0.65em;
+  letter-spacing: 0;
+}
+
+.hero__description {
+  max-width: 500px;
+  margin: 26px 0 0;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  line-height: 1.7;
+}
+
+.hero__visual {
+  min-height: 440px;
+}
+
+.hero__photo-placeholder {
+  display: grid;
+  min-height: 440px;
+  place-items: center;
+  padding: 24px;
+  color: var(--text-muted);
+  background: #ffe1b4;
+  border: 2px dashed #e9b66f;
+  border-radius: 30px;
+}
+
+.pesquisar-modo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: min(100%, 490px);
+  margin-top: 30px;
+  padding: 9px 10px 9px 18px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 8px 22px rgba(98, 59, 27, 0.08);
+}
+
+.pesquisar-cidade {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.pesquisar-cidade-icon {
+  font-size: 1.15rem;
+}
+
+.pesquisar-modo input {
+  width: 100%;
+  padding: 12px 0;
+  border: 0;
+  outline: 0;
+  color: var(--text);
+  font: inherit;
+}
+
+.pesquisar-modo input::placeholder {
+  color: var(--text-muted);
+}
+
+.pesquisar-modo button {
+  padding: 12px 20px;
+  border: 0;
+  border-radius: 999px;
+  color: white;
+  background: var(--orange);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.pesquisar-modo button:hover {
+  filter: brightness(0.94);
+}
+
+.cidade-estado {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
