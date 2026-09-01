@@ -1,11 +1,14 @@
 :root {
-  --bg-page: #fff5e7;
-  --bg-header: #fffdfa;
-  --text: #2b190f;
-  --text-muted: #8e6548;
-  --orange: #ff9200;
-  --purple: #8048c4;
-  --border: #eee1d4;
+  --bg-page: #fff8ef;
+  --bg-header: #ffffff;
+  --paper: #fffcf8;
+  --text: #20120c;
+  --text-muted: #7d6b60;
+  --orange: #ff9800;
+  --purple: #7b3fc6;
+  --border: #f0dfcf;
+  --peach: #ffe7c7;
+  --cream: #fff2de;
 }
 
 * {
@@ -17,9 +20,7 @@ body {
   background: var(--bg-page);
   color: var(--text);
   font-family: Arial, sans-serif;
-}
-
-
+}d
 
 a {
   color: inherit;
@@ -27,10 +28,13 @@ a {
 }
 
 .site-header {
+  display: grid;
+  grid-template-columns: 300px 1fr auto;
   min-height: 104px;
-  padding: 0 54px;
+  padding: 0 34px 0 37px;
   display: flex;
   align-items: center;
+  height: 78px;
   justify-content: space-between;
   background: var(--bg-header);
   border-bottom: 1px solid var(--border);
@@ -39,7 +43,6 @@ a {
 .logo-horizontal {
     display: inline-flex;
     align-items: center;
-    flex-shrink: 0;
 }
 
 .logo-horizontal img {
@@ -50,38 +53,52 @@ a {
 
 .main-nav {
   display: flex;
+  justify-self: center;
   gap: 38px;
+  font-size: 14px;
   font-weight: 600;
+}
+
+.main-nav a:last-child {
+  color: var(--text-muted);
+  font-weight: 400;
 }
 
 .main-nav a:hover {
   color: var(--orange);
 }
 
-.header-actions {
+.acoes-header {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 20px;
 }
 
-.button {
-  padding: 11px 22px;
-  border-radius: 999px;
-  font-size: 0.9rem;
-  font-weight: 700;
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  white-space: nowrap;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
 }
 
-.button--outline {
+.botao--entrar {
+  width: 77px;
   color: var(--purple);
-  border: 2px solid var(--purple);
+  border: 1px solid var(--purple);
 }
 
-.button--orange {
+.botao--cadastrar {
+  width: 99px;
   color: white;
   background: var(--orange);
 }
 
-.button--purple {
+.botao--anunciar {
+  width: 104px;
   color: white;
   background: var(--purple);
 }
