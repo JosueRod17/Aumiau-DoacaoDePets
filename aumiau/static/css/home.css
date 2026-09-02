@@ -19,8 +19,8 @@ body {
   margin: 0;
   background: var(--bg-page);
   color: var(--text);
-  font-family: Arial, sans-serif;
-}d
+  font-family: "Inter", Arial, sans-serif;
+}
 
 a {
   color: inherit;
@@ -30,14 +30,10 @@ a {
 .site-header {
   display: grid;
   grid-template-columns: 300px 1fr auto;
-  min-height: 104px;
-  padding: 0 34px 0 37px;
-  display: flex;
   align-items: center;
   height: 78px;
-  justify-content: space-between;
+  padding: 0 34px 0 37px;
   background: var(--bg-header);
-  border-bottom: 1px solid var(--border);
 }
 
 .logo-horizontal {
@@ -112,13 +108,13 @@ main {
   grid-template-columns: minmax(0, 1fr) minmax(320px, 1fr);
   align-items: center;
   gap: 64px;
-  min-height: calc(100vh - 104px);
+  min-height: calc(100vh - 78px);
   max-width: 1280px;
   margin: 0 auto;
   padding: 72px 64px;
 }
 
-.hero__content {
+.hero-conteudo {
   max-width: 540px;
 }
 
@@ -139,7 +135,7 @@ main {
   letter-spacing: 0;
 }
 
-.hero__description {
+.hero-descricao {
   max-width: 500px;
   margin: 26px 0 0;
   color: var(--text-muted);
@@ -147,19 +143,30 @@ main {
   line-height: 1.7;
 }
 
-.hero__visual {
-  min-height: 440px;
+.hero-visual {
+  position: relative;
+  justify-self: end;
+  width: 580px;
+  height: 520px;
+  overflow: visible;
 }
 
-.hero__photo-placeholder {
-  display: grid;
-  min-height: 440px;
-  place-items: center;
-  padding: 24px;
-  color: var(--text-muted);
-  background: #ffe1b4;
-  border: 2px dashed #e9b66f;
-  border-radius: 30px;
+.hero-visual::before {
+  position: absolute;
+  z-index: 0;
+  content: "";
+  background: var(--orange);
+  border-radius: 68px;
+}
+
+.hero-foto {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 60px;
+  object-fit: cover;
 }
 
 .pesquisar-modo {
@@ -167,7 +174,7 @@ main {
   align-items: center;
   gap: 12px;
   width: min(100%, 490px);
-  margin-top: 30px;
+  margin-top: 15px;
   padding: 9px 10px 9px 18px;
   background: white;
   border: 1px solid var(--border);
