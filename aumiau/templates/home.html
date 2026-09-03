@@ -51,7 +51,7 @@
 
                         <label class="cidade-estado" for="localizacao">Sua cidade ou estado</label>
 
-                        <input id="localizacao" name="localizacao" type="text" placeholder="Sua cidade ou estado..." autocomplete="address-level2">
+                        <input id="localizacao" name="localizacao" type="text" placeholder="Sua cidade ou estado..." autocomplete="address-level2" value="{{ localizacao }}">
                     </div>
 
                 <button type="submit">Buscar Pets</button>
@@ -64,13 +64,12 @@
                     </li>
 
                     <li>
-                        <span>Seja o</span>
-                        <strong>PRIMEIRO</strong>
-                        <span>a virar uma ONG Parceira</span>
+                        <strong>{{ total_ongs }}</strong>
+                        <span>ONGs parceiras</span>
                     </li>
 
                     <li>
-                        <strong>0</strong>
+                        <strong>{{ total_pets }}</strong>
                         <span>Pets cadastrados</span>
                     </li>
                 </ul>
@@ -80,6 +79,125 @@
                 <img class="hero-foto" src="{% static 'img/hero-pets.png' %}" alt="Cachorro golden e gato juntos">
             </div>
         </section>
+
+        <section class="como-funciona" aria-labelledby="como-funciona-titulo">
+            <div class="como-funciona-cabecalho">
+                <h2 id="como-funciona-titulo">Como funciona a adoção?</h2>
+
+                <p>
+                Em 3 passos simples você pode transformar a vida de um animal
+                e a sua também.
+                </p>
+            </div>
+
+            <ol class="passos-adocao">
+                <li class="passo-adocao">
+                <span class="passo-icone" aria-hidden="true">🔍</span>
+                <h3>Busque pets</h3>
+                <p>Filtre por espécie, raça, cidade e muito mais.</p>
+                </li>
+
+                <li class="passo-adocao">
+                <span class="passo-icone" aria-hidden="true">💜</span>
+                <h3>Conheça e se apaixone</h3>
+                <p>Veja fotos, vídeos e a história de cada animal.</p>
+                </li>
+
+                <li class="passo-adocao">
+                <span class="passo-icone" aria-hidden="true">🏠</span>
+                <h3>Adote com amor</h3>
+                <p>
+                    Passe pelo processo de adoção e leve seu novo companheiro.
+                </p>
+                </li>
+            </ol>
+        </section>
+
+        <section class="pets-disponiveis" id="adocao" aria-labelledby="pets-titulo">
+            <div class="pets-cabecalho">
+                <p class="secao-etiqueta">Prontos para um lar!</p>
+                <h2 id="pets-titulo">Pets esperando por você</h2>
+            </div>
+
+            <div class="grade-pets">
+                {% for pet in pets %}
+                <article class="card-pet">
+                    <div class="card-pet-imagem" aria-hidden="true">🐾</div>
+
+                    <div class="card-pet-conteudo">
+                        <span class="card-pet-especie">{{ pet.get_especie_display }}</span>
+                        <h3>{{ pet.nome }}</h3>
+                        <p>📍 {{ pet.cidade }}, {{ pet.estado|upper }}</p>
+                    </div>
+                </article>
+
+                {% empty %}
+                <div class="pets-vazio">
+                    <span class="pets-vazio-icone" aria-hidden="true">🐾</span>
+                    <h3>Nenhum pet disponível por enquanto</h3>
+
+                    {% if localizacao %}
+                    <p>
+                        Não encontramos pets em “{{ localizacao }}”.
+                        Tente outra cidade ou estado.
+                    </p>
+
+                    {% else %}
+                    <p>Quando um pet real for cadastrado, ele aparecerá aqui.</p>
+
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            </section>
+
+            <section class="ongs-parceiras" id="ongs" aria-labelledby="ongs-titulo">
+                <div class="ongs-conteudo">
+                    <div class="ongs-cabecalho">
+                        <div>
+                            <p class="secao-etiqueta">Quem cuida com amor</p>
+                            <h2 id="ongs-titulo">ONGs parceiras</h2>
+                        </div>
+
+                        <p class="ongs-total">
+                            {{ total_ongs }} ONG{{ total_ongs|pluralize }}
+                        </p>
+                    </div>
+                    <div class="grade-ongs">
+                        {% for ong in ongs %}
+                            <article class="card-ong">
+                                <div class="card-ong-topo">
+                                    <span class="card-ong-icone" aria-hidden="true">🐾</span>
+                                    <span class="card-ong-status">Parceira</span>
+                                </div>
+
+                                <h3>{{ ong.nome }}</h3>
+
+                                <p class="card-ong-localizacao">
+                                    {{ ong.cidade }} · {{ ong.estado|upper }}
+                                </p>
+
+                                {% if ong.descricao %}
+                                    <p class="card-ong-descricao">
+                                        {{ ong.descricao|truncatechars:80 }}
+                                    </p>
+                                {% endif %}
+
+                            </article>
+                            
+                        {% empty %}
+                            <div class="ongs-vazio">
+                                <span aria-hidden="true">🐾</span>
+                                <h3>Ainda não temos ONGs parceiras</h3>
+                                <p>
+                                    Quando a primeira ONG for aprovada,
+                                    ela aparecerá aqui.
+                                </p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
     </main>
 </body>
 </html>
