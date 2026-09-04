@@ -23,19 +23,17 @@
         </nav>
 
         <div class="acoes-header">
-            <a class="botao botao--entrar" href="#">Entrar</a>
-            <a class="botao botao--cadastrar" href="#">Cadastrar</a>
-            <a class="botao botao--anunciar" href="#">Anunciar Pet</a>
+            <span class="botao botao--entrar botao--indisponivel" aria-disabled="true" title="Disponível em breve"> Entrar </span>
+                <span class="botao botao--cadastrar botao--indisponivel" aria-disabled="true" title="Disponível em breve"> Cadastrar </span>
+                    <a class="botao botao--anunciar" href="#anunciar"> Anunciar Pet </a>
         </div>
-    </header>
-
+        </header>
     <main>
         <section class="hero" aria-labelledby="hero-titulo">
             <div class="hero-conteudo">
                 <p class="hero-frase">🐾 Seja o primeiro a realizar uma adoção!</p>
 
-                <h1 id="hero-titulo">
-                    Encontre seu <span>melhor amigo</span><br>
+                <h1 id="hero-titulo">                    Encontre seu <span class="highlight">melhor amigo</span><br>
                     para sempre
                     <span class="hero-emojis" role="img" aria-label="cachorro e gato">🐶 🐱</span>
                 </h1>
@@ -80,7 +78,7 @@
             </div>
         </section>
 
-        <section class="como-funciona" aria-labelledby="como-funciona-titulo">
+        <section class="como-funciona" id="como-funciona" aria-labelledby="como-funciona-titulo">
             <div class="como-funciona-cabecalho">
                 <h2 id="como-funciona-titulo">Como funciona a adoção?</h2>
 
@@ -198,6 +196,100 @@
                     </div>
                 </div>
             </section>
+
+            <section class="depoimentos" aria-labelledby="depoimentos-titulo">
+                <div class="depoimentos-conteudo">
+                    <div class="depoimentos-cabecalho">
+                        <p class="secao-etiqueta">Histórias reais</p>
+                            <h2 id="depoimentos-titulo"> Depoimentos de quem adotou </h2>
+                    </div>
+                    <div class="depoimentos-vazio">
+                        <span aria-hidden="true">♡</span>
+                        <div>
+                            <h3>A primeira história ainda será escrita</h3>                
+                                <p>                                           
+                                    Quando uma adoção for concluída e o responsável
+
+                                    autorizar o depoimento, ela aparecerá aqui.
+                                </p>
+                        </div>
+                    </div>
+                </div>
+                </section>
+                
+                <section class="cta-ong" id="anunciar" aria-labelledby="cta-ong-titulo">
+                    <div class="cta-ong-conteudo">
+                        <div class="cta-ong-texto">
+                            <p class="cta-ong-etiqueta">
+                                Faça parte dessa transformação
+                            </p>
+                
+                            <h2 id="cta-ong-titulo">
+                                Você tem uma ONG ou é protetor independente?
+                            </h2>
+
+                            <p>
+                                Em breve você poderá cadastrar sua organização
+
+                                e divulgar pets que procuram um novo lar.
+                            </p>
+                        </div>
+
+                        <div class="cta-ong-acao">
+                            <button type="button" disabled>
+                                Quero ser parceiro
+                            </button>
+                
+                            <small>Cadastro disponível na próxima etapa</small>
+                        </div>
+                    </div>
+                </section>
+
     </main>
+    <footer class="rodape" id="ajuda">
+        <div class="rodape-conteudo">
+            <div class="rodape-marca">
+                <a href="{% url 'home' %}">
+                    <img src="{% static 'img/aumiau-logo-horizontal.png' %}" alt="AuMiau - adoção de pets">
+                </a>    
+        
+                <p>
+                    Aproximando pessoas, protetores e animais
+
+                    que procuram um novo lar.
+                </p>
+            </div>
+        
+            <nav class="rodape-coluna" aria-label="Navegação do rodapé">
+                <h2>Explore</h2>
+                    <a href="#adocao">Pets para adoção</a>
+                    <a href="#como-funciona">Como funciona</a>
+                    <a href="#ongs">ONGs parceiras</a>
+                    <a href="#anunciar">Seja parceiro</a>
+            </nav>
+        
+            <div class="rodape-coluna">
+                <h2>Conta</h2>
+                    <span class="rodape-indisponivel">Entrar — em breve</span>
+                    <span class="rodape-indisponivel">Criar conta — em breve</span>
+                    <span class="rodape-indisponivel">Anunciar pet — em breve</span>
+            </div>
+        
+            <div class="rodape-coluna">
+                <h2>Ajuda</h2>
+        
+                    <p>
+                        A central de ajuda e os canais de contato
+
+                        serão adicionados nas próximas etapas.
+                    </p>
+            </div>
+        </div>
+        
+            <div class="rodape-base">
+                <p>&copy; {% now "Y" %} AuMiau.</p>
+                <p>Feito para aproximar pessoas e animais.</p>
+            </div>
+    </footer>
 </body>
 </html>
