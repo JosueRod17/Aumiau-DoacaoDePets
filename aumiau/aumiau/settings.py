@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'adocoes.apps.AdocoesConfig',
     'pets.apps.PetsConfig',
     'ongs.apps.OngsConfig',
+    'usuarios.apps.UsuariosConfig',
 ]
 
 MIDDLEWARE = [
@@ -119,3 +120,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+LOGIN_URL = 'usuarios:login'
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
+TERMOS_VERSAO = '1.0'

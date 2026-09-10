@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    Entrar | AuMiau
+{% endblock %}
+
+{% block extra_css %}
+    <link
+        rel="stylesheet"
+        href="{% static 'css/auth.css' %}"
+    >
+{% endblock %}
+
+{% block content %}
+<section class="auth-pagina">
+    <div class="auth-card">
+        <p class="secao-etiqueta">Bem-vindo de volta</p>
+        <h1>Entrar</h1>
+
+        <p class="auth-descricao">
+            Entre utilizando seu nome de usuário e senha.
+        </p>
+
+        {% if form.non_field_errors %}
+            <div class="auth-erros-gerais">
+                Nome de usuário ou senha inválidos.
+            </div>
+        {% endif %}
+
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+
+            {% if next %}
+                <input type="hidden" name="next" value="{{ next }}">
+            {% endif %}
+
+            <div class="auth-campo">
+                <label for="{{ form.username.id_for_label }}">
+                    Nome de usuário
+                </label>
+
+                {{ form.username }}
+            </div>
+
+            <div class="auth-campo">
+                <label for="{{ form.password.id_for_label }}">
+                    Senha
+                </label>
+
+                {{ form.password }}
+            </div>
+
+            <button type="submit" class="auth-botao">
+                Entrar
+            </button>
+        </form>
+
+        <p class="auth-alternativa">
+            Ainda não possui conta?
+
+            <a href="{% url 'usuarios:cadastro' %}">
+                Cadastre-se
+            </a>
+        </p>
+    </div>
+</section>
+{% endblock %}

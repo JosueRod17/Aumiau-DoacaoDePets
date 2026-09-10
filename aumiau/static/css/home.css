@@ -516,8 +516,7 @@ main {
     font-size: 18px;
 }
 
-.card-ong-localizacao,
-.card-ong-descricao {
+.card-ong-localizacao, .card-ong-descricao {
     margin: 0;
     color: var(--text-muted);
     font-size: 13px;
@@ -723,9 +722,7 @@ main {
     font-size: 14px;
 }
 
-.rodape-coluna a,
-.rodape-coluna span,
-.rodape-coluna p {
+.rodape-coluna a, .rodape-coluna span, .rodape-coluna p {
     margin: 0;
     color: rgba(255, 255, 255, 0.72);
     font-size: 13px;
@@ -754,4 +751,279 @@ main {
     color: rgba(255, 255, 255, 0.5);
     font-size: 12px;
 }
- 
+
+html {
+    scroll-behavior: smooth;
+}
+
+.acoes-header form {
+    margin: 0;
+}
+
+button.botao {
+    background: transparent;
+    font: inherit;
+    cursor: pointer;
+}
+
+.usuario-header {
+    max-width: 150px;
+    overflow: hidden;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Tablets e telas menores */
+
+@media (max-width: 1100px) {
+  .site-header {
+      height: auto;
+      min-height: 78px;
+      padding: 12px 24px;
+      grid-template-columns: auto 1fr;
+      row-gap: 14px;
+  }
+
+  .logo-horizontal {
+      grid-row: 1;
+      grid-column: 1;
+  }
+
+  .logo-horizontal img {
+      width: 200px;
+  }
+
+  .acoes-header {
+      grid-row: 1;
+      grid-column: 2;
+      justify-self: end;
+  }
+
+  .main-nav {
+      grid-row: 2;
+      grid-column: 1 / -1;
+      justify-self: stretch;
+      justify-content: center;
+  }
+
+  .hero {
+      gap: 40px;
+      padding-right: 40px;
+      padding-left: 40px;
+  }
+
+  .passos-adocao {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 40px;
+  }
+
+  .grade-pets,
+  .grade-ongs {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .rodape-conteudo {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+
+@media (max-width: 960px) {
+  .hero {
+      grid-template-columns: 1fr;
+      padding: 50px 32px;
+  }
+
+  .hero-conteudo {
+      max-width: 650px;
+  }
+
+  .hero-visual {
+      justify-self: center;
+      width: min(100%, 427px);
+      height: auto;
+      aspect-ratio: 427 / 389;
+  }
+
+  .passos-adocao {
+      max-width: 520px;
+      grid-template-columns: 1fr;
+      gap: 42px;
+  }
+
+  .cta-ong-conteudo {
+      flex-direction: column;
+      align-items: flex-start;
+  }
+
+  .cta-ong-acao {
+      align-items: flex-start;
+  }
+}
+
+@media (max-width: 700px) {
+  .logo-horizontal img {
+      width: 160px;
+  }
+
+  .acoes-header {
+      gap: 8px;
+  }
+
+  .acoes-header .botao {
+      width: auto;
+      padding-right: 12px;
+      padding-left: 12px;
+  }
+
+  .botao--anunciar {
+      display: none;
+  }
+
+  .pets-disponiveis,
+  .ongs-parceiras,
+  .rodape {
+      padding-right: 24px;
+      padding-left: 24px;
+  }
+
+  .grade-pets,
+  .grade-ongs,
+  .rodape-conteudo {
+      grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .usuario-header {
+      display: none;
+  }
+
+  .site-header {
+      padding-right: 18px;
+      padding-left: 18px;
+  }
+
+  .logo-horizontal img {
+      width: 145px;
+  }
+
+  .acoes-header {
+      gap: 8px;
+  }
+
+  .acoes-header .botao {
+      width: auto;
+      padding-right: 12px;
+      padding-left: 12px;
+      font-size: 12px;
+  }
+
+  .botao--anunciar {
+      display: none;
+  }
+
+  .main-nav {
+      justify-content: flex-start;
+      gap: 22px;
+      padding-bottom: 4px;
+      overflow-x: auto;
+  }
+
+  .hero, .como-funciona, .pets-disponiveis, .ongs-parceiras, .depoimentos, .cta-ong, .rodape {
+      padding-right: 20px;
+      padding-left: 20px;
+  }
+
+  .hero h1 {
+      font-size: 2.35rem;
+  }
+
+  .hero-descricao {
+      font-size: 1rem;
+  }
+
+  .pesquisar-modo {
+      align-items: stretch;
+      flex-direction: column;
+  }
+
+  .pesquisar-modo button {
+      width: 100%;
+  }
+
+  .estatisticas {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+  }
+
+  .estatisticas li {
+      min-width: 0;
+      padding: 0 8px;
+  }
+
+  .estatisticas strong {
+      font-size: 18px;
+  }
+
+  .estatisticas span {
+      font-size: 11px;
+  }
+
+  .como-funciona-cabecalho h2, .pets-cabecalho h2, .ongs-cabecalho h2, .depoimentos-cabecalho h2, .cta-ong h2 {
+      font-size: 28px;
+  }
+
+  .grade-pets, .grade-ongs, .rodape-conteudo {
+      grid-template-columns: 1fr;
+  }
+
+  .ongs-cabecalho {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 12px;
+  }
+
+  .depoimentos-vazio {
+      grid-template-columns: 1fr;
+      padding: 24px 18px;
+      text-align: center;
+  }
+
+  .cta-ong-acao {
+      width: 100%;
+  }
+
+  .cta-ong-acao button {
+      width: 100%;
+  }
+
+  .rodape-base {
+      align-items: center;
+      flex-direction: column;
+      gap: 8px;
+      text-align: center;
+  }
+}
+
+@media (max-width: 360px) {
+  .logo-horizontal img {
+      width: 120px;
+  }
+
+  .acoes-header .botao {
+      padding-right: 8px;
+      padding-left: 8px;
+      font-size: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+      scroll-behavior: auto;
+  }
+}
+

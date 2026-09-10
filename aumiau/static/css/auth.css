@@ -1,0 +1,382 @@
+.auth-pagina {
+    display: grid;
+    min-height: calc(100vh - 78px);
+    padding: 60px 20px;
+    place-items: center;
+    background: var(--bg-page);
+}
+
+.auth-card {
+    width: min(100%, 480px);
+    padding: 38px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    box-shadow: 0 18px 50px rgba(53, 28, 14, 0.1);
+}
+
+.auth-card h1 {
+    margin: 0;
+    font-size: 34px;
+}
+
+.auth-descricao {
+    margin: 10px 0 28px;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.auth-form {
+    display: grid;
+    gap: 18px;
+}
+
+.auth-campo {
+    display: grid;
+    gap: 7px;
+}
+
+.auth-campo label {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.auth-campo input:not([type="checkbox"]) {
+    width: 100%;
+    height: 46px;
+    padding: 0 14px;
+    color: var(--text);
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    outline: none;
+    font: inherit;
+}
+
+.auth-campo input:not([type="checkbox"]):focus {
+    border-color: var(--purple);
+    box-shadow: 0 0 0 3px rgba(123, 63, 198, 0.12);
+}
+
+.auth-botao {
+    min-height: 46px;
+    margin-top: 4px;
+    color: white;
+    background: var(--orange);
+    border: 0;
+    border-radius: 999px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.auth-erro, .errorlist {
+    margin: 0;
+    padding: 0;
+    color: #b42318;
+    font-size: 12px;
+    list-style: none;
+}
+
+.auth-erros-gerais {
+    margin-bottom: 18px;
+    padding: 12px;
+    color: #8d2119;
+    background: #fff0ee;
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+.auth-alternativa {
+    margin: 24px 0 0;
+    color: var(--text-muted);
+    text-align: center;
+    font-size: 14px;
+}
+
+.auth-alternativa a {
+    color: var(--purple);
+    font-weight: 700;
+}
+
+@media (max-width: 560px) {
+    .auth-pagina {
+        padding: 32px 16px;
+    }
+
+    .auth-card {
+        padding: 26px 20px;
+    }
+}
+
+.auth-pagina--cadastro {
+    padding: 36px 20px;
+}
+
+.cadastro-card {
+    display: grid;
+    grid-template-columns: 330px minmax(0, 1fr);
+    width: min(100%, 1220px);
+    min-height: 690px;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(53, 28, 14, 0.1);
+}
+
+/* Painel esquerdo */
+
+.cadastro-lateral {
+    position: relative;
+    overflow: hidden;
+    padding: 138px 42px 40px;
+    background: var(--cream);
+}
+
+.cadastro-lateral__conteudo {
+    position: relative;
+    z-index: 2;
+}
+
+.cadastro-lateral h2 {
+    max-width: 240px;
+    margin: 0;
+    color: var(--text);
+    font-size: 24px;
+    line-height: 1.25;
+}
+
+.cadastro-lateral p {
+    max-width: 240px;
+    margin: 22px 0 28px;
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.cadastro-lateral ul {
+    display: grid;
+    gap: 17px;
+    margin: 0;
+    padding: 0;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 600;
+    list-style: none;
+}
+
+.cadastro-lateral li::first-letter {
+    color: var(--orange);
+}
+
+.cadastro-bolha {
+    position: absolute;
+    display: block;
+    border-radius: 50%;
+}
+
+.cadastro-bolha--grande {
+    right: 22px;
+    bottom: 106px;
+    width: 104px;
+    height: 104px;
+    background: #ffdaa1;
+}
+
+.cadastro-bolha--pequena {
+    bottom: 50px;
+    left: 89px;
+    width: 76px;
+    height: 76px;
+    background: #ffe8c5;
+}
+
+/* Conteúdo e grade */
+
+.cadastro-conteudo {
+    min-width: 0;
+    padding: 44px 65px 30px 55px;
+}
+
+.cadastro-cabecalho h1 {
+    margin: 0;
+    color: var(--text);
+    font-size: 24px;
+    line-height: 1.25;
+}
+
+.cadastro-cabecalho p {
+    margin: 7px 0 0;
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.cadastro-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 30px;
+    row-gap: 28px;
+    margin-top: 32px;
+}
+
+.cadastro-form .auth-campo {
+    align-content: start;
+}
+
+.cadastro-form .auth-campo label {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.cadastro-form .auth-campo input:not([type="checkbox"]) {
+    width: 100%;
+    height: 52px;
+    padding: 0 16px;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+}
+
+.cadastro-form .auth-campo input::placeholder {
+    color: #a39389;
+    opacity: 1;
+}
+
+.cadastro-largura-total {
+    grid-column: 1 / -1;
+}
+
+/* Checkbox dos termos */
+
+.auth-termos {
+    display: grid;
+    gap: 7px;
+}
+
+.auth-termos__linha {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.auth-termos input[type="checkbox"] {
+    display: grid;
+    flex: 0 0 20px;
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    padding: 0;
+    appearance: none;
+    place-content: center;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.auth-termos input[type="checkbox"]::before {
+    width: 6px;
+    height: 10px;
+    content: "";
+    border-right: 2px solid #ffffff;
+    border-bottom: 2px solid #ffffff;
+    transform: rotate(45deg) scale(0);
+    transition: transform 0.15s ease;
+}
+
+.auth-termos input[type="checkbox"]:checked {
+    background: var(--orange);
+    border-color: var(--orange);
+}
+
+.auth-termos input[type="checkbox"]:checked::before {
+    transform: rotate(45deg) scale(1);
+}
+
+.auth-termos input[type="checkbox"]:focus-visible {
+    outline: 3px solid rgba(123, 63, 198, 0.2);
+    outline-offset: 2px;
+}
+
+.auth-termos label {
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 20px;
+    cursor: pointer;
+}
+
+.auth-termos label strong {
+    color: var(--purple);
+    font-weight: 700;
+}
+
+/* Botão e textos inferiores */
+
+.cadastro-form .auth-botao {
+    width: 100%;
+    height: 52px;
+    margin-top: 8px;
+    border-radius: 26px;
+}
+
+.cadastro-alternativa {
+    margin-top: 20px;
+}
+
+.cadastro-privacidade {
+    margin: 30px 0 0;
+    color: var(--text-muted);
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* Responsividade */
+
+@media (max-width: 1000px) {
+    .cadastro-card {
+        grid-template-columns: 280px minmax(0, 1fr);
+    }
+
+    .cadastro-conteudo {
+        padding-right: 40px;
+        padding-left: 40px;
+    }
+}
+
+@media (max-width: 850px) {
+    .cadastro-card {
+        grid-template-columns: 1fr;
+    }
+
+    .cadastro-lateral {
+        display: none;
+    }
+}
+
+@media (max-width: 650px) {
+    .cadastro-form {
+        grid-template-columns: 1fr;
+        row-gap: 18px;
+    }
+
+    .cadastro-largura-total {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 560px) {
+    .auth-pagina--cadastro {
+        padding: 20px 14px;
+    }
+
+    .cadastro-card {
+        min-height: auto;
+        border-radius: 20px;
+    }
+
+    .cadastro-conteudo {
+        padding: 30px 20px;
+    }
+}

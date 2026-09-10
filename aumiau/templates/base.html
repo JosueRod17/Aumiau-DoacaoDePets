@@ -1,0 +1,123 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {% block title %}AuMiau{% endblock %}
+    </title>
+
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header class="site-header">
+        <a class="logo-horizontal" href="{% url 'home' %}">
+            <img src="{% static 'img/aumiau-logo-horizontal.png' %}" alt="AuMiau - adoção de pets">
+        </a>
+
+        <nav class="main-nav" aria-label="Navegação principal">
+            <a href="{% url 'home' %}#adocao">Adoção</a>
+            <a href="{% url 'home' %}#anunciar">Anunciar</a>
+            <a href="{% url 'home' %}#ongs">ONGs</a>
+            <a href="{% url 'home' %}#ajuda">Ajuda</a>
+        </nav>
+
+        <div class="acoes-header">
+            {% if user.is_authenticated %}
+                <span class="usuario-header">
+                    Olá, {{ user.first_name|default:user.username }}
+                </span>
+
+                <form method="post" action="{% url 'usuarios:logout' %}">
+                    {% csrf_token %}
+
+                    <button class="botao botao--entrar" type="submit">
+                        Sair
+                    </button>
+                </form>
+            {% else %}
+
+                <a class="botao botao--entrar" href="{% url 'usuarios:login' %}">
+                    Entrar
+                </a>
+
+                <a class="botao botao--cadastrar" href="{% url 'usuarios:cadastro' %}">
+                    Cadastrar
+                </a>
+            {% endif %}
+
+            <a class="botao botao--anunciar" href="{% url 'home' %}#anunciar">
+                Anunciar Pet
+            </a>
+        </div>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="rodape" id="ajuda">
+        <div class="rodape-conteudo">
+            <div class="rodape-marca">
+                <a href="{% url 'home' %}">
+                    <img src="{% static 'img/aumiau-logo-horizontal.png' %}" alt="AuMiau - adoção de pets">
+                </a>
+
+                <p>
+                    Aproximando pessoas, protetores e animais
+                    que procuram um novo lar.
+                </p>
+            </div>
+
+            <nav class="rodape-coluna" aria-label="Navegação do rodapé">
+                <h2>Explore</h2>
+
+                <a href="{% url 'home' %}#adocao">
+                    Pets para adoção
+                </a>
+
+                <a href="{% url 'home' %}#como-funciona">
+                    Como funciona
+                </a>
+
+                <a href="{% url 'home' %}#ongs">
+                    ONGs parceiras
+                </a>
+
+                <a href="{% url 'home' %}#anunciar">
+                    Seja parceiro
+                </a>
+            </nav>
+
+            <div class="rodape-coluna">
+                <h2>Conta</h2>
+                <span class="rodape-indisponivel">Entrar — em breve</span>
+                <span class="rodape-indisponivel">Criar conta — em breve</span>
+                <span class="rodape-indisponivel">Anunciar pet — em breve</span>
+            </div>
+
+            <div class="rodape-coluna">
+                <h2>Ajuda</h2>
+
+                <p>
+                    A central de ajuda e os canais de contato
+                    serão adicionados nas próximas etapas.
+                </p>
+            </div>
+        </div>
+
+        <div class="rodape-base">
+            <p>&copy; {% now "Y" %} AuMiau.</p>
+            <p>Feito para aproximar pessoas e animais.</p>
+        </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
