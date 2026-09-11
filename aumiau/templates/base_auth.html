@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}AuMiau{% endblock %}
+    </title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="auth-body">
+    <main class="auth-main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="{% static 'js/password-toggle.js' %}?v=2" defer></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

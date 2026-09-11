@@ -20,7 +20,6 @@ class LoginEmailForm(AuthenticationForm):
             attrs={
                 'placeholder': '✉  seuemail@exemplo.com',
                 'autocomplete': 'email',
-                'autofocus': True,
             }
         ),
     )

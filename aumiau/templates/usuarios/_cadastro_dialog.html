@@ -1,0 +1,167 @@
+<dialog
+    id="cadastro-dialog"
+    class="auth-dialog auth-dialog--cadastro"
+    aria-labelledby="cadastro-titulo"
+>
+    <button
+        type="button"
+        class="auth-dialog__fechar"
+        data-dialog-close
+        aria-label="Fechar cadastro"
+    >
+        &times;
+    </button>
+
+    <div class="cadastro-card">
+
+        <aside class="cadastro-lateral">
+            <div class="cadastro-lateral__conteudo">
+                <h2>Adotar é transformar duas vidas.</h2>
+
+                <p>
+                    Com uma conta você pode salvar pets, enviar
+                    pedidos de adoção e acompanhar todo o processo.
+                </p>
+
+                <ul>
+                    <li>✓ Salvar pets favoritos</li>
+                    <li>✓ Acompanhar solicitações</li>
+                    <li>✓ Conversar com ONGs</li>
+                    <li>✓ Atualizar seu perfil</li>
+                </ul>
+            </div>
+
+            <span class="cadastro-bolha cadastro-bolha--grande" aria-hidden="true"
+                >
+            </span>
+
+            <span class="cadastro-bolha cadastro-bolha--pequena" aria-hidden="true"
+                >
+            </span>
+        </aside>
+
+        <div class="cadastro-conteudo">
+            <header class="cadastro-cabecalho">
+                <h1 id="cadastro-titulo">Dados da sua conta</h1>
+                <p>Preencha seus dados para começar.</p>
+            </header>
+
+            <form method="post" action="{% url 'usuarios:cadastro' %}" class="cadastro-form">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="auth-erros-gerais cadastro-largura-total">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div class="auth-campo">
+                    <label for="{{ form.nome_completo.id_for_label }}">
+                        Nome completo
+                    </label>
+
+                    {{ form.nome_completo }}
+
+                    {% for error in form.nome_completo.errors %}
+                        <p class="auth-erro">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="auth-campo">
+                    <label for="{{ form.email.id_for_label }}">
+                        E-mail
+                    </label>
+
+                    {{ form.email }}
+
+                    {% for error in form.email.errors %}
+                        <p class="auth-erro">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="auth-campo">
+                    <label for="{{ form.telefone.id_for_label }}">
+                        Telefone
+                    </label>
+
+                    {{ form.telefone }}
+
+                    {% for error in form.telefone.errors %}
+                        <p class="auth-erro">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="auth-campo">
+                    <label for="{{ form.localizacao.id_for_label }}">
+                        Cidade / UF
+                    </label>
+
+                    {{ form.localizacao }}
+
+                    {% for error in form.localizacao.errors %}
+                        <p class="auth-erro">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="auth-campo">
+                    <label for="{{ form.password1.id_for_label }}">
+                        Senha
+                    </label>
+
+                    {{ form.password1 }}
+
+                    {% for error in form.password1.errors %}
+                        <p class="auth-erro">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="auth-campo">
+                    <label for="{{ form.password2.id_for_label }}">
+                        Confirmar senha
+                    </label>
+
+                    {{ form.password2 }}
+
+                    {% for error in form.password2.errors %}
+                        <p class="auth-erro">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="auth-termos cadastro-largura-total">
+                    <div class="auth-termos__linha">
+                        {{ form.aceite_termos }}
+
+                        <label for="{{ form.aceite_termos.id_for_label }}">
+                            Li e aceito os
+                            <strong>Termos de Uso</strong>
+                            e a
+                            <strong>Política de Privacidade</strong>.
+                        </label>
+                    </div>
+
+                    {% for error in form.aceite_termos.errors %}
+                        <p class="auth-erro">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <button type="submit" class="auth-botao cadastro-largura-total"
+                    >
+                    Criar minha conta
+                </button>
+            </form>
+
+            <p class="auth-alternativa cadastro-alternativa">
+                Já possui uma conta?
+
+                <a href="{% url 'usuarios:login' %}" data-dialog-open="login-dialog">
+                    Entrar
+                </a>
+            </p>
+
+            <p class="cadastro-privacidade">
+                🔒 Seus dados são protegidos e usados apenas para
+                melhorar sua experiência no AuMiau.
+            </p>
+        </div>
+    </div>
+</dialog>

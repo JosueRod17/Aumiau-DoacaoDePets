@@ -43,11 +43,11 @@
                 </form>
             {% else %}
 
-                <a class="botao botao--entrar" href="{% url 'usuarios:login' %}">
-                    Entrar
+                <a class="botao botao--entrar" href="{% url 'usuarios:login' %}" data-dialog-open="login-dialog">
+                Entrar
                 </a>
 
-                <a class="botao botao--cadastrar" href="{% url 'usuarios:cadastro' %}">
+                <a class="botao botao--cadastrar" href="{% url 'usuarios:cadastro' %}" data-dialog-open="cadastro-dialog">
                     Cadastrar
                 </a>
             {% endif %}
@@ -118,6 +118,7 @@
         </div>
     </footer>
 
+    <script src="{% static 'js/password-toggle.js' %}?v=2" defer></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

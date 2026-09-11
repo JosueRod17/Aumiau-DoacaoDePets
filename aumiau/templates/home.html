@@ -5,12 +5,16 @@
     AuMiau | Adoção de Pets
 {% endblock %}
 
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}?v=5">
+{% endblock %}
+
 {% block content %}
     <section class="hero" aria-labelledby="hero-titulo">
         <div class="hero-conteudo">
             <p class="hero-frase">🐾 Seja o primeiro a realizar uma adoção!</p>
 
-            <h1 id="hero-titulo">                    Encontre seu <span class="highlight">melhor amigo</span><br>
+            <h1 id="hero-titulo">Encontre seu <span class="highlight">melhor amigo</span><br>
                 para sempre
                 <span class="hero-emojis" role="img" aria-label="cachorro e gato">🐶 🐱</span>
             </h1>
@@ -222,5 +226,15 @@
             </div>
         </div>
     </section>
+
+    {% if not user.is_authenticated %}
+    {% include 'usuarios/_login_dialog.html' with form=login_form %}
+
+    {% include 'usuarios/_cadastro_dialog.html' with form=cadastro_form %}
+    {% endif %}
     
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/auth-dialogs.js' %}" defer></script>
 {% endblock %}

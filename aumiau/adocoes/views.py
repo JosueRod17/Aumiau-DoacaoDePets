@@ -2,6 +2,7 @@ from django.db.models import Q
 from django.shortcuts import render
 from ongs.models import Ong
 from pets.models import Pet
+from usuarios.forms import CadastroUsuarioForm, LoginEmailForm
 
 def home(request):
     localizacao = request.GET.get('localizacao', '').strip()
@@ -22,6 +23,9 @@ def home(request):
         'total_pets': Pet.objects.count(),
         'ongs': ongs_aprovadas[:4],
         'total_ongs': ongs_aprovadas.count(),
+
+        'login_form': LoginEmailForm(request=request),
+        'cadastro_form': CadastroUsuarioForm(),
     }
 
     return render(request, 'home.html', contexto)

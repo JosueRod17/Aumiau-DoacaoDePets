@@ -1,14 +1,10 @@
-{% extends 'base_auth.html' %}
 {% load static %}
 
-{% block title %}Entrar | AuMiau{% endblock %}
+<dialog id="login-dialog" class="auth-dialog auth-dialog--login" aria-labelledby="login-titulo">
+    <button type="button" class="auth-dialog__fechar" data-dialog-close aria-label="Fechar login">
+        &times;
+    </button>
 
-{% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/auth.css' %}?v=2">
-{% endblock %}
-
-{% block content %}
-<section class="auth-pagina auth-pagina--login">
     <div class="login-card">
 
         <aside class="login-apresentacao">
@@ -36,7 +32,7 @@
 
         <div class="login-conteudo">
             <header class="login-cabecalho">
-                <h2>Entrar no AuMiau</h2>
+                <h2 id="login-titulo">Entrar no AuMiau</h2>
 
                 <p>
                     Que bom ter você por aqui novamente.
@@ -49,7 +45,7 @@
                 </div>
             {% endif %}
 
-            <form method="post" class="login-form">
+            <form method="post" action="{% url 'usuarios:login' %}" class="login-form">
                 {% csrf_token %}
 
                 {% if next %}
@@ -110,11 +106,10 @@
             <p class="login-cadastro">
                 Ainda não tem uma conta?
 
-                <a href="{% url 'usuarios:cadastro' %}">
+                <a href="{% url 'usuarios:cadastro' %}" data-dialog-open="cadastro-dialog">
                     Cadastre-se gratuitamente
                 </a>
             </p>
         </div>
     </div>
-</section>
-{% endblock %}
+</dialog>
