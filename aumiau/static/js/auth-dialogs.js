@@ -79,4 +79,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         dialog.addEventListener('close', atualizarRolagem);
     });
+
+    const dialogInicial = dialogs.find(
+        (dialog) => dialog.dataset.openOnLoad === 'true'
+    );
+
+    if (dialogInicial) {
+        abrirDialog(dialogInicial);
+
+        const url = new URL(window.location.href);
+
+        url.searchParams.delete('conta');
+
+        window.history.replaceState(
+            {},
+            '',
+            `${url.pathname}${url.search}${url.hash}`
+        );
+    }
 });

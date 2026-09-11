@@ -1,6 +1,6 @@
 {% load static %}
 
-<dialog id="login-dialog" class="auth-dialog auth-dialog--login" aria-labelledby="login-titulo">
+<dialog id="login-dialog" class="auth-dialog auth-dialog--login" aria-labelledby="login-titulo" {% if abrir_login %}data-open-on-load="true"{% endif %}>
     <button type="button" class="auth-dialog__fechar" data-dialog-close aria-label="Fechar login">
         &times;
     </button>
@@ -39,6 +39,13 @@
                 </p>
             </header>
 
+            {% if abrir_login %}
+                <div class="auth-aviso-acesso" role="alert">
+                    Para anunciar um pet, entre na sua conta
+                    ou crie um cadastro.
+                </div>
+            {% endif %}
+
             {% if form.non_field_errors %}
                 <div class="auth-erros-gerais login-erros">
                     E-mail ou senha inválidos.
@@ -48,8 +55,8 @@
             <form method="post" action="{% url 'usuarios:login' %}" class="login-form">
                 {% csrf_token %}
 
-                {% if next %}
-                    <input type="hidden" name="next" value="{{ next }}">
+                {% if login_next %}
+                    <input type="hidden" name="next" value="{{ login_next }}">
                 {% endif %}
 
                 <div class="login-campos">

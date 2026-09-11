@@ -23,24 +23,56 @@
 
         <nav class="main-nav" aria-label="Navegação principal">
             <a href="{% url 'home' %}#adocao">Adoção</a>
-            <a href="{% url 'home' %}#anunciar">Anunciar</a>
+            <a href="{% url 'pets:anunciar' %}">Anunciar</a>
             <a href="{% url 'home' %}#ongs">ONGs</a>
             <a href="{% url 'home' %}#ajuda">Ajuda</a>
         </nav>
 
         <div class="acoes-header">
             {% if user.is_authenticated %}
-                <span class="usuario-header">
-                    Olá, {{ user.first_name|default:user.username }}
-                </span>
+                <details class="perfil-menu">
+                    <summary class="perfil-menu__gatilho">
+                        <span class="perfil-menu__avatar">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="12" cy="8" r="4"></circle>
+                                <path d="M4 21a8 8 0 0 1 16 0"></path>
+                            </svg>
+                        </span>
 
-                <form method="post" action="{% url 'usuarios:logout' %}">
-                    {% csrf_token %}
+                        <span class="perfil-menu__texto">
+                            <small>Perfil</small>
 
-                    <button class="botao botao--entrar" type="submit">
-                        Sair
-                    </button>
-                </form>
+                            <strong>
+                                {{ user.first_name|default:user.username }}
+                            </strong>
+                        </span>
+
+                        <svg class="perfil-menu__seta" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="m7 10 5 5 5-5"></path>
+                        </svg>
+                    </summary>
+
+                    <div class="perfil-menu__painel">
+                        <strong>
+                            {{ user.get_full_name|default:user.username }}
+                        </strong>
+
+                        <span>{{ user.email }}</span>
+
+                        <a href="{% url 'home' %}?conta=1" class="perfil-menu__conta" data-dialog-open="conta-dialog" aria-haspopup="dialog" aria-controls="conta-dialog">
+                            Minha conta
+                        </a>
+
+                        <form method="post" action="{% url 'usuarios:logout' %}">
+                            {% csrf_token %}
+
+                            <button type="submit">
+                                Sair da conta
+                            </button>
+                        </form>
+                    </div>
+                </details>
+
             {% else %}
 
                 <a class="botao botao--entrar" href="{% url 'usuarios:login' %}" data-dialog-open="login-dialog">
@@ -52,7 +84,7 @@
                 </a>
             {% endif %}
 
-            <a class="botao botao--anunciar" href="{% url 'home' %}#anunciar">
+            <a class="botao botao--anunciar" href="{% url 'pets:anunciar' %}">
                 Anunciar Pet
             </a>
         </div>
@@ -119,6 +151,7 @@
     </footer>
 
     <script src="{% static 'js/password-toggle.js' %}?v=2" defer></script>
+    <script src="{% static 'js/uf-cidades.js' %}?v=1" defer></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

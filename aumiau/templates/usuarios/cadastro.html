@@ -43,7 +43,7 @@
                 <p>Preencha seus dados para começar.</p>
             </header>
 
-            <form method="post" class="cadastro-form">
+            <form method="post" action="{% url 'usuarios:cadastro' %}" class="cadastro-form" data-uf-cidades-form>
                 {% csrf_token %}
 
                 {% if form.non_field_errors %}
@@ -76,7 +76,7 @@
                     {% endfor %}
                 </div>
 
-                <div class="auth-campo">
+                <div class="auth-campo cadastro-largura-total">
                     <label for="{{ form.telefone.id_for_label }}">
                         Telefone
                     </label>
@@ -89,13 +89,27 @@
                 </div>
 
                 <div class="auth-campo">
-                    <label for="{{ form.localizacao.id_for_label }}">
-                        Cidade / UF
+                    <label for="{{ form.estado.id_for_label }}">
+                        UF
                     </label>
 
-                    {{ form.localizacao }}
+                    {{ form.estado }}
 
-                    {% for error in form.localizacao.errors %}
+                    {% for error in form.estado.errors %}
+                        <p class="auth-erro">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="auth-campo">
+                    <label for="{{ form.cidade.id_for_label }}">
+                        Cidade
+                    </label>
+
+                    {{ form.cidade }}
+
+                    <p class="localidade-status" data-cidades-status aria-live="polite"></p>
+
+                    {% for error in form.cidade.errors %}
                         <p class="auth-erro">{{ error }}</p>
                     {% endfor %}
                 </div>

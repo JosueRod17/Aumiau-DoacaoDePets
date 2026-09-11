@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/auth.css' %}?v=5">
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}?v=7">
 {% endblock %}
 
 {% block content %}
@@ -16,7 +16,6 @@
 
             <h1 id="hero-titulo">Encontre seu <span class="highlight">melhor amigo</span><br>
                 para sempre
-                <span class="hero-emojis" role="img" aria-label="cachorro e gato">🐶 🐱</span>
             </h1>
 
             <p class="hero-descricao">
@@ -227,14 +226,15 @@
         </div>
     </section>
 
-    {% if not user.is_authenticated %}
-    {% include 'usuarios/_login_dialog.html' with form=login_form %}
-
-    {% include 'usuarios/_cadastro_dialog.html' with form=cadastro_form %}
+    {% if user.is_authenticated %}
+        {% include 'usuarios/_conta_dialog.html' with form=conta_form %}
+    {% else %}
+        {% include 'usuarios/_login_dialog.html' with form=login_form %}
+        {% include 'usuarios/_cadastro_dialog.html' with form=cadastro_form %}
     {% endif %}
     
 {% endblock %}
 
 {% block extra_js %}
-    <script src="{% static 'js/auth-dialogs.js' %}" defer></script>
+    <script src="{% static 'js/auth-dialogs.js' %}?v=2" defer></script>
 {% endblock %}

@@ -1,0 +1,123 @@
+<dialog id="conta-dialog" class="auth-dialog auth-dialog--conta" aria-labelledby="conta-titulo" {% if abrir_conta %}data-open-on-load="true"{% endif %}>
+    <button type="button" class="auth-dialog__fechar" data-dialog-close aria-label="Fechar">
+        &times;
+    </button>
+
+    <section class="conta-card">
+        <header class="conta-cabecalho">
+            <p class="secao-etiqueta">Seu perfil</p>
+
+            <h2 id="conta-titulo">Minha conta</h2>
+
+            <p>
+                Atualize seus dados e confirme usando sua senha atual.
+            </p>
+        </header>
+
+        {% if messages %}
+            <div class="conta-mensagens" aria-live="polite">
+                {% for message in messages %}
+                    <p class="conta-mensagem conta-mensagem--{{ message.tags }}">
+                        {{ message }}
+                    </p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if form.non_field_errors %}
+            <div class="auth-erros-gerais">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'home' %}" class="conta-form" data-uf-cidades-form>
+            {% csrf_token %}
+
+            <input type="hidden" name="acao" value="editar_conta">
+
+            <div class="auth-campo conta-largura-total">
+                <label for="{{ form.nome_completo.id_for_label }}">
+                    {{ form.nome_completo.label }}
+                </label>
+
+                {{ form.nome_completo }}
+
+                {% for error in form.nome_completo.errors %}
+                    <p class="auth-erro">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div class="auth-campo conta-largura-total">
+                <label for="{{ form.email.id_for_label }}">
+                    {{ form.email.label }}
+                </label>
+
+                {{ form.email }}
+
+                <small class="conta-ajuda">
+                    A alteração de e-mail será adicionada depois.
+                </small>
+            </div>
+
+            <div class="auth-campo">
+                <label for="{{ form.telefone.id_for_label }}">
+                    {{ form.telefone.label }}
+                </label>
+
+                {{ form.telefone }}
+
+                {% for error in form.telefone.errors %}
+                    <p class="auth-erro">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div class="auth-campo">
+                <label for="{{ form.estado.id_for_label }}">
+                    {{ form.estado.label }}
+                </label>
+
+                {{ form.estado }}
+
+                {% for error in form.estado.errors %}
+                    <p class="auth-erro">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div class="auth-campo">
+                <label for="{{ form.cidade.id_for_label }}">
+                    {{ form.cidade.label }}
+                </label>
+
+                {{ form.cidade }}
+
+                {% for error in form.cidade.errors %}
+                    <p class="auth-erro">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <p class="localidade-status" data-cidades-status aria-live="polite"></p>
+
+            <div class="auth-campo">
+                <label for="{{ form.senha_atual.id_for_label }}">
+                    {{ form.senha_atual.label }}
+                </label>
+
+                {{ form.senha_atual }}
+
+                {% for error in form.senha_atual.errors %}
+                    <p class="auth-erro">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div class="conta-acoes conta-largura-total">
+                <button type="button" class="conta-botao conta-botao--cancelar" data-dialog-close>
+                    Cancelar
+                </button>
+
+                <button type="submit" class="conta-botao conta-botao--salvar">
+                    Salvar alterações
+                </button>
+            </div>
+        </form>
+    </section>
+</dialog>

@@ -9,7 +9,44 @@ from .models import UF_CHOICES
 
 
 User = get_user_model()
-UFS_VALIDAS = {sigla for sigla, nome in UF_CHOICES}
+UF_FORM_CHOICES = [
+    ('', 'Selecione a UF'),
+    *UF_CHOICES,
+]
+
+
+def preparar_select_cidade(formulario):
+    if formulario.is_bound:
+        estado = formulario.data.get(
+            formulario.add_prefix('estado'),
+            '',
+        ).strip().upper()
+
+        cidade = formulario.data.get(
+            formulario.add_prefix('cidade'),
+            '',
+        ).strip()
+    else:
+        estado = str(
+            formulario.initial.get('estado', '') or ''
+        ).strip().upper()
+
+        cidade = str(
+            formulario.initial.get('cidade', '') or ''
+        ).strip()
+
+    texto_inicial = (
+        'Selecione a cidade'
+        if estado
+        else 'Selecione primeiro a UF'
+    )
+
+    opcoes = [('', texto_inicial)]
+
+    if cidade:
+        opcoes.append((cidade, cidade))
+
+    formulario.fields['cidade'].widget.choices = opcoes
 
 
 class LoginEmailForm(AuthenticationForm):
@@ -79,14 +116,28 @@ class CadastroUsuarioForm(UserCreationForm):
         ),
     )
 
-    localizacao = forms.CharField(
-        label='Cidade / UF',
-        max_length=105,
-        widget=forms.TextInput(
+    estado = forms.ChoiceField(
+    label='UF',
+    choices=UF_FORM_CHOICES,
+    widget=forms.Select(
+        attrs={
+            'data-uf-select': '',
+            'autocomplete': 'address-level1',
+        }
+    ),
+)
+
+    cidade = forms.CharField(
+        label='Cidade',
+        max_length=100,
+        widget=forms.Select(
             attrs={
-                'placeholder': '📍  Brasília, DF',
+                'data-cidade-select': '',
                 'autocomplete': 'address-level2',
-            }
+            },
+            choices=[
+                ('', 'Selecione primeiro a UF'),
+            ],
         ),
     )
 
@@ -105,7 +156,8 @@ class CadastroUsuarioForm(UserCreationForm):
             'nome_completo',
             'email',
             'telefone',
-            'localizacao',
+            'estado',
+            'cidade',
             'password1',
             'password2',
             'aceite_termos',
@@ -125,6 +177,8 @@ class CadastroUsuarioForm(UserCreationForm):
             'placeholder': '🔒  Digite a senha novamente',
             'autocomplete': 'new-password',
         })
+
+        preparar_select_cidade(self)
 
     def clean_email(self):
         email = self.cleaned_data['email'].strip().casefold()
@@ -155,32 +209,15 @@ class CadastroUsuarioForm(UserCreationForm):
 
         return telefone
 
-    def clean_localizacao(self):
-        localizacao = self.cleaned_data['localizacao'].strip()
-
-        if ',' not in localizacao:
-            raise forms.ValidationError(
-                'Informe a cidade e o estado no formato Cidade, UF.'
-            )
-
-        cidade, estado = localizacao.rsplit(',', 1)
-        cidade = cidade.strip()
-        estado = estado.strip().upper()
+    def clean_cidade(self):
+        cidade = self.cleaned_data['cidade'].strip()
 
         if not cidade:
-            raise forms.ValidationError('Informe sua cidade.')
-
-        if estado not in UFS_VALIDAS:
             raise forms.ValidationError(
-                'Informe uma UF brasileira válida.'
+                'Selecione sua cidade.'
             )
 
-        return f'{cidade}, {estado}'
-
-    def obter_localizacao(self):
-        cidade, estado = self.cleaned_data['localizacao'].rsplit(',', 1)
-
-        return cidade.strip(), estado.strip().upper()
+        return cidade
 
     def save(self, commit=True):
         usuario = super().save(commit=False)
@@ -201,3 +238,150 @@ class CadastroUsuarioForm(UserCreationForm):
             usuario.save()
 
         return usuario
+
+class EditarContaForm(forms.Form):
+    nome_completo = forms.CharField(
+        label='Nome completo',
+        max_length=150,
+        widget=forms.TextInput(
+            attrs={
+                'placeholder': 'Digite seu nome completo',
+                'autocomplete': 'name',
+            }
+        ),
+    )
+
+    email = forms.EmailField(
+        label='E-mail',
+        disabled=True,
+        widget=forms.EmailInput(
+            attrs={
+                'autocomplete': 'email',
+            }
+        ),
+    )
+
+    telefone = forms.CharField(
+        label='Telefone',
+        max_length=20,
+        widget=forms.TextInput(
+            attrs={
+                'placeholder': '(00) 00000-0000',
+                'autocomplete': 'tel',
+                'inputmode': 'tel',
+            }
+        ),
+    )
+
+    estado = forms.ChoiceField(
+        label='UF',
+        choices=UF_FORM_CHOICES,
+        widget=forms.Select(
+            attrs={
+                'data-uf-select': '',
+                'autocomplete': 'address-level1',
+            }
+        ),
+    )
+
+    cidade = forms.CharField(
+        label='Cidade',
+        max_length=100,
+        widget=forms.Select(
+            attrs={
+                'data-cidade-select': '',
+                'autocomplete': 'address-level2',
+            },
+            choices=[
+                ('', 'Selecione primeiro a UF'),
+            ],
+        ),
+    )
+
+    senha_atual = forms.CharField(
+        label='Confirme sua senha',
+        strip=False,
+        widget=forms.PasswordInput(
+            attrs={
+                'placeholder': 'Digite sua senha atual',
+                'autocomplete': 'current-password',
+            }
+        ),
+    )
+
+    def __init__(self, *args, usuario, **kwargs):
+        self.usuario = usuario
+        super().__init__(*args, **kwargs)
+
+        perfil = usuario.perfil
+
+        self.initial.update({
+            'nome_completo': usuario.get_full_name(),
+            'email': usuario.email,
+            'telefone': perfil.telefone,
+            'cidade': perfil.cidade,
+            'estado': perfil.estado,
+        })
+
+        preparar_select_cidade(self)
+
+    def clean_telefone(self):
+        telefone = re.sub(
+            r'\D',
+            '',
+            self.cleaned_data['telefone'],
+        )
+
+        if len(telefone) not in (10, 11):
+            raise forms.ValidationError(
+                'Informe um telefone válido com DDD.'
+            )
+
+        return telefone
+
+    def clean_cidade(self):
+        cidade = self.cleaned_data['cidade'].strip()
+
+        if not cidade:
+            raise forms.ValidationError('Informe sua cidade.')
+
+        return cidade
+
+    def clean_senha_atual(self):
+        senha_atual = self.cleaned_data['senha_atual']
+
+        if not self.usuario.check_password(senha_atual):
+            raise forms.ValidationError('A senha atual está incorreta.')
+
+        return senha_atual
+
+    def save(self):
+        partes_nome = (
+            self.cleaned_data['nome_completo']
+            .strip()
+            .split(maxsplit=1)
+        )
+
+        self.usuario.first_name = partes_nome[0]
+        self.usuario.last_name = (
+            partes_nome[1] if len(partes_nome) > 1 else ''
+        )
+
+        self.usuario.save(
+            update_fields=['first_name', 'last_name']
+        )
+
+        perfil = self.usuario.perfil
+        perfil.telefone = self.cleaned_data['telefone']
+        perfil.cidade = self.cleaned_data['cidade']
+        perfil.estado = self.cleaned_data['estado']
+        perfil.save(
+            update_fields=[
+                'telefone',
+                'cidade',
+                'estado',
+                'atualizado_em',
+            ]
+        )
+
+        return self.usuario

@@ -49,6 +49,10 @@
             <form method="post" action="{% url 'usuarios:cadastro' %}" class="cadastro-form">
                 {% csrf_token %}
 
+                {% if login_next %}
+                    <input type="hidden" name="next" value="{{ login_next }}">
+                {% endif %}
+
                 {% if form.non_field_errors %}
                     <div class="auth-erros-gerais cadastro-largura-total">
                         {{ form.non_field_errors }}

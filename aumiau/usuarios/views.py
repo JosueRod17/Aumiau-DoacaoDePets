@@ -3,6 +3,7 @@ from django.contrib.auth import login
 from django.db import IntegrityError, transaction
 from django.shortcuts import redirect, render
 from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
 
 from .forms import CadastroUsuarioForm
 from .models import Perfil
@@ -18,7 +19,8 @@ def cadastro(request):
         try:
             with transaction.atomic():
                 usuario = form.save()
-                cidade, estado = form.obter_localizacao()
+                cidade = form.cleaned_data['cidade']
+                estado = form.cleaned_data['estado']
 
                 Perfil.objects.create(
                     usuario=usuario,
@@ -37,6 +39,15 @@ def cadastro(request):
 
         else:
             login(request, usuario)
+            destino = request.POST.get('next', '')
+
+            if destino and url_has_allowed_host_and_scheme(
+                url=destino,
+                allowed_hosts={request.get_host()},
+                require_https=request.is_secure(),
+            ):
+                return redirect(destino)
+
             return redirect('home')
 
     return render(

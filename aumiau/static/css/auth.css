@@ -229,7 +229,7 @@
     font-weight: 600;
 }
 
-.cadastro-form .auth-campo input:not([type="checkbox"]) {
+.cadastro-form .auth-campo :is( input:not([type="checkbox"]), select) {
     width: 100%;
     height: 52px;
     padding: 0 16px;
@@ -245,6 +245,19 @@
 
 .cadastro-largura-total {
     grid-column: 1 / -1;
+}
+
+.auth-campo select:disabled {
+    color: var(--text-muted);
+    background: #f6f2ee;
+    cursor: not-allowed;
+}
+
+.localidade-status {
+    min-height: 14px;
+    margin: 4px 0 0;
+    color: var(--text-muted);
+    font-size: 11px;
 }
 
 /* Checkbox dos termos */
@@ -745,6 +758,193 @@ html.auth-modal-aberto, html.auth-modal-aberto body {
 .senha-toggle:focus-visible {
     outline: 3px solid rgba(123, 63, 198, 0.2);
     outline-offset: 1px;
+}
+
+/* Mantém o olho dentro do input mesmo quando aparecem erros */
+
+.campo-senha {
+    position: relative;
+    align-self: start;
+    width: 100%;
+    height: 52px;
+}
+
+.auth-campo .campo-senha > input:not([type="checkbox"]) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding-right: 54px;
+}
+
+.senha-toggle {
+    top: 0;
+    right: 10px;
+    bottom: 0;
+    margin: auto 0;
+    transform: none;
+}
+
+.auth-aviso-acesso {
+    margin: 18px 0 -18px;
+    padding: 11px 13px;
+    color: #6b3d00;
+    background: #fff4df;
+    border: 1px solid #ffd28a;
+    border-radius: 12px;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+/* Modal Minha conta */
+
+.auth-dialog--conta {
+    --dialog-width: 720px;
+    --dialog-radius: 24px;
+}
+
+.conta-card {
+    width: 100%;
+    padding: 40px;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: inherit;
+}
+
+.conta-cabecalho {
+    padding-right: 48px;
+}
+
+.conta-cabecalho h2 {
+    margin: 0;
+    color: var(--text);
+    font-size: 30px;
+}
+
+.conta-cabecalho > p:last-child {
+    margin: 8px 0 0;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.conta-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 24px;
+    margin-top: 28px;
+}
+
+.conta-form .auth-campo {
+    min-width: 0;
+    align-content: start;
+}
+
+.conta-form .auth-campo :is(
+    input:not([type="checkbox"]),
+    select
+) {
+    width: 100%;
+    height: 52px;
+    padding: 0 16px;
+    color: var(--text);
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    outline: none;
+    font: inherit;
+}
+
+.conta-form .auth-campo :is(
+    input:not([type="checkbox"]),
+    select
+):focus {
+    border-color: var(--purple);
+    box-shadow: 0 0 0 3px rgba(123, 63, 198, 0.12);
+}
+
+.conta-form input:disabled {
+    color: var(--text-muted);
+    background: #f6f2ee;
+    cursor: not-allowed;
+}
+
+.conta-largura-total {
+    grid-column: 1 / -1;
+}
+
+.conta-ajuda {
+    color: var(--text-muted);
+    font-size: 11px;
+}
+
+.conta-acoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 6px;
+}
+
+.conta-botao {
+    min-height: 48px;
+    padding: 0 24px;
+    border-radius: 999px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.conta-botao--cancelar {
+    color: var(--purple);
+    background: #ffffff;
+    border: 1px solid var(--purple);
+}
+
+.conta-botao--salvar {
+    color: #ffffff;
+    background: var(--orange);
+    border: 1px solid var(--orange);
+}
+
+.conta-mensagens {
+    margin-top: 20px;
+}
+
+.conta-mensagem {
+    margin: 0;
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+.conta-mensagem--success {
+    color: #166534;
+    background: #dcfce7;
+}
+
+.conta-mensagem--error {
+    color: #8d2119;
+    background: #fff0ee;
+}
+
+@media (max-width: 650px) {
+    .conta-card {
+        padding: 32px 20px;
+    }
+
+    .conta-form {
+        grid-template-columns: 1fr;
+    }
+
+    .conta-largura-total {
+        grid-column: auto;
+    }
+
+    .conta-acoes {
+        flex-direction: column-reverse;
+    }
+
+    .conta-botao {
+        width: 100%;
+    }
 }
 
 @keyframes auth-modal-entrada {
