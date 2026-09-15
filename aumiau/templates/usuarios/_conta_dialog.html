@@ -1,18 +1,9 @@
-<dialog id="conta-dialog" class="auth-dialog auth-dialog--conta" aria-labelledby="conta-titulo" {% if abrir_conta %}data-open-on-load="true"{% endif %}>
+<dialog id="conta-dialog" class="auth-dialog auth-dialog--conta" aria-labelledby="{% if form.is_bound %}conta-cadastro-titulo{% else %}conta-menu-titulo{% endif %}" data-conta-initial-panel="{% if form.is_bound %}cadastro{% else %}menu{% endif %}" {% if abrir_conta %}data-open-on-load="true"{% endif %}>
     <button type="button" class="auth-dialog__fechar" data-dialog-close aria-label="Fechar">
         &times;
     </button>
 
     <section class="conta-card">
-        <header class="conta-cabecalho">
-            <p class="secao-etiqueta">Seu perfil</p>
-
-            <h2 id="conta-titulo">Minha conta</h2>
-
-            <p>
-                Atualize seus dados e confirme usando sua senha atual.
-            </p>
-        </header>
 
         {% if messages %}
             <div class="conta-mensagens" aria-live="polite">
@@ -24,100 +15,203 @@
             </div>
         {% endif %}
 
-        {% if form.non_field_errors %}
-            <div class="auth-erros-gerais">
-                {{ form.non_field_errors }}
-            </div>
-        {% endif %}
+        <div class="conta-painel" data-conta-panel="menu" {% if form.is_bound %}hidden{% endif %}>
 
-        <form method="post" action="{% url 'home' %}" class="conta-form" data-uf-cidades-form>
-            {% csrf_token %}
+            <header class="conta-cabecalho">
+                <p class="secao-etiqueta">Seu perfil</p>
 
-            <input type="hidden" name="acao" value="editar_conta">
+                <h2 id="conta-menu-titulo" data-conta-panel-title>
+                    Minha conta
+                </h2>
 
-            <div class="auth-campo conta-largura-total">
-                <label for="{{ form.nome_completo.id_for_label }}">
-                    {{ form.nome_completo.label }}
-                </label>
+                <p>
+                    Escolha o que deseja gerenciar no seu perfil.
+                </p>
+            </header>
 
-                {{ form.nome_completo }}
+            <div class="conta-menu">
+                <button type="button" class="conta-opcao conta-opcao--principal" data-conta-show="cadastro" data-conta-focus>
+                    <span class="conta-opcao__texto">
+                        <strong>Atualizar cadastro</strong>
+                        <small>
+                            Altere nome, telefone e localização
+                        </small>
+                    </span>
 
-                {% for error in form.nome_completo.errors %}
-                    <p class="auth-erro">{{ error }}</p>
-                {% endfor %}
-            </div>
-
-            <div class="auth-campo conta-largura-total">
-                <label for="{{ form.email.id_for_label }}">
-                    {{ form.email.label }}
-                </label>
-
-                {{ form.email }}
-
-                <small class="conta-ajuda">
-                    A alteração de e-mail será adicionada depois.
-                </small>
-            </div>
-
-            <div class="auth-campo">
-                <label for="{{ form.telefone.id_for_label }}">
-                    {{ form.telefone.label }}
-                </label>
-
-                {{ form.telefone }}
-
-                {% for error in form.telefone.errors %}
-                    <p class="auth-erro">{{ error }}</p>
-                {% endfor %}
-            </div>
-
-            <div class="auth-campo">
-                <label for="{{ form.estado.id_for_label }}">
-                    {{ form.estado.label }}
-                </label>
-
-                {{ form.estado }}
-
-                {% for error in form.estado.errors %}
-                    <p class="auth-erro">{{ error }}</p>
-                {% endfor %}
-            </div>
-
-            <div class="auth-campo">
-                <label for="{{ form.cidade.id_for_label }}">
-                    {{ form.cidade.label }}
-                </label>
-
-                {{ form.cidade }}
-
-                {% for error in form.cidade.errors %}
-                    <p class="auth-erro">{{ error }}</p>
-                {% endfor %}
-            </div>
-
-            <p class="localidade-status" data-cidades-status aria-live="polite"></p>
-
-            <div class="auth-campo">
-                <label for="{{ form.senha_atual.id_for_label }}">
-                    {{ form.senha_atual.label }}
-                </label>
-
-                {{ form.senha_atual }}
-
-                {% for error in form.senha_atual.errors %}
-                    <p class="auth-erro">{{ error }}</p>
-                {% endfor %}
-            </div>
-
-            <div class="conta-acoes conta-largura-total">
-                <button type="button" class="conta-botao conta-botao--cancelar" data-dialog-close>
-                    Cancelar
+                    <span class="conta-opcao__seta" aria-hidden="true">
+                        →
+                    </span>
                 </button>
 
-                <button type="submit" class="conta-botao conta-botao--salvar">
-                    Salvar alterações
+                <button type="button" class="conta-opcao" disabled>
+                    <span class="conta-opcao__texto">
+                        <strong>Alterar senha</strong>
+                        <small>Atualize sua senha de acesso</small>
+                    </span>
+
+                    <span class="conta-em-breve">Em breve</span>
+                </button>
+
+                <button type="button" class="conta-opcao" disabled>
+                    <span class="conta-opcao__texto">
+                        <strong>Meus anúncios</strong>
+                        <small>Gerencie os pets que anunciou</small>
+                    </span>
+
+                    <span class="conta-em-breve">Em breve</span>
+                </button>
+
+                <button type="button" class="conta-opcao" disabled>
+                    <span class="conta-opcao__texto">
+                        <strong>Pedidos de adoção</strong>
+                        <small>Acompanhe suas solicitações</small>
+                    </span>
+
+                    <span class="conta-em-breve">Em breve</span>
+                </button>
+
+                <button type="button" class="conta-opcao" disabled>
+                    <span class="conta-opcao__texto">
+                        <strong>Pets favoritos</strong>
+                        <small>Veja os animais que você salvou</small>
+                    </span>
+
+                    <span class="conta-em-breve">Em breve</span>
                 </button>
             </div>
-        </form>
+
+            <div class="conta-zona-risco">
+                <p>Zona de risco</p>
+
+                <button type="button" class="conta-opcao conta-opcao--perigo" disabled>
+                    <span class="conta-opcao__texto">
+                        <strong>Excluir minha conta</strong>
+                        <small>Exclui permanentemente seus dados</small>
+                    </span>
+
+                    <span class="conta-em-breve">Em breve</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="conta-painel" data-conta-panel="cadastro" {% if not form.is_bound %}hidden{% endif %}>
+            <header class="conta-form-cabecalho">
+                <h2 id="conta-cadastro-titulo" tabindex="-1" data-conta-focus data-conta-panel-title>
+                    Atualizar cadastro
+                </h2>
+
+                <p>
+                    Altere seus dados e confirme usando sua senha atual.
+                </p>
+            </header>
+
+            {% if form.non_field_errors %}
+                <div class="auth-erros-gerais">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <form method="post" action="{% url 'home' %}" class="conta-form" data-uf-cidades-form autocomplete="off">
+                {% csrf_token %}
+
+                <input type="hidden" name="acao" value="editar_conta">
+
+                <div class="auth-campo conta-largura-total">
+                    <label for="{{ form.nome_completo.id_for_label }}">
+                        {{ form.nome_completo.label }}
+                    </label>
+
+                    {{ form.nome_completo }}
+
+                    {% for error in form.nome_completo.errors %}
+                        <p class="auth-erro">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="auth-campo">
+                    <label for="{{ form.email.id_for_label }}">
+                        {{ form.email.label }}
+                    </label>
+
+                    {{ form.email }}
+
+                    <small class="conta-ajuda">
+                        A alteração de e-mail será adicionada depois.
+                    </small>
+                </div>
+
+                <div class="auth-campo">
+                    <label for="{{ form.telefone.id_for_label }}">
+                        {{ form.telefone.label }}
+                    </label>
+
+                    {{ form.telefone }}
+
+                    {% for error in form.telefone.errors %}
+                        <p class="auth-erro">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="auth-campo">
+                    <label for="{{ form.estado.id_for_label }}">
+                        {{ form.estado.label }}
+                    </label>
+
+                    {{ form.estado }}
+
+                    {% for error in form.estado.errors %}
+                        <p class="auth-erro">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="auth-campo">
+                    <label for="{{ form.cidade.id_for_label }}">
+                        {{ form.cidade.label }}
+                    </label>
+
+                    {{ form.cidade }}
+
+                    <p class="localidade-status" data-cidades-status aria-live="polite"></p>
+
+                    {% for error in form.cidade.errors %}
+                        <p class="auth-erro">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="auth-campo">
+                    <label for="{{ form.senha_atual.id_for_label }}">
+                        {{ form.senha_atual.label }}
+                    </label>
+
+                    {{ form.senha_atual }}
+
+                    {% for error in form.senha_atual.errors %}
+                        <p class="auth-erro">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="auth-campo">
+                    <label for="{{ form.confirmacao_senha_atual.id_for_label }}">
+                        {{ form.confirmacao_senha_atual.label }}
+                    </label>
+
+                    {{ form.confirmacao_senha_atual }}
+
+                    {% for error in form.confirmacao_senha_atual.errors %}
+                        <p class="auth-erro">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="conta-acoes conta-largura-total">
+                    <button type="button" class="conta-botao conta-botao--cancelar" data-conta-show="menu">
+                        Voltar
+                    </button>
+
+                    <button type="submit" class="conta-botao conta-botao--salvar">
+                        Salvar alterações
+                    </button>
+                </div>
+            </form>
+        </div>
     </section>
 </dialog>

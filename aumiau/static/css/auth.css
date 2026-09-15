@@ -826,11 +826,129 @@ html.auth-modal-aberto, html.auth-modal-aberto body {
     font-size: 14px;
 }
 
+.conta-painel[hidden] {
+    display: none;
+}
+
+.conta-menu {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 28px;
+}
+
+.conta-opcao {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    min-height: 82px;
+    padding: 15px 18px;
+    color: var(--text);
+    text-align: left;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    font: inherit;
+}
+
+.conta-opcao--principal {
+    grid-column: 1 / -1;
+    border-color: var(--purple);
+    background: #faf7ff;
+}
+
+.conta-opcao:not(:disabled) {
+    cursor: pointer;
+    transition:
+        transform 160ms ease,
+        border-color 160ms ease,
+        box-shadow 160ms ease;
+}
+
+.conta-opcao:not(:disabled):hover {
+    border-color: var(--purple);
+    box-shadow: 0 8px 22px rgba(86, 52, 112, 0.1);
+    transform: translateY(-2px);
+}
+
+.conta-opcao:disabled {
+    opacity: 0.72;
+    cursor: not-allowed;
+}
+
+.conta-opcao__texto {
+    display: grid;
+    gap: 4px;
+}
+
+.conta-opcao__texto strong {
+    font-size: 14px;
+}
+
+.conta-opcao__texto small {
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.conta-opcao__seta {
+    color: var(--purple);
+    font-size: 22px;
+}
+
+.conta-em-breve {
+    flex: none;
+    padding: 5px 9px;
+    color: var(--purple);
+    background: #f1e8fc;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.conta-zona-risco {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+}
+
+.conta-zona-risco > p {
+    margin: 0 0 10px;
+    color: #a3322b;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.conta-opcao--perigo {
+    color: #a3322b;
+    background: #fffafa;
+    border-color: #f2cfcc;
+}
+
+.conta-form-cabecalho {
+    margin-top: 26px;
+}
+
+.conta-form-cabecalho h2 {
+    margin: 0;
+    color: var(--text);
+    font-size: 21px;
+}
+
+.conta-form-cabecalho p {
+    margin: 6px 0 0;
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
 .conta-form {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 20px 24px;
-    margin-top: 28px;
+    margin-top: 18px;
 }
 
 .conta-form .auth-campo {
@@ -926,6 +1044,14 @@ html.auth-modal-aberto, html.auth-modal-aberto body {
 }
 
 @media (max-width: 650px) {
+    .conta-menu {
+        grid-template-columns: 1fr;
+    }
+
+    .conta-opcao--principal {
+        grid-column: auto;
+    }
+
     .conta-card {
         padding: 32px 20px;
     }

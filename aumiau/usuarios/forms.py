@@ -299,15 +299,30 @@ class EditarContaForm(forms.Form):
     )
 
     senha_atual = forms.CharField(
-        label='Confirme sua senha',
-        strip=False,
-        widget=forms.PasswordInput(
-            attrs={
-                'placeholder': 'Digite sua senha atual',
-                'autocomplete': 'current-password',
-            }
-        ),
-    )
+    label='Senha atual',
+    strip=False,
+    widget=forms.PasswordInput(
+        render_value=False,
+        attrs={
+            'placeholder': 'Digite sua senha atual',
+            'autocomplete': 'off',
+            'data-conta-senha': '',
+        },
+    ),
+)
+
+    confirmacao_senha_atual = forms.CharField(
+    label='Confirmar senha atual',
+    strip=False,
+    widget=forms.PasswordInput(
+        render_value=False,
+        attrs={
+            'placeholder': 'Digite sua senha atual novamente',
+            'autocomplete': 'off',
+            'data-conta-senha': '',
+        },
+    ),
+)
 
     def __init__(self, *args, usuario, **kwargs):
         self.usuario = usuario
@@ -347,13 +362,34 @@ class EditarContaForm(forms.Form):
 
         return cidade
 
-    def clean_senha_atual(self):
-        senha_atual = self.cleaned_data['senha_atual']
+    def clean(self):
+        cleaned_data = super().clean()
 
-        if not self.usuario.check_password(senha_atual):
-            raise forms.ValidationError('A senha atual está incorreta.')
+        senha_atual = cleaned_data.get('senha_atual')
+        confirmacao = cleaned_data.get(
+            'confirmacao_senha_atual'
+        )
 
-        return senha_atual
+        if (
+            senha_atual
+            and not self.usuario.check_password(senha_atual)
+        ):
+            self.add_error(
+                'senha_atual',
+                'A senha atual está incorreta.',
+            )
+
+        if (
+            senha_atual
+            and confirmacao
+            and senha_atual != confirmacao
+        ):
+            self.add_error(
+                'confirmacao_senha_atual',
+                'As senhas informadas não coincidem.',
+            )
+
+        return cleaned_data
 
     def save(self):
         partes_nome = (
