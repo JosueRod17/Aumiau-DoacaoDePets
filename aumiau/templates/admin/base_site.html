@@ -1,0 +1,113 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}
+    {% if title %}{{ title }} | {% endif %}AuMiau Admin
+{% endblock %}
+
+{% block extrastyle %}
+    {{ block.super }}
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+
+    <link rel="stylesheet" href="{% static 'admin/css/aumiau-admin.css' %}?v=2">
+{% endblock %}
+
+{% block responsive %}
+    {{ block.super }}
+
+    {# Carregado por último para vencer o CSS nativo do Django #}
+    <link rel="stylesheet" href="{% static 'admin/css/aumiau-admin-v2.css' %}?v=1">
+{% endblock %}
+
+{% block branding %}
+    <h1 id="site-name">
+        <a href="{% url 'admin:index' %}">
+            <img src="{% static 'img/aumiau-logo-horizontal.png' %}" alt="AuMiau">
+
+            <span>Administração</span>
+        </a>
+    </h1>
+{% endblock %}
+
+{% block usertools %}
+    {% if has_permission %}
+        <div id="user-tools" class="aumiau-top-actions">
+
+            {% if site_url %}
+                <a href="{{ site_url }}" class="aumiau-view-site">
+                    Ver site
+                </a>
+            {% endif %}
+
+            <details class="aumiau-user-menu">
+                <summary>
+                    <span class="aumiau-user-avatar">
+                        {{ user.get_username|slice:":1"|upper }}
+                    </span>
+
+                    <span class="aumiau-user-copy">
+                        <small>Administrador</small>
+
+                        <strong>
+                            {% firstof user.get_short_name user.get_username %}
+                        </strong>
+                    </span>
+
+                    <span class="aumiau-user-chevron" aria-hidden="true">
+                        ⌄
+                    </span>
+                </summary>
+
+                <div class="aumiau-user-panel">
+                    {% if user.has_usable_password %}
+                        <a href="{% url 'admin:password_change' %}">
+                            Alterar senha
+                        </a>
+                    {% endif %}
+
+                    <form method="post" action="{% url 'admin:logout' %}">
+                        {% csrf_token %}
+
+                        <button type="submit">
+                            Sair da conta
+                        </button>
+                    </form>
+                </div>
+            </details>
+
+            {% include "admin/color_theme_toggle.html" %}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block content_title %}
+    {% if title %}
+        <header class="aumiau-page-heading">
+            <span>Administração AuMiau</span>
+
+            <h1>{{ title }}</h1>
+
+            {% if subtitle %}
+                <p>{{ subtitle }}</p>
+            {% else %}
+                <p>
+                    Gerencie os registros e mantenha a plataforma atualizada.
+                </p>
+            {% endif %}
+        </header>
+    {% endif %}
+{% endblock %}
+
+{% block content_subtitle %}{% endblock %}
+
+{% block footer %}
+    <div class="aumiau-admin-footer">
+        © {% now "Y" %} AuMiau · Painel administrativo
+    </div>
+{% endblock %}

@@ -1043,6 +1043,25 @@ html.auth-modal-aberto, html.auth-modal-aberto body {
     background: #fff0ee;
 }
 
+.conta-senha-regras {
+    padding: 12px 14px;
+    color: var(--text-muted);
+    background: #faf7ff;
+    border: 1px solid #e7dcf3;
+    border-radius: 12px;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.conta-senha-regras ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.conta-senha-regras li + li {
+    margin-top: 3px;
+}
+
 @media (max-width: 650px) {
     .conta-menu {
         grid-template-columns: 1fr;

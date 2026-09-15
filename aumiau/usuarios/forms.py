@@ -2,7 +2,7 @@ import re
 
 from django import forms
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import (AuthenticationForm, PasswordChangeForm, UserCreationForm,)
 from django.db.models import Q
 
 from .models import UF_CHOICES
@@ -50,13 +50,13 @@ def preparar_select_cidade(formulario):
 
 
 class LoginEmailForm(AuthenticationForm):
-    username = forms.EmailField(
-        label='E-mail',
+    username = forms.CharField(
+        label='E-mail ou usuário',
         max_length=150,
-        widget=forms.EmailInput(
+        widget=forms.TextInput(
             attrs={
-                'placeholder': '✉  seuemail@exemplo.com',
-                'autocomplete': 'email',
+                'placeholder': 'Digite seu e-mail ou usuário',
+                'autocomplete': 'username',
             }
         ),
     )
@@ -78,7 +78,15 @@ class LoginEmailForm(AuthenticationForm):
     }
 
     def clean_username(self):
-        return self.cleaned_data['username'].strip().casefold()
+        identificador = (
+            self.cleaned_data['username']
+            .strip()
+        )
+
+        if '@' in identificador:
+            return identificador.casefold()
+
+        return identificador
 
 
 class CadastroUsuarioForm(UserCreationForm):
@@ -238,6 +246,45 @@ class CadastroUsuarioForm(UserCreationForm):
             usuario.save()
 
         return usuario
+
+class AlterarSenhaForm(PasswordChangeForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        configuracoes = {
+            'old_password': {
+                'label': 'Senha atual',
+                'placeholder': 'Digite sua senha atual',
+                'autocomplete': 'off',
+            },
+            'new_password1': {
+                'label': 'Nova senha',
+                'placeholder': 'Digite a nova senha',
+                'autocomplete': 'new-password',
+            },
+            'new_password2': {
+                'label': 'Confirmar nova senha',
+                'placeholder': 'Digite a nova senha novamente',
+                'autocomplete': 'new-password',
+            },
+        }
+
+        for nome, configuracao in configuracoes.items():
+            campo = self.fields[nome]
+
+            campo.label = configuracao['label']
+            campo.widget.render_value = False
+
+            campo.widget.attrs.update({
+                'placeholder': configuracao['placeholder'],
+                'autocomplete': configuracao['autocomplete'],
+                'data-conta-senha': '',
+            })
+
+        self.fields['old_password'].widget.attrs.pop(
+            'autofocus',
+            None,
+        )    
 
 class EditarContaForm(forms.Form):
     nome_completo = forms.CharField(

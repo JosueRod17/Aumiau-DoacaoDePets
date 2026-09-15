@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/auth.css' %}?v=9">
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}?v=10">
 {% endblock %}
 
 {% block content %}
@@ -227,7 +227,7 @@
     </section>
 
     {% if user.is_authenticated %}
-        {% include 'usuarios/_conta_dialog.html' with form=conta_form %}
+        {% include 'usuarios/_conta_dialog.html' with form=conta_form senha_form=senha_form painel_conta=painel_conta %}
     {% else %}
         {% include 'usuarios/_login_dialog.html' with form=login_form %}
         {% include 'usuarios/_cadastro_dialog.html' with form=cadastro_form %}

@@ -1,0 +1,67 @@
+{% load i18n %}
+
+<button class="sticky toggle-nav-sidebar" id="toggle-nav-sidebar" aria-label="Abrir ou fechar navegação"></button>
+
+<nav class="sticky" id="nav-sidebar" aria-label="Navegação administrativa">
+    {# Este input precisa existir para o JavaScript interno do Django #}
+    <input type="search" id="nav-filter" aria-label="Filtrar navegação" hidden>
+
+    {% with current=request.resolver_match.url_name %}
+
+        <div class="aumiau-admin-nav">
+            <p class="aumiau-nav-label">
+                Menu principal
+            </p>
+
+            <a href="{% url 'admin:index' %}" class="aumiau-nav-link {% if current == 'index' %}is-active{% endif %}" {% if current == 'index' %}aria-current="page"{% endif %}>
+                <span class="aumiau-nav-icon" aria-hidden="true">VG</span>
+                <span>Visão geral</span>
+            </a>
+
+            {% if perms.pets.view_pet or perms.pets.change_pet or perms.pets.add_pet %}
+                <a href="{% url 'admin:pets_pet_changelist' %}" class="aumiau-nav-link {% if current == 'pets_pet_changelist' or current == 'pets_pet_add' or current == 'pets_pet_change' %}is-active{% endif %}">
+                    <span class="aumiau-nav-icon" aria-hidden="true">PT</span>
+                    <span>Pets</span>
+                </a>
+            {% endif %}
+
+            {% if perms.ongs.view_ong or perms.ongs.change_ong or perms.ongs.add_ong %}
+                <a href="{% url 'admin:ongs_ong_changelist' %}" class="aumiau-nav-link {% if current == 'ongs_ong_changelist' or current == 'ongs_ong_add' or current == 'ongs_ong_change' %}is-active{% endif %}">
+                    <span class="aumiau-nav-icon" aria-hidden="true">ON</span>
+                    <span>ONGs</span>
+                </a>
+            {% endif %}
+
+            {% if perms.auth.view_user or perms.auth.change_user %}
+                <a href="{% url 'admin:auth_user_changelist' %}" class="aumiau-nav-link {% if current == 'auth_user_changelist' or current == 'auth_user_add' or current == 'auth_user_change' %}is-active{% endif %}">
+                    <span class="aumiau-nav-icon" aria-hidden="true">US</span>
+                    <span>Usuários</span>
+                </a>
+            {% endif %}
+
+            {% if perms.auth.view_group or perms.auth.change_group %}
+                <a href="{% url 'admin:auth_group_changelist' %}" class="aumiau-nav-link {% if current == 'auth_group_changelist' or current == 'auth_group_add' or current == 'auth_group_change' %}is-active{% endif %}">
+                    <span class="aumiau-nav-icon" aria-hidden="true">GP</span>
+                    <span>Grupos e permissões</span>
+                </a>
+            {% endif %}
+
+            <div class="aumiau-nav-divider"></div>
+
+            <p class="aumiau-nav-label">
+                Acesso rápido
+            </p>
+
+            <a href="{% url 'home' %}" class="aumiau-nav-link">
+                <span class="aumiau-nav-icon" aria-hidden="true">↗</span>
+                <span>Voltar ao site</span>
+            </a>
+        </div>
+
+        <div class="aumiau-sidebar-note">
+            <strong>AuMiau Admin</strong>
+            <span>Gerenciamento da plataforma</span>
+        </div>
+
+    {% endwith %}
+</nav>

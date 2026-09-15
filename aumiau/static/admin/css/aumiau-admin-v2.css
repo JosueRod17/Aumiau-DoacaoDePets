@@ -1,0 +1,1229 @@
+/*AUMIAU ADMIN V2*/
+
+:root {
+    --aumiau-admin-radius: 18px;
+    --aumiau-admin-radius-small: 12px;
+    --aumiau-admin-shadow: 0 12px 35px rgba(53, 28, 14, 0.08);
+    --aumiau-admin-header-height: 78px;
+}
+
+/*ESTRUTURA GERAL*/
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-width: 320px;
+    background: var(--aumiau-fundo);
+    color: var(--aumiau-texto);
+}
+
+#container {
+    min-height: 100vh;
+}
+
+#header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    box-sizing: border-box;
+    width: 100%;
+    height: var(--aumiau-admin-header-height);
+    min-height: var(--aumiau-admin-header-height);
+    padding: 0 30px;
+
+    background: var(--aumiau-superficie);
+    border-bottom: 1px solid var(--aumiau-borda);
+    box-shadow: 0 5px 22px rgba(53, 28, 14, 0.05);
+}
+
+#branding {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+}
+
+#branding #site-name {
+    margin: 0;
+}
+
+#branding #site-name a {
+    display: flex;
+    align-items: center;
+    gap: 17px;
+    color: var(--aumiau-texto);
+    text-decoration: none;
+}
+
+#branding #site-name img {
+    display: block;
+    width: 145px;
+    max-height: 58px;
+    object-fit: contain;
+}
+
+#branding #site-name span {
+    padding-left: 17px;
+    border-left: 1px solid var(--aumiau-borda);
+    color: var(--aumiau-texto-suave);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+}
+
+/*CONTA DO ADMINISTRADOR*/
+
+#user-tools.aumiau-top-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+
+    color: var(--aumiau-texto);
+    font-size: 13px;
+    text-transform: none;
+}
+
+#user-tools .aumiau-view-site {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 40px;
+    padding: 0 17px;
+
+    color: var(--aumiau-roxo);
+    border: 1px solid var(--aumiau-roxo);
+    border-radius: 999px;
+
+    font-weight: 800;
+    text-decoration: none;
+}
+
+#user-tools .aumiau-view-site:hover {
+    background: rgba(123, 63, 198, 0.08);
+}
+
+.aumiau-user-menu {
+    position: relative;
+}
+
+.aumiau-user-menu summary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    min-height: 46px;
+    padding: 4px 13px 4px 5px;
+
+    background: var(--aumiau-papel);
+    border: 1px solid var(--aumiau-borda);
+    border-radius: 999px;
+
+    cursor: pointer;
+    list-style: none;
+}
+
+.aumiau-user-menu summary::-webkit-details-marker {
+    display: none;
+}
+
+.aumiau-user-avatar {
+    display: grid;
+    place-items: center;
+
+    width: 36px;
+    height: 36px;
+
+    background: var(--aumiau-roxo);
+    color: #ffffff;
+    border-radius: 50%;
+
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.aumiau-user-copy {
+    display: grid;
+    gap: 1px;
+    min-width: 100px;
+    text-align: left;
+}
+
+.aumiau-user-copy small {
+    color: var(--aumiau-texto-suave);
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.aumiau-user-copy strong {
+    overflow: hidden;
+    max-width: 150px;
+    color: var(--aumiau-texto);
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.aumiau-user-chevron {
+    color: var(--aumiau-texto-suave);
+    transition: transform 0.2s ease;
+}
+
+.aumiau-user-menu[open] .aumiau-user-chevron {
+    transform: rotate(180deg);
+}
+
+.aumiau-user-panel {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    z-index: 1100;
+
+    display: grid;
+    width: 190px;
+    padding: 8px;
+
+    background: var(--aumiau-superficie);
+    border: 1px solid var(--aumiau-borda);
+    border-radius: 14px;
+    box-shadow: var(--aumiau-admin-shadow);
+}
+
+.aumiau-user-panel a, .aumiau-user-panel button {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 11px 12px;
+
+    background: transparent;
+    color: var(--aumiau-texto);
+    border: 0;
+    border-radius: 9px;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.aumiau-user-panel a:hover, .aumiau-user-panel button:hover {
+    background: var(--aumiau-creme);
+    color: var(--aumiau-roxo);
+}
+
+.aumiau-user-panel form {
+    margin: 0;
+}
+
+#header .theme-toggle {
+    display: grid;
+    place-items: center;
+
+    width: 42px;
+    height: 42px;
+    padding: 0;
+
+    background: var(--aumiau-papel);
+    color: var(--aumiau-roxo);
+    border: 1px solid var(--aumiau-borda);
+    border-radius: 50%;
+}
+
+/*MENU LATERAL*/
+
+#nav-sidebar.sticky, #toggle-nav-sidebar.sticky {
+    top: var(--aumiau-admin-header-height);
+    max-height: calc(100vh - var(--aumiau-admin-header-height));
+}
+
+#toggle-nav-sidebar {
+    background: var(--aumiau-superficie);
+    color: var(--aumiau-roxo);
+    border-color: var(--aumiau-borda);
+}
+
+#toggle-nav-sidebar:hover {
+    background: var(--aumiau-creme);
+}
+
+#nav-sidebar {
+    padding: 22px 14px;
+
+    background: var(--aumiau-superficie);
+    border-right: 1px solid var(--aumiau-borda);
+}
+
+.aumiau-admin-nav {
+    display: grid;
+    gap: 6px;
+}
+
+.aumiau-nav-label {
+    margin: 8px 10px 7px;
+    color: var(--aumiau-texto-suave);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+}
+
+.aumiau-nav-link, .aumiau-nav-link:link, .aumiau-nav-link:visited {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    min-height: 46px;
+    padding: 0 12px;
+
+    color: var(--aumiau-texto-suave);
+    border-radius: 12px;
+
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    transition:
+        color 0.2s ease,
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.aumiau-nav-link:hover {
+    background: var(--aumiau-creme);
+    color: var(--aumiau-roxo);
+    transform: translateX(2px);
+}
+
+.aumiau-nav-link.is-active {
+    background: var(--aumiau-creme);
+    color: var(--aumiau-roxo);
+}
+
+.aumiau-nav-link.is-active::before {
+    position: absolute;
+    top: 10px;
+    bottom: 10px;
+    left: -14px;
+
+    width: 4px;
+    background: var(--aumiau-roxo);
+    border-radius: 0 999px 999px 0;
+    content: "";
+}
+
+.aumiau-nav-icon {
+    display: grid;
+    place-items: center;
+
+    width: 31px;
+    height: 31px;
+
+    flex: 0 0 31px;
+    background: var(--aumiau-papel);
+    color: var(--aumiau-roxo);
+    border: 1px solid var(--aumiau-borda);
+    border-radius: 9px;
+
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.aumiau-nav-link.is-active .aumiau-nav-icon {
+    background: var(--aumiau-roxo);
+    color: #ffffff;
+    border-color: var(--aumiau-roxo);
+}
+
+.aumiau-nav-divider {
+    height: 1px;
+    margin: 14px 8px;
+    background: var(--aumiau-borda);
+}
+
+.aumiau-sidebar-note {
+    display: grid;
+    gap: 4px;
+
+    margin-top: 28px;
+    padding: 16px;
+
+    background: var(--aumiau-creme);
+    border: 1px solid var(--aumiau-borda);
+    border-radius: 14px;
+}
+
+.aumiau-sidebar-note strong {
+    color: var(--aumiau-texto);
+    font-size: 12px;
+}
+
+.aumiau-sidebar-note span {
+    color: var(--aumiau-texto-suave);
+    font-size: 10px;
+}
+
+/*CONTEÚDO E TÍTULOS*/
+
+#content-start {
+    min-width: 0;
+    background: var(--aumiau-fundo);
+}
+
+#content {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 1480px;
+    margin: 0 auto;
+    padding: 30px 32px 50px;
+}
+
+.aumiau-page-heading {
+    display: grid;
+    gap: 5px;
+    margin: 0 0 28px;
+}
+
+.aumiau-page-heading > span {
+    color: var(--aumiau-roxo);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.aumiau-page-heading h1 {
+    margin: 0;
+    color: var(--aumiau-texto);
+    font-size: clamp(26px, 3vw, 36px);
+    font-weight: 800;
+    line-height: 1.15;
+}
+
+.aumiau-page-heading p {
+    margin: 0;
+    color: var(--aumiau-texto-suave);
+    font-size: 13px;
+}
+
+#container > nav[aria-label="Breadcrumbs"] {
+    background: var(--aumiau-papel);
+    border-bottom: 1px solid var(--aumiau-borda);
+}
+
+div.breadcrumbs {
+    padding: 13px 32px;
+    background: transparent;
+    color: var(--aumiau-texto-suave);
+}
+
+div.breadcrumbs a {
+    color: var(--aumiau-roxo);
+    font-weight: 700;
+}
+
+.aumiau-admin-footer {
+    padding: 24px;
+    color: var(--aumiau-texto-suave);
+    font-size: 11px;
+    text-align: center;
+}
+
+/*MENSAGENS*/
+
+ul.messagelist {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 1480px;
+    margin: 0 auto;
+    padding: 20px 32px 0;
+}
+
+ul.messagelist li {
+    padding: 15px 18px;
+
+    background-image: none;
+    color: var(--aumiau-texto);
+    border: 1px solid var(--aumiau-borda);
+    border-left: 5px solid var(--aumiau-roxo);
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(53, 28, 14, 0.06);
+}
+
+ul.messagelist li.success {
+    background: #eaf8ef;
+    border-left-color: #27864f;
+}
+
+ul.messagelist li.warning {
+    background: #fff4df;
+    border-left-color: var(--aumiau-laranja);
+}
+
+ul.messagelist li.error {
+    background: #fdecec;
+    border-left-color: #b42318;
+}
+
+/*BOTÕES E FERRAMENTAS*/
+
+.object-tools {
+    display: flex;
+    float: none;
+    justify-content: flex-end;
+    gap: 10px;
+    margin: 0 0 22px;
+    padding: 0;
+}
+
+.object-tools li {
+    margin: 0;
+}
+
+.object-tools a, .object-tools a:link, .object-tools a:visited {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 43px;
+    padding: 0 19px;
+
+    background: var(--aumiau-laranja);
+    background-image: none;
+    color: var(--aumiau-marrom);
+    border-radius: 999px;
+
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.object-tools a:hover {
+    filter: brightness(0.97);
+    transform: translateY(-1px);
+}
+
+/*LISTAGENS*/
+
+body.change-list #changelist {
+    overflow: visible;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+body.change-list #changelist .changelist-form-container {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 250px;
+    align-items: start;
+    gap: 20px;
+    width: 100%;
+}
+
+body.change-list #changelist .changelist-form-container > div {
+    grid-column: 1;
+    grid-row: 1;
+
+    width: auto;
+    min-width: 0;
+    max-width: none;
+}
+
+body.change-list #changelist .changelist-form-container:has(#changelist-filter) > div {
+    width: auto;
+    min-width: 0;
+    max-width: none;
+}
+
+body.change-list #changelist-filter {
+    position: sticky;
+    top: 98px;
+
+    grid-column: 2;
+    grid-row: 1;
+
+    box-sizing: border-box;
+    width: auto;
+    max-height: calc(100vh - 118px);
+    margin: 0;
+    padding-bottom: 12px;
+    overflow: auto;
+
+    background: var(--aumiau-superficie);
+    border: 1px solid var(--aumiau-borda);
+    border-radius: var(--aumiau-admin-radius);
+    box-shadow: var(--aumiau-admin-shadow);
+}
+
+body.change-list #changelist-filter h2 {
+    margin: 0 0 14px;
+    padding: 17px 18px;
+
+    background: var(--aumiau-creme);
+    color: var(--aumiau-texto);
+    border-bottom: 1px solid var(--aumiau-borda);
+
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+}
+
+body.change-list #changelist-filter h3, body.change-list #changelist-filter details summary {
+    padding: 0 17px;
+    color: var(--aumiau-texto);
+    font-size: 12px;
+    font-weight: 800;
+}
+
+body.change-list #changelist-filter ul {
+    margin: 7px 0 16px;
+    padding: 0 17px 15px;
+    border-color: var(--aumiau-borda);
+}
+
+body.change-list #changelist-filter li {
+    margin: 3px 0;
+}
+
+body.change-list #changelist-filter a {
+    padding: 7px 9px;
+    color: var(--aumiau-texto-suave);
+    border-radius: 9px;
+    text-decoration: none;
+}
+
+body.change-list #changelist-filter a:hover {
+    background: var(--aumiau-creme);
+    color: var(--aumiau-roxo);
+}
+
+body.change-list #changelist-filter li.selected {
+    margin-left: 0;
+    padding-left: 0;
+    border-left: 0;
+}
+
+body.change-list #changelist-filter li.selected a {
+    background: var(--aumiau-creme);
+    color: var(--aumiau-roxo);
+    font-weight: 800;
+}
+
+/* Pesquisa */
+
+body.change-list #toolbar {
+    margin: 0 0 14px;
+    padding: 14px 16px;
+
+    background: var(--aumiau-superficie);
+    color: var(--aumiau-texto-suave);
+    border: 1px solid var(--aumiau-borda);
+    border-radius: 16px;
+    box-shadow: var(--aumiau-admin-shadow);
+}
+
+body.change-list #toolbar form > div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+body.change-list #toolbar #searchbar {
+    flex: 1 1 300px;
+
+    box-sizing: border-box;
+    width: auto;
+    height: 44px;
+    margin: 0;
+    padding: 0 14px;
+
+    background: var(--aumiau-papel);
+    color: var(--aumiau-texto);
+    border: 1px solid var(--aumiau-borda);
+    border-radius: 12px;
+
+    font-size: 13px;
+}
+
+body.change-list #toolbar #searchbar:focus {
+    border-color: var(--aumiau-roxo);
+    outline: 3px solid rgba(123, 63, 198, 0.12);
+}
+
+body.change-list #toolbar form input[type="submit"] {
+    height: 44px;
+    margin: 0;
+    padding: 0 19px;
+
+    background: var(--aumiau-roxo);
+    color: #ffffff;
+    border: 0;
+    border-radius: 12px;
+    box-shadow: none;
+
+    font-weight: 800;
+}
+
+body.change-list #toolbar .small {
+    margin-left: auto;
+}
+
+/* Ações coletivas */
+
+body.change-list #changelist .actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+
+    box-sizing: border-box;
+    width: 100%;
+    margin-bottom: 14px;
+    padding: 13px 15px;
+
+    background: var(--aumiau-superficie);
+    color: var(--aumiau-texto-suave);
+    border: 1px solid var(--aumiau-borda);
+    border-radius: 14px;
+}
+
+body.change-list #changelist .actions label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+body.change-list #changelist .actions select {
+    height: 40px;
+    margin: 0;
+    padding: 0 35px 0 12px;
+
+    background: var(--aumiau-papel);
+    color: var(--aumiau-texto);
+    border: 1px solid var(--aumiau-borda);
+    border-radius: 10px;
+}
+
+body.change-list #changelist .actions .button {
+    height: 40px;
+    padding: 0 16px;
+
+    background: var(--aumiau-roxo);
+    color: #ffffff;
+    border: 0;
+    border-radius: 10px;
+    box-shadow: none;
+
+    font-weight: 800;
+}
+
+/* Tabela */
+
+body.change-list #changelist-form .results {
+    width: 100%;
+    overflow: auto;
+
+    background: var(--aumiau-superficie);
+    border: 1px solid var(--aumiau-borda);
+    border-radius: var(--aumiau-admin-radius);
+    box-shadow: var(--aumiau-admin-shadow);
+}
+
+body.change-list #result_list {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+body.change-list #result_list thead th {
+    padding: 14px 15px;
+    background: var(--aumiau-creme);
+    color: var(--aumiau-texto-suave);
+    border-bottom: 1px solid var(--aumiau-borda);
+
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+body.change-list #result_list thead th a {
+    color: var(--aumiau-texto);
+}
+
+body.change-list #result_list tbody th, body.change-list #result_list tbody td {
+    padding: 14px 15px;
+    background: var(--aumiau-superficie);
+    color: var(--aumiau-texto);
+    border-bottom: 1px solid var(--aumiau-borda);
+    vertical-align: middle;
+}
+
+body.change-list #result_list tbody tr:last-child th, body.change-list #result_list tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+body.change-list #result_list tbody tr:hover th, body.change-list #result_list tbody tr:hover td {
+    background: var(--aumiau-papel);
+}
+
+body.change-list #result_list tbody a {
+    color: var(--aumiau-roxo);
+    font-weight: 700;
+}
+
+body.change-list #result_list input[type="checkbox"] {
+    width: 17px;
+    height: 17px;
+    accent-color: var(--aumiau-roxo);
+}
+
+/* Paginação */
+
+body.change-list #changelist .changelist-footer {
+    margin-top: 14px;
+    padding: 13px 16px;
+
+    background: var(--aumiau-superficie);
+    border: 1px solid var(--aumiau-borda);
+    border-radius: 14px;
+}
+
+body.change-list #changelist .paginator {
+    background: transparent;
+    color: var(--aumiau-texto-suave);
+    border: 0;
+}
+
+body.change-list .paginator a:link, body.change-list .paginator a:visited, body.change-list .paginator .this-page {
+    display: inline-grid;
+    place-items: center;
+
+    min-width: 34px;
+    min-height: 34px;
+    padding: 0 6px;
+
+    border-radius: 9px;
+    text-decoration: none;
+}
+
+body.change-list .paginator a:hover, body.change-list .paginator .this-page {
+    background: var(--aumiau-roxo);
+    color: #ffffff;
+}
+
+/*FORMULÁRIOS DE CADASTRO E EDIÇÃO*/
+
+body.change-form #content-main {
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto;
+}
+
+body.change-form fieldset.module {
+    margin-bottom: 20px;
+    overflow: visible;
+
+    background: var(--aumiau-superficie);
+    border: 1px solid var(--aumiau-borda);
+    border-radius: var(--aumiau-admin-radius);
+    box-shadow: var(--aumiau-admin-shadow);
+}
+
+body.change-form fieldset.module > .fieldset-heading {
+    margin: 0;
+    padding: 18px 22px;
+
+    background: var(--aumiau-creme);
+    color: var(--aumiau-texto);
+    border: 0;
+    border-bottom: 1px solid var(--aumiau-borda);
+    border-radius: var(--aumiau-admin-radius) var(--aumiau-admin-radius) 0 0;
+
+    font-size: 15px;
+    font-weight: 800;
+}
+
+body.change-form fieldset.module.collapse > details > summary {
+    padding: 18px 22px;
+    background: var(--aumiau-creme);
+    border-radius: var(--aumiau-admin-radius);
+    cursor: pointer;
+}
+
+body.change-form fieldset.module.collapse summary .fieldset-heading {
+    padding: 0;
+    background: transparent;
+    color: var(--aumiau-texto);
+    border: 0;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+body.change-form .form-row {
+    padding: 18px 22px;
+    overflow: visible;
+    border-bottom: 1px solid var(--aumiau-borda);
+}
+
+body.change-form .form-row:last-child {
+    border-bottom: 0;
+}
+
+body.change-form .form-multiline {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 16px;
+}
+
+body.change-form .form-multiline > div, body.change-form .form-multiline > fieldset {
+    padding: 0;
+}
+
+body.change-form .aligned .fieldBox {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    margin: 0;
+}
+
+body.change-form .aligned .form-row > div > .flex-container:not(.checkbox-row):not(.form-multiline) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+}
+
+body.change-form .aligned label, body.change-form .aligned legend {
+    box-sizing: border-box;
+    width: auto;
+    min-width: 0;
+    padding: 0;
+
+    color: var(--aumiau-texto);
+    font-size: 12px;
+    font-weight: 800;
+}
+
+body.change-form .aligned input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]), body.change-form .aligned select:not([multiple]), body.change-form .aligned textarea {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 680px;
+
+    background: var(--aumiau-papel);
+    color: var(--aumiau-texto);
+    border: 1px solid var(--aumiau-borda);
+    border-radius: 11px;
+}
+
+body.change-form .aligned input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]), body.change-form .aligned select:not([multiple]) {
+    min-height: 45px;
+    padding: 0 13px;
+}
+
+body.change-form .aligned textarea {
+    min-height: 130px;
+    padding: 13px;
+    resize: vertical;
+}
+
+body.change-form .aligned input:focus, body.change-form .aligned select:focus, body.change-form .aligned textarea:focus {
+    border-color: var(--aumiau-roxo);
+    outline: 3px solid rgba(123, 63, 198, 0.12);
+}
+
+body.change-form input[type="checkbox"], body.change-form input[type="radio"] {
+    width: 19px;
+    height: 19px;
+    accent-color: var(--aumiau-roxo);
+}
+
+body.change-form form .aligned p.help, body.change-form form .aligned div.help, body.change-form form .aligned input + div.help, body.change-form form .aligned select + div.help, body.change-form form .aligned textarea + div.help {
+    margin: 7px 0 0;
+    padding: 0;
+    color: var(--aumiau-texto-suave);
+    font-size: 11px;
+}
+
+body.change-form .readonly {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 680px;
+    min-height: 43px;
+    padding: 12px 13px;
+
+    background: var(--aumiau-creme);
+    color: var(--aumiau-texto-suave);
+    border: 1px solid var(--aumiau-borda);
+    border-radius: 10px;
+}
+
+/* Autocomplete */
+
+body.change-form .select2-container {
+    max-width: 680px;
+}
+
+body.change-form .select2-container--admin-autocomplete .select2-selection--single {
+    min-height: 45px;
+    background: var(--aumiau-papel);
+    border: 1px solid var(--aumiau-borda);
+    border-radius: 11px;
+}
+
+body.change-form .select2-container--admin-autocomplete .select2-selection--single .select2-selection__rendered {
+    line-height: 43px;
+}
+
+body.change-form .select2-container--admin-autocomplete .select2-selection--single .select2-selection__arrow {
+    height: 43px;
+}
+
+/* Galeria e formulários relacionados */
+
+body.change-form .inline-group {
+    margin-bottom: 20px;
+    overflow: visible;
+
+    background: var(--aumiau-superficie);
+    border: 1px solid var(--aumiau-borda);
+    border-radius: var(--aumiau-admin-radius);
+    box-shadow: var(--aumiau-admin-shadow);
+}
+
+body.change-form .inline-group > h2, body.change-form .inline-group .inline-heading {
+    margin: 0;
+    padding: 18px 22px;
+
+    background: var(--aumiau-creme);
+    color: var(--aumiau-texto);
+    border: 0;
+    border-bottom: 1px solid var(--aumiau-borda);
+
+    font-size: 15px;
+    font-weight: 800;
+}
+
+body.change-form .inline-related {
+    border-color: var(--aumiau-borda);
+}
+
+body.change-form .inline-group .add-row {
+    padding: 15px 20px;
+    background: var(--aumiau-papel);
+}
+
+body.change-form .inline-group .add-row a {
+    color: var(--aumiau-roxo);
+    font-weight: 800;
+}
+
+/* Barra de salvamento */
+
+body.change-form .submit-row {
+    position: sticky;
+    bottom: 16px;
+    z-index: 20;
+
+    justify-content: flex-end;
+    margin: 24px 0 0;
+    padding: 14px;
+    overflow: visible;
+
+    background: color-mix(
+        in srgb,
+        var(--aumiau-superficie) 92%,
+        transparent
+    );
+    border: 1px solid var(--aumiau-borda);
+    border-radius: 16px;
+    box-shadow: 0 14px 38px rgba(53, 28, 14, 0.14);
+    backdrop-filter: blur(12px);
+}
+
+body.change-form .submit-row input {
+    min-height: 43px;
+    padding: 0 18px;
+
+    background: rgba(123, 63, 198, 0.1);
+    color: var(--aumiau-roxo);
+    border: 1px solid transparent;
+    border-radius: 999px;
+
+    font-weight: 800;
+    text-transform: none;
+}
+
+body.change-form .submit-row input.default {
+    background: var(--aumiau-roxo);
+    color: #ffffff;
+}
+
+body.change-form .submit-row a.deletelink {
+    height: auto;
+    margin-right: auto;
+    padding: 13px 18px;
+    background: #b42318;
+    border-radius: 999px;
+}
+
+/*ERROS DE FORMULÁRIO*/
+
+.errornote {
+    padding: 15px 18px;
+    background: #fdecec;
+    color: #9b1c1c;
+    border: 1px solid #efb5b5;
+    border-radius: 12px;
+}
+
+.errorlist {
+    margin-bottom: 8px;
+    color: #b42318;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/*DASHBOARD*/
+
+body.dashboard .aumiau-hero {
+    background:
+        radial-gradient(
+            circle at 88% 15%,
+            rgba(255, 152, 0, 0.22),
+            transparent 30%
+        ),
+        linear-gradient(
+            135deg,
+            var(--aumiau-superficie),
+            var(--aumiau-creme)
+        );
+
+    color: var(--aumiau-texto);
+    border: 1px solid var(--aumiau-borda);
+}
+
+body.dashboard .aumiau-hero h1 {
+    color: var(--aumiau-texto);
+}
+
+body.dashboard .aumiau-hero p {
+    color: var(--aumiau-texto-suave);
+}
+
+body.dashboard .aumiau-hero__etiqueta {
+    background: rgba(123, 63, 198, 0.1);
+    color: var(--aumiau-roxo);
+}
+
+/*RESPONSIVIDADE*/
+
+@media (max-width: 1050px) {
+    body.change-list #changelist .changelist-form-container {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    body.change-list #changelist .changelist-form-container > div {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    body.change-list #changelist-filter {
+        position: static;
+
+        grid-column: 1;
+        grid-row: 2;
+
+        width: auto;
+        max-height: none;
+    }
+}
+
+@media (max-width: 900px) {
+    .aumiau-user-copy {
+        display: none;
+    }
+
+    .aumiau-user-menu summary {
+        padding-right: 8px;
+    }
+}
+
+@media (max-width: 767px) {
+    #content {
+        padding: 22px 16px 40px;
+    }
+
+    ul.messagelist {
+        padding: 16px 16px 0;
+    }
+
+    div.breadcrumbs {
+        padding: 12px 16px;
+    }
+
+    body.change-form .submit-row {
+        position: static;
+    }
+}
+
+@media (max-width: 620px) {
+    #header {
+        height: 68px;
+        min-height: 68px;
+        padding: 0 14px;
+    }
+
+    #branding #site-name img {
+        width: 120px;
+    }
+
+    #branding #site-name span, #user-tools .aumiau-view-site, #header .theme-toggle {
+        display: none;
+    }
+
+    .aumiau-page-heading {
+        margin-bottom: 20px;
+    }
+
+    .aumiau-page-heading h1 {
+        font-size: 25px;
+    }
+
+    .object-tools {
+        justify-content: stretch;
+    }
+
+    .object-tools li, .object-tools a {
+        width: 100%;
+    }
+
+    body.change-form .form-row {
+        padding: 16px;
+    }
+
+    body.change-form .form-multiline {
+        grid-template-columns: 1fr;
+    }
+
+    body.change-form .submit-row {
+        flex-direction: column;
+    }
+
+    body.change-form .submit-row input, body.change-form .submit-row a.deletelink {
+        box-sizing: border-box;
+        width: 100%;
+        margin: 0;
+        text-align: center;
+    }
+}

@@ -1,0 +1,227 @@
+{% extends "admin/index.html" %}
+{% load static %}
+
+{% block coltype %}colM{% endblock %}
+{% block content_title %}{% endblock %}
+{% block sidebar %}{% endblock %}
+{% block nav-sidebar %}
+    {% include "admin/nav_sidebar.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="aumiau-dashboard">
+
+    <section class="aumiau-hero">
+        <div>
+            <span class="aumiau-hero__etiqueta">
+                Painel administrativo
+            </span>
+
+            <h1>
+                Olá,
+                {{ request.user.first_name|default:request.user.username }}!
+            </h1>
+
+            <p>
+                Acompanhe os cadastros, publicações e atividades
+                da plataforma AuMiau.
+            </p>
+        </div>
+
+        <a href="{% url 'admin:pets_pet_add' %}" class="aumiau-hero__botao">
+            Adicionar novo pet
+        </a>
+    </section>
+
+    <section class="aumiau-kpis" aria-label="Indicadores principais">
+        <a href="{% url 'admin:auth_user_changelist' %}" class="aumiau-kpi aumiau-kpi--purple">
+            <span>Usuários cadastrados</span>
+            <strong>{{ total_usuarios }}</strong>
+            <small>{{ novos_usuarios }} nos últimos 30 dias</small>
+        </a>
+
+        <a href="{% url 'admin:pets_pet_changelist' %}?status__exact=publicado" class="aumiau-kpi aumiau-kpi--green">
+            <span>Pets publicados</span>
+            <strong>{{ pets_publicados }}</strong>
+            <small>Visíveis para adoção</small>
+        </a>
+
+        <a href="{% url 'admin:pets_pet_changelist' %}?status__exact=pendente" class="aumiau-kpi aumiau-kpi--orange">
+            <span>Aguardando aprovação</span>
+            <strong>{{ pets_pendentes }}</strong>
+            <small>Precisam de moderação</small>
+        </a>
+
+        <a href="{% url 'admin:pets_pet_changelist' %}?status__exact=adotado" class="aumiau-kpi aumiau-kpi--pink">
+            <span>Pets adotados</span>
+            <strong>{{ pets_adotados }}</strong>
+            <small>Histórias concluídas</small>
+        </a>
+
+        <a href="{% url 'admin:ongs_ong_changelist' %}?aprovada__exact=1" class="aumiau-kpi aumiau-kpi--brown">
+            <span>ONGs aprovadas</span>
+            <strong>{{ ongs_aprovadas }}</strong>
+            <small>Parceiras ativas</small>
+        </a>
+
+        <a href="{% url 'admin:ongs_ong_changelist' %}?aprovada__exact=0" class="aumiau-kpi aumiau-kpi--cream">
+            <span>ONGs pendentes</span>
+            <strong>{{ ongs_pendentes }}</strong>
+            <small>Aguardando análise</small>
+        </a>
+    </section>
+
+    <section class="aumiau-dashboard__grade">
+
+        <article class="aumiau-painel">
+            <header class="aumiau-painel__cabecalho">
+                <div>
+                    <h2>Pets por status</h2>
+                    <p>{{ total_pets }} pets cadastrados</p>
+                </div>
+
+                <a href="{% url 'admin:pets_pet_changelist' %}">
+                    Ver todos
+                </a>
+            </header>
+
+            <div class="aumiau-grafico">
+                {% for item in grafico_status %}
+                    <div class="aumiau-grafico__item">
+                        <div class="aumiau-grafico__informacao">
+                            <span>{{ item.rotulo }}</span>
+                            <strong>{{ item.quantidade }}</strong>
+                        </div>
+
+                        <div class="aumiau-grafico__trilho">
+                            <span
+                                class="aumiau-grafico__barra aumiau-grafico__barra--{{ item.valor }}"
+                                style="--aumiau-progresso: {{ item.percentual }}%;"
+                            ></span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </article>
+
+        <article class="aumiau-painel">
+            <header class="aumiau-painel__cabecalho">
+                <div>
+                    <h2>Fila de moderação</h2>
+                    <p>Cadastros mais antigos primeiro</p>
+                </div>
+
+                <a href="{% url 'admin:pets_pet_changelist' %}?status__exact=pendente">
+                    Abrir fila
+                </a>
+            </header>
+
+            <div class="aumiau-fila">
+                {% for pet in pets_pendentes_lista %}
+                    <a href="{% url 'admin:pets_pet_change' pet.pk %}" class="aumiau-fila__item">
+                        <div>
+                            <strong>{{ pet.nome }}</strong>
+
+                            <span>
+                                {{ pet.get_especie_display }}
+                                · {{ pet.cidade }}/{{ pet.estado }}
+                            </span>
+                        </div>
+
+                        <small>
+                            {{ pet.criado_em|date:"d/m/Y" }}
+                        </small>
+                    </a>
+                {% empty %}
+                    <div class="aumiau-vazio">
+                        <strong>Fila vazia!</strong>
+                        <span>
+                            Nenhum anúncio aguarda moderação.
+                        </span>
+                    </div>
+                {% endfor %}
+            </div>
+        </article>
+
+    </section>
+
+    <section class="aumiau-painel aumiau-painel--tabela">
+        <header class="aumiau-painel__cabecalho">
+            <div>
+                <h2>Cadastros recentes</h2>
+                <p>Últimos pets adicionados à plataforma</p>
+            </div>
+
+            <a href="{% url 'admin:pets_pet_add' %}">
+                Novo pet
+            </a>
+        </header>
+
+        <div class="aumiau-tabela-wrapper">
+            <table class="aumiau-tabela">
+                <thead>
+                    <tr>
+                        <th>Pet</th>
+                        <th>Espécie</th>
+                        <th>Localização</th>
+                        <th>Status</th>
+                        <th>Cadastro</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for pet in ultimos_pets %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'admin:pets_pet_change' pet.pk %}" class="aumiau-pet">
+                                    {% if pet.foto_principal %}
+                                        <img src="{{ pet.foto_principal.url }}" alt="">
+                                    {% else %}
+                                        <span class="aumiau-pet__sem-foto">
+                                            Sem foto
+                                        </span>
+                                    {% endif %}
+
+                                    <strong>{{ pet.nome }}</strong>
+                                </a>
+                            </td>
+
+                            <td>
+                                {{ pet.get_especie_display }}
+                            </td>
+
+                            <td>
+                                {{ pet.cidade }}/{{ pet.estado }}
+                            </td>
+
+                            <td>
+                                <span class="aumiau-status aumiau-status--{{ pet.status }}">
+                                    {{ pet.get_status_display }}
+                                </span>
+                            </td>
+
+                            <td>
+                                {{ pet.criado_em|date:"d/m/Y H:i" }}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5">
+                                <div class="aumiau-vazio">
+                                    <strong>Nenhum pet cadastrado.</strong>
+
+                                    <span>
+                                        Use o botão “Adicionar novo pet”
+                                        para começar.
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+</div>
+{% endblock %}

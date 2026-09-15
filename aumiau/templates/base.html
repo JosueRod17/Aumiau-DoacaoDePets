@@ -59,9 +59,17 @@
 
                         <span>{{ user.email }}</span>
 
+                        {% if not user.is_superuser %}
                         <a href="{% url 'home' %}?conta=1" class="perfil-menu__conta" data-dialog-open="conta-dialog" aria-haspopup="dialog" aria-controls="conta-dialog">
                             Minha conta
                         </a>
+                        {% endif %}
+
+                        {% if user.is_staff %}
+                        <a href="{% url 'admin:index' %}" class="perfil-menu__conta">
+                            Painel administrativo
+                        </a>
+                        {% endif %}
 
                         <form method="post" action="{% url 'usuarios:logout' %}">
                             {% csrf_token %}

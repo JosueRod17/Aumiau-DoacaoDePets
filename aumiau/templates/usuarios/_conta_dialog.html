@@ -1,5 +1,4 @@
-<dialog id="conta-dialog" class="auth-dialog auth-dialog--conta" aria-labelledby="{% if form.is_bound %}conta-cadastro-titulo{% else %}conta-menu-titulo{% endif %}" data-conta-initial-panel="{% if form.is_bound %}cadastro{% else %}menu{% endif %}" {% if abrir_conta %}data-open-on-load="true"{% endif %}>
-    <button type="button" class="auth-dialog__fechar" data-dialog-close aria-label="Fechar">
+<dialog id="conta-dialog" class="auth-dialog auth-dialog--conta" aria-labelledby="{% if painel_conta == 'senha' %}conta-senha-titulo{% elif painel_conta == 'cadastro' %}conta-cadastro-titulo{% else %}conta-menu-titulo{% endif %}" data-conta-initial-panel="{{ painel_conta }}" {% if abrir_conta %}data-open-on-load="true"{% endif %}>    <button type="button" class="auth-dialog__fechar" data-dialog-close aria-label="Fechar">
         &times;
     </button>
 
@@ -15,7 +14,7 @@
             </div>
         {% endif %}
 
-        <div class="conta-painel" data-conta-panel="menu" {% if form.is_bound %}hidden{% endif %}>
+        <div class="conta-painel" data-conta-panel="menu" {% if painel_conta != 'menu' %}hidden{% endif %}>
 
             <header class="conta-cabecalho">
                 <p class="secao-etiqueta">Seu perfil</p>
@@ -43,13 +42,15 @@
                     </span>
                 </button>
 
-                <button type="button" class="conta-opcao" disabled>
+                <button type="button" class="conta-opcao" data-conta-show="senha">
                     <span class="conta-opcao__texto">
                         <strong>Alterar senha</strong>
                         <small>Atualize sua senha de acesso</small>
                     </span>
 
-                    <span class="conta-em-breve">Em breve</span>
+                    <span class="conta-opcao__seta" aria-hidden="true">
+                        →
+                    </span>
                 </button>
 
                 <button type="button" class="conta-opcao" disabled>
@@ -94,7 +95,7 @@
             </div>
         </div>
 
-        <div class="conta-painel" data-conta-panel="cadastro" {% if not form.is_bound %}hidden{% endif %}>
+        <div class="conta-painel" data-conta-panel="cadastro" {% if painel_conta != 'cadastro' %}hidden{% endif %}>
             <header class="conta-form-cabecalho">
                 <h2 id="conta-cadastro-titulo" tabindex="-1" data-conta-focus data-conta-panel-title>
                     Atualizar cadastro
@@ -209,6 +210,82 @@
 
                     <button type="submit" class="conta-botao conta-botao--salvar">
                         Salvar alterações
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="conta-painel" data-conta-panel="senha" {% if painel_conta != 'senha' %}hidden{% endif %}>
+            <header class="conta-form-cabecalho">
+                <h2 id="conta-senha-titulo" tabindex="-1" data-conta-focus data-conta-panel-title>
+                    Alterar senha
+                </h2>
+
+                <p>
+                    Informe sua senha atual e escolha uma nova senha.
+                </p>
+            </header>
+
+            {% if senha_form.non_field_errors %}
+                <div class="auth-erros-gerais">
+                    {{ senha_form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <form method="post" action="{% url 'home' %}" class="conta-form conta-form--senha" autocomplete="off">
+                {% csrf_token %}
+
+                <input type="hidden" name="acao" value="alterar_senha">
+
+                <div class="auth-campo conta-largura-total">
+                    <label for="{{ senha_form.old_password.id_for_label }}">
+                        {{ senha_form.old_password.label }}
+                    </label>
+
+                    {{ senha_form.old_password }}
+
+                    {% for error in senha_form.old_password.errors %}
+                        <p class="auth-erro">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="auth-campo">
+                    <label for="{{ senha_form.new_password1.id_for_label }}">
+                        {{ senha_form.new_password1.label }}
+                    </label>
+
+                    {{ senha_form.new_password1 }}
+
+                    {% for error in senha_form.new_password1.errors %}
+                        <p class="auth-erro">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="auth-campo">
+                    <label for="{{ senha_form.new_password2.id_for_label }}">
+                        {{ senha_form.new_password2.label }}
+                    </label>
+
+                    {{ senha_form.new_password2 }}
+
+                    {% for error in senha_form.new_password2.errors %}
+                        <p class="auth-erro">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                {% if senha_form.new_password1.help_text %}
+                    <div class="conta-senha-regras conta-largura-total">
+                        {{ senha_form.new_password1.help_text|safe }}
+                    </div>
+                {% endif %}
+
+                <div class="conta-acoes conta-largura-total">
+                    <button type="button" class="conta-botao conta-botao--cancelar" data-conta-show="menu">
+                        Voltar
+                    </button>
+
+                    <button type="submit" class="conta-botao conta-botao--salvar">
+                        Alterar senha
                     </button>
                 </div>
             </form>
