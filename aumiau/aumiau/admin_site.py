@@ -42,87 +42,145 @@ class AuMiauAdminSite(AdminSite):
         from pets.models import Pet
 
         Usuario = get_user_model()
+
+        pet_admin = self._registry.get(Pet)
+        ong_admin = self._registry.get(Ong)
+        usuario_admin = self._registry.get(Usuario)
+
+        pode_ver_pets = bool(
+            pet_admin
+            and pet_admin.has_view_or_change_permission(request)
+        )
+
+        pode_adicionar_pets = bool(
+            pet_admin
+            and pet_admin.has_add_permission(request)
+        )
+
+        pode_ver_ongs = bool(
+            ong_admin
+            and ong_admin.has_view_or_change_permission(request)
+        )
+
+        pode_ver_usuarios = bool(
+            usuario_admin
+            and usuario_admin.has_view_or_change_permission(request)
+        )
+
         agora = timezone.now()
         ultimos_30_dias = agora - timedelta(days=30)
 
-        contagens_status = {
-            item['status']: item['total']
-            for item in (
-                Pet.objects
-                .values('status')
-                .annotate(total=Count('id'))
-            )
+        contexto_dashboard = {
+            'pode_ver_pets': pode_ver_pets,
+            'pode_adicionar_pets': pode_adicionar_pets,
+            'pode_ver_ongs': pode_ver_ongs,
+            'pode_ver_usuarios': pode_ver_usuarios,
+
+            'total_usuarios': 0,
+            'novos_usuarios': 0,
+
+            'total_pets': 0,
+            'pets_publicados': 0,
+            'pets_pendentes': 0,
+            'pets_adotados': 0,
+
+            'ongs_aprovadas': 0,
+            'ongs_pendentes': 0,
+
+            'grafico_status': [],
+            'pets_pendentes_lista': [],
+            'ultimos_pets': [],
         }
 
-        total_pets = sum(contagens_status.values())
-
-        grafico_status = []
-
-        for valor, rotulo in Pet.Status.choices:
-            quantidade = contagens_status.get(valor, 0)
-
-            percentual = (
-                round((quantidade / total_pets) * 100)
-                if total_pets
-                else 0
+        if pode_ver_usuarios:
+            usuarios_comuns = Usuario.objects.filter(
+                is_staff=False,
             )
 
-            grafico_status.append({
-                'valor': valor,
-                'rotulo': rotulo,
-                'quantidade': quantidade,
-                'percentual': percentual,
+            contexto_dashboard.update({
+                'total_usuarios': usuarios_comuns.count(),
+
+                'novos_usuarios': usuarios_comuns.filter(
+                    date_joined__gte=ultimos_30_dias,
+                ).count(),
             })
 
-        contexto_dashboard = {
-            'total_usuarios': Usuario.objects.count(),
+        if pode_ver_pets:
+            contagens_status = {
+                item['status']: item['total']
+                for item in (
+                    Pet.objects
+                    .values('status')
+                    .annotate(total=Count('id'))
+                )
+            }
 
-            'novos_usuarios': Usuario.objects.filter(
-                date_joined__gte=ultimos_30_dias,
-            ).count(),
+            total_pets = sum(contagens_status.values())
 
-            'total_pets': total_pets,
+            grafico_status = []
 
-            'pets_publicados': contagens_status.get(
-                Pet.Status.PUBLICADO,
-                0,
-            ),
+            for valor, rotulo in Pet.Status.choices:
+                quantidade = contagens_status.get(valor, 0)
 
-            'pets_pendentes': contagens_status.get(
-                Pet.Status.PENDENTE,
-                0,
-            ),
+                percentual = (
+                    round((quantidade / total_pets) * 100)
+                    if total_pets
+                    else 0
+                )
 
-            'pets_adotados': contagens_status.get(
-                Pet.Status.ADOTADO,
-                0,
-            ),
+                grafico_status.append({
+                    'valor': valor,
+                    'rotulo': rotulo,
+                    'quantidade': quantidade,
+                    'percentual': percentual,
+                })
 
-            'ongs_aprovadas': Ong.objects.filter(
-                aprovada=True,
-            ).count(),
+            contexto_dashboard.update({
+                'total_pets': total_pets,
 
-            'ongs_pendentes': Ong.objects.filter(
-                aprovada=False,
-            ).count(),
+                'pets_publicados': contagens_status.get(
+                    Pet.Status.PUBLICADO,
+                    0,
+                ),
 
-            'grafico_status': grafico_status,
+                'pets_pendentes': contagens_status.get(
+                    Pet.Status.PENDENTE,
+                    0,
+                ),
 
-            'pets_pendentes_lista': (
-                Pet.objects
-                .filter(status=Pet.Status.PENDENTE)
-                .select_related('responsavel', 'ong')
-                .order_by('criado_em')[:5]
-            ),
+                'pets_adotados': contagens_status.get(
+                    Pet.Status.ADOTADO,
+                    0,
+                ),
 
-            'ultimos_pets': (
-                Pet.objects
-                .select_related('responsavel', 'ong')
-                .order_by('-criado_em')[:6]
-            ),
-        }
+                'grafico_status': grafico_status,
 
-        contexto = extra_context or {}
+                'pets_pendentes_lista': (
+                    Pet.objects
+                    .filter(status=Pet.Status.PENDENTE)
+                    .select_related('responsavel', 'ong')
+                    .order_by('criado_em')[:5]
+                ),
+
+                'ultimos_pets': (
+                    Pet.objects
+                    .select_related('responsavel', 'ong')
+                    .order_by('-criado_em')[:6]
+                ),
+            })
+
+        if pode_ver_ongs:
+            contexto_dashboard.update({
+                'ongs_aprovadas': Ong.objects.filter(
+                    aprovada=True,
+                ).count(),
+
+                'ongs_pendentes': Ong.objects.filter(
+                    aprovada=False,
+                ).count(),
+            })
+
+        contexto = dict(extra_context or {})
         contexto.update(contexto_dashboard)
 
         return super().index(

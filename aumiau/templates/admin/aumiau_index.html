@@ -28,49 +28,60 @@
             </p>
         </div>
 
-        <a href="{% url 'admin:pets_pet_add' %}" class="aumiau-hero__botao">
-            Adicionar novo pet
-        </a>
+        {% if pode_adicionar_pets %}
+            <a href="{% url 'admin:pets_pet_add' %}" class="aumiau-hero__botao">
+                Adicionar novo pet
+            </a>
+        {% endif %}
     </section>
 
     <section class="aumiau-kpis" aria-label="Indicadores principais">
-        <a href="{% url 'admin:auth_user_changelist' %}" class="aumiau-kpi aumiau-kpi--purple">
-            <span>Usuários cadastrados</span>
-            <strong>{{ total_usuarios }}</strong>
-            <small>{{ novos_usuarios }} nos últimos 30 dias</small>
-        </a>
 
-        <a href="{% url 'admin:pets_pet_changelist' %}?status__exact=publicado" class="aumiau-kpi aumiau-kpi--green">
-            <span>Pets publicados</span>
-            <strong>{{ pets_publicados }}</strong>
-            <small>Visíveis para adoção</small>
-        </a>
+        {% if pode_ver_usuarios %}
+            <a href="{% url 'admin:auth_user_changelist' %}" class="aumiau-kpi aumiau-kpi--purple">
+                <span>Usuários cadastrados</span>
+                <strong>{{ total_usuarios }}</strong>
+                <small>{{ novos_usuarios }} nos últimos 30 dias</small>
+            </a>
+        {% endif %}
 
-        <a href="{% url 'admin:pets_pet_changelist' %}?status__exact=pendente" class="aumiau-kpi aumiau-kpi--orange">
-            <span>Aguardando aprovação</span>
-            <strong>{{ pets_pendentes }}</strong>
-            <small>Precisam de moderação</small>
-        </a>
+        {% if pode_ver_pets %}
+            <a href="{% url 'admin:pets_pet_changelist' %}?status__exact=publicado" class="aumiau-kpi aumiau-kpi--green">
+                <span>Pets publicados</span>
+                <strong>{{ pets_publicados }}</strong>
+                <small>Visíveis para adoção</small>
+            </a>
 
-        <a href="{% url 'admin:pets_pet_changelist' %}?status__exact=adotado" class="aumiau-kpi aumiau-kpi--pink">
-            <span>Pets adotados</span>
-            <strong>{{ pets_adotados }}</strong>
-            <small>Histórias concluídas</small>
-        </a>
+            <a href="{% url 'admin:pets_pet_changelist' %}?status__exact=pendente" class="aumiau-kpi aumiau-kpi--orange">
+                <span>Aguardando aprovação</span>
+                <strong>{{ pets_pendentes }}</strong>
+                <small>Precisam de moderação</small>
+            </a>
 
-        <a href="{% url 'admin:ongs_ong_changelist' %}?aprovada__exact=1" class="aumiau-kpi aumiau-kpi--brown">
-            <span>ONGs aprovadas</span>
-            <strong>{{ ongs_aprovadas }}</strong>
-            <small>Parceiras ativas</small>
-        </a>
+            <a href="{% url 'admin:pets_pet_changelist' %}?status__exact=adotado" class="aumiau-kpi aumiau-kpi--pink">
+                <span>Pets adotados</span>
+                <strong>{{ pets_adotados }}</strong>
+                <small>Histórias concluídas</small>
+            </a>
+        {% endif %}
 
-        <a href="{% url 'admin:ongs_ong_changelist' %}?aprovada__exact=0" class="aumiau-kpi aumiau-kpi--cream">
-            <span>ONGs pendentes</span>
-            <strong>{{ ongs_pendentes }}</strong>
-            <small>Aguardando análise</small>
-        </a>
+        {% if pode_ver_ongs %}
+            <a href="{% url 'admin:ongs_ong_changelist' %}?aprovada__exact=1" class="aumiau-kpi aumiau-kpi--brown">
+                <span>ONGs aprovadas</span>
+                <strong>{{ ongs_aprovadas }}</strong>
+                <small>Parceiras ativas</small>
+            </a>
+
+            <a href="{% url 'admin:ongs_ong_changelist' %}?aprovada__exact=0" class="aumiau-kpi aumiau-kpi--cream">
+                <span>ONGs pendentes</span>
+                <strong>{{ ongs_pendentes }}</strong>
+                <small>Aguardando análise</small>
+            </a>
+        {% endif %}
+
     </section>
 
+    {% if pode_ver_pets %}
     <section class="aumiau-dashboard__grade">
 
         <article class="aumiau-painel">
@@ -144,7 +155,9 @@
         </article>
 
     </section>
+    {% endif %}
 
+    {% if pode_ver_pets %}
     <section class="aumiau-painel aumiau-painel--tabela">
         <header class="aumiau-painel__cabecalho">
             <div>
@@ -222,6 +235,7 @@
             </table>
         </div>
     </section>
+    {% endif %}
 
 </div>
 {% endblock %}

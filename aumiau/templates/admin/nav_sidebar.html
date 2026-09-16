@@ -1,66 +1,188 @@
 {% load i18n %}
 
-<button class="sticky toggle-nav-sidebar" id="toggle-nav-sidebar" aria-label="Abrir ou fechar navegação"></button>
+<button class="sticky toggle-nav-sidebar" id="toggle-nav-sidebar" aria-label="Abrir ou fechar navegação" title="Abrir ou fechar menu"></button>
 
-<nav class="sticky" id="nav-sidebar" aria-label="Navegação administrativa">
-    {# Este input precisa existir para o JavaScript interno do Django #}
+<nav class="sticky aumiau-sidebar" id="nav-sidebar" aria-label="Navegação administrativa">
+    {# Obrigatório para o JavaScript interno do Django #}
     <input type="search" id="nav-filter" aria-label="Filtrar navegação" hidden>
 
     {% with current=request.resolver_match.url_name %}
 
-        <div class="aumiau-admin-nav">
-            <p class="aumiau-nav-label">
-                Menu principal
-            </p>
+        <div class="aumiau-sidebar-context">
+            <span class="aumiau-sidebar-context__icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path>
+                    <path d="m9 12 2 2 4-4"></path>
+                </svg>
+            </span>
 
-            <a href="{% url 'admin:index' %}" class="aumiau-nav-link {% if current == 'index' %}is-active{% endif %}" {% if current == 'index' %}aria-current="page"{% endif %}>
-                <span class="aumiau-nav-icon" aria-hidden="true">VG</span>
-                <span>Visão geral</span>
-            </a>
-
-            {% if perms.pets.view_pet or perms.pets.change_pet or perms.pets.add_pet %}
-                <a href="{% url 'admin:pets_pet_changelist' %}" class="aumiau-nav-link {% if current == 'pets_pet_changelist' or current == 'pets_pet_add' or current == 'pets_pet_change' %}is-active{% endif %}">
-                    <span class="aumiau-nav-icon" aria-hidden="true">PT</span>
-                    <span>Pets</span>
-                </a>
-            {% endif %}
-
-            {% if perms.ongs.view_ong or perms.ongs.change_ong or perms.ongs.add_ong %}
-                <a href="{% url 'admin:ongs_ong_changelist' %}" class="aumiau-nav-link {% if current == 'ongs_ong_changelist' or current == 'ongs_ong_add' or current == 'ongs_ong_change' %}is-active{% endif %}">
-                    <span class="aumiau-nav-icon" aria-hidden="true">ON</span>
-                    <span>ONGs</span>
-                </a>
-            {% endif %}
-
-            {% if perms.auth.view_user or perms.auth.change_user %}
-                <a href="{% url 'admin:auth_user_changelist' %}" class="aumiau-nav-link {% if current == 'auth_user_changelist' or current == 'auth_user_add' or current == 'auth_user_change' %}is-active{% endif %}">
-                    <span class="aumiau-nav-icon" aria-hidden="true">US</span>
-                    <span>Usuários</span>
-                </a>
-            {% endif %}
-
-            {% if perms.auth.view_group or perms.auth.change_group %}
-                <a href="{% url 'admin:auth_group_changelist' %}" class="aumiau-nav-link {% if current == 'auth_group_changelist' or current == 'auth_group_add' or current == 'auth_group_change' %}is-active{% endif %}">
-                    <span class="aumiau-nav-icon" aria-hidden="true">GP</span>
-                    <span>Grupos e permissões</span>
-                </a>
-            {% endif %}
-
-            <div class="aumiau-nav-divider"></div>
-
-            <p class="aumiau-nav-label">
-                Acesso rápido
-            </p>
-
-            <a href="{% url 'home' %}" class="aumiau-nav-link">
-                <span class="aumiau-nav-icon" aria-hidden="true">↗</span>
-                <span>Voltar ao site</span>
-            </a>
+            <span>
+                <strong>Administração</strong>
+                <small>Central de gerenciamento</small>
+            </span>
         </div>
 
-        <div class="aumiau-sidebar-note">
-            <strong>AuMiau Admin</strong>
-            <span>Gerenciamento da plataforma</span>
+        <div class="aumiau-admin-nav">
+
+            <section class="aumiau-sidebar-section">
+                <p class="aumiau-nav-label">
+                    Visão geral
+                </p>
+
+                <a href="{% url 'admin:index' %}" class="aumiau-nav-link {% if current == 'index' %}is-active{% endif %}">
+                    <span class="aumiau-nav-icon">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <rect x="3" y="3" width="7" height="7" rx="2"></rect>
+                            <rect x="14" y="3" width="7" height="7" rx="2"></rect>
+                            <rect x="3" y="14" width="7" height="7" rx="2"></rect>
+                            <rect x="14" y="14" width="7" height="7" rx="2"></rect>
+                        </svg>
+                    </span>
+
+                    <span>Dashboard</span>
+                </a>
+            </section>
+
+            <section class="aumiau-sidebar-section">
+                <p class="aumiau-nav-label">
+                    Gerenciamento
+                </p>
+
+                {% if perms.pets.view_pet or perms.pets.change_pet %}
+                    <a href="{% url 'admin:pets_pet_changelist' %}" class="aumiau-nav-link {% if current == 'pets_pet_add' or current == 'pets_pet_change' or current == 'pets_pet_delete' or current == 'pets_pet_history' %}is-active{% elif current == 'pets_pet_changelist' and request.GET.status__exact != 'pendente' %}is-active{% endif %}">
+                        <span class="aumiau-nav-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="7" cy="7.5" r="2.2"></circle>
+                                <circle cx="17" cy="7.5" r="2.2"></circle>
+                                <circle cx="4.8" cy="12.3" r="2"></circle>
+                                <circle cx="19.2" cy="12.3" r="2"></circle>
+                                <path d="M12 11.2c-3.2 0-6.4 3.4-6.4 6.1 0 2 1.6 3.2 3.5 3.2 1.2 0 2-.6 2.9-.6s1.7.6 2.9.6c1.9 0 3.5-1.2 3.5-3.2 0-2.7-3.2-6.1-6.4-6.1Z"></path>
+                            </svg>
+                        </span>
+
+                        <span>Pets</span>
+                    </a>
+
+                    <a href="{% url 'admin:pets_pet_changelist' %}?status__exact=pendente" class="aumiau-nav-link {% if current == 'pets_pet_changelist' and request.GET.status__exact == 'pendente' %}is-active{% endif %}">
+                        <span class="aumiau-nav-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path>
+                                <path d="M12 8v5"></path>
+                                <path d="M12 17h.01"></path>
+                            </svg>
+                        </span>
+
+                        <span>Moderação</span>
+                    </a>
+
+                {% elif perms.pets.add_pet %}
+                    <a href="{% url 'admin:pets_pet_add' %}" class="aumiau-nav-link {% if current == 'pets_pet_add' %}is-active{% endif %}">
+                        <span class="aumiau-nav-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M12 5v14"></path>
+                                <path d="M5 12h14"></path>
+                            </svg>
+                        </span>
+
+                        <span>Cadastrar pet</span>
+                    </a>
+                {% endif %}
+
+                {% if perms.ongs.view_ong or perms.ongs.change_ong %}
+                    <a href="{% url 'admin:ongs_ong_changelist' %}" class="aumiau-nav-link {% if current == 'ongs_ong_changelist' or current == 'ongs_ong_add' or current == 'ongs_ong_change' or current == 'ongs_ong_delete' or current == 'ongs_ong_history' %}is-active{% endif %}">
+                        <span class="aumiau-nav-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M4 21V9l8-6 8 6v12"></path>
+                                <path d="M9 21v-5h6v5"></path>
+                                <path d="M9 11h.01"></path>
+                                <path d="M15 11h.01"></path>
+                            </svg>
+                        </span>
+
+                        <span>ONGs parceiras</span>
+                    </a>
+
+                {% elif perms.ongs.add_ong %}
+                    <a href="{% url 'admin:ongs_ong_add' %}" class="aumiau-nav-link">
+                        <span class="aumiau-nav-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M12 5v14"></path>
+                                <path d="M5 12h14"></path>
+                            </svg>
+                        </span>
+
+                        <span>Cadastrar ONG</span>
+                    </a>
+                {% endif %}
+            </section>
+
+            <section class="aumiau-sidebar-section">
+                <p class="aumiau-nav-label">
+                    Acesso e segurança
+                </p>
+
+                {% if perms.auth.view_user or perms.auth.change_user %}
+                    <a href="{% url 'admin:auth_user_changelist' %}" class="aumiau-nav-link {% if current == 'auth_user_changelist' or current == 'auth_user_add' or current == 'auth_user_change' or current == 'auth_user_delete' or current == 'auth_user_history' %}is-active{% endif %}">
+                        <span class="aumiau-nav-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M16 11a4 4 0 0 0 0-8"></path>
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                            </svg>
+                        </span>
+
+                        <span>Usuários</span>
+                    </a>
+                {% endif %}
+
+                {% if perms.auth.view_group or perms.auth.change_group %}
+                    <a href="{% url 'admin:auth_group_changelist' %}" class="aumiau-nav-link {% if current == 'auth_group_changelist' or current == 'auth_group_add' or current == 'auth_group_change' or current == 'auth_group_delete' or current == 'auth_group_history' %}is-active{% endif %}">
+                        <span class="aumiau-nav-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path>
+                                <path d="m9 12 2 2 4-4"></path>
+                            </svg>
+                        </span>
+
+                        <span>Grupos e permissões</span>
+                    </a>
+                {% endif %}
+            </section>
+
+        </div>
+
+        {% if perms.pets.add_pet %}
+            <a href="{% url 'admin:pets_pet_add' %}" class="aumiau-sidebar-cta">
+                <span class="aumiau-sidebar-cta__icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 5v14"></path>
+                        <path d="M5 12h14"></path>
+                    </svg>
+                </span>
+
+                <span>
+                    <strong>Novo anúncio</strong>
+                    <small>Cadastrar um pet</small>
+                </span>
+            </a>
+        {% endif %}
+
+        <div class="aumiau-sidebar-footer">
+            <a href="{% url 'home' %}">
+                <span class="aumiau-nav-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M15 3h6v6"></path>
+                        <path d="m10 14 11-11"></path>
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    </svg>
+                </span>
+
+                <span>
+                    <strong>Visualizar o site</strong>
+                    <small>Abrir página inicial</small>
+                </span>
+            </a>
         </div>
 
     {% endwith %}

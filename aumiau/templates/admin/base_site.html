@@ -1,6 +1,12 @@
 {% extends "admin/base.html" %}
 {% load static %}
 
+{% block dark-mode-vars %}
+    <link rel="stylesheet" href="{% static 'admin/css/dark_mode.css' %}">
+
+    <script src="{% static 'admin/js/aumiau-theme.js' %}?v=1"></script>
+{% endblock %}
+
 {% block title %}
     {% if title %}{{ title }} | {% endif %}AuMiau Admin
 {% endblock %}
@@ -19,8 +25,9 @@
 {% block responsive %}
     {{ block.super }}
 
-    {# Carregado por último para vencer o CSS nativo do Django #}
-    <link rel="stylesheet" href="{% static 'admin/css/aumiau-admin-v2.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'admin/css/aumiau-admin-v2.css' %}?v=2">
+
+    <link rel="stylesheet" href="{% static 'admin/css/aumiau-admin-pro.css' %}?v=1">
 {% endblock %}
 
 {% block branding %}
@@ -39,32 +46,53 @@
 
             {% if site_url %}
                 <a href="{{ site_url }}" class="aumiau-view-site">
-                    Ver site
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M15 3h6v6"></path>
+                        <path d="m10 14 11-11"></path>
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    </svg>
+
+                    <span>Ver site</span>
                 </a>
             {% endif %}
 
-            <details class="aumiau-user-menu">
+            {% include "admin/color_theme_toggle.html" %}
+
+            <details class="aumiau-user-menu" data-admin-profile-menu>
                 <summary>
                     <span class="aumiau-user-avatar">
-                        {{ user.get_username|slice:":1"|upper }}
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="8" r="4"></circle>
+                            <path d="M4 21a8 8 0 0 1 16 0"></path>
+                        </svg>
                     </span>
 
                     <span class="aumiau-user-copy">
-                        <small>Administrador</small>
+                        <small>Perfil</small>
 
                         <strong>
-                            {% firstof user.get_short_name user.get_username %}
+                            {% firstof user.first_name user.get_short_name user.get_username %}
                         </strong>
                     </span>
 
-                    <span class="aumiau-user-chevron" aria-hidden="true">
-                        ⌄
-                    </span>
+                    <svg class="aumiau-user-chevron" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="m7 10 5 5 5-5"></path>
+                    </svg>
                 </summary>
 
                 <div class="aumiau-user-panel">
+                    <div class="aumiau-user-panel__identity">
+                        <strong>
+                            {% firstof user.get_full_name user.get_username %}
+                        </strong>
+
+                        <span>
+                            {{ user.email|default:"Conta administrativa" }}
+                        </span>
+                    </div>
+
                     {% if user.has_usable_password %}
-                        <a href="{% url 'admin:password_change' %}">
+                        <a href="{% url 'admin:password_change' %}" class="aumiau-user-panel__primary">
                             Alterar senha
                         </a>
                     {% endif %}
@@ -79,7 +107,6 @@
                 </div>
             </details>
 
-            {% include "admin/color_theme_toggle.html" %}
         </div>
     {% endif %}
 {% endblock %}
