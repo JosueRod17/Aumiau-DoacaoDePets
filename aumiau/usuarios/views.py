@@ -1,12 +1,33 @@
 from django.conf import settings
 from django.contrib.auth import login
+from django.contrib.auth.views import LoginView
 from django.db import IntegrityError, transaction
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, resolve_url
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 
-from .forms import CadastroUsuarioForm
+from supervisores.permissions import usuario_e_supervisor
+
+from .forms import CadastroUsuarioForm, LoginEmailForm
 from .models import Perfil
+
+
+class LoginUsuarioView(LoginView):
+    template_name = 'usuarios/login.html'
+    authentication_form = LoginEmailForm
+    redirect_authenticated_user = True
+
+    def get_success_url(self):
+        destino = self.get_redirect_url()
+
+        if destino:
+            return destino
+
+        if usuario_e_supervisor(self.request.user):
+            return reverse('supervisores:dashboard')
+
+        return resolve_url(settings.LOGIN_REDIRECT_URL)
 
 
 def cadastro(request):

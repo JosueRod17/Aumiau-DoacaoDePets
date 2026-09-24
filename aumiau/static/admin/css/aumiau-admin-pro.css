@@ -627,6 +627,217 @@ html[data-theme="dark"] ul.messagelist li.error {
     color: #ffd6d6;
 }
 
+/*CORREÇÕES DE LINKS DO ADMIN*/
+
+/* Remove os sublinhados nativos do Django Admin */
+
+#container a, #container a:link, #container a:visited, #container a:hover, #container a:focus, #container a:active {
+    text-decoration: none !important;
+}
+
+/* Botão Ver site */
+
+#header #user-tools .aumiau-view-site, #header #user-tools .aumiau-view-site:link, #header #user-tools .aumiau-view-site:visited {
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-height: 42px;
+    padding: 0 17px;
+
+    background: var(--aumiau-superficie);
+    color: #6d36b3 !important;
+    border: 2px solid #7b3fc6;
+    border-radius: 999px;
+    box-shadow: 0 5px 14px rgba(123, 63, 198, 0.1);
+
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none !important;
+
+    transition:
+        color 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+#header #user-tools .aumiau-view-site:hover {
+    background: #7b3fc6;
+    color: #ffffff !important;
+    border-color: #7b3fc6;
+    box-shadow: 0 8px 20px rgba(123, 63, 198, 0.24);
+    transform: translateY(-1px);
+}
+
+#header #user-tools .aumiau-view-site:focus-visible {
+    outline: 3px solid rgba(123, 63, 198, 0.24);
+    outline-offset: 3px;
+}
+
+#header #user-tools .aumiau-view-site svg {
+    flex: 0 0 16px;
+    width: 16px;
+    height: 16px;
+
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Versão do botão no tema escuro */
+
+html[data-theme="dark"] #header #user-tools .aumiau-view-site {
+    background: #2d211c;
+    color: #d9c2f5 !important;
+    border-color: #a978e4;
+    box-shadow: 0 5px 16px rgba(0, 0, 0, 0.2);
+}
+
+html[data-theme="dark"] #header #user-tools .aumiau-view-site:hover {
+    background: #a978e4;
+    color: #20120c !important;
+    border-color: #a978e4;
+}
+
+/*CORREÇÕES FINAIS DO CABEÇALHO DO ADMIN*/
+
+
+/* NOME DO USUÁRIO NO BOTÃO DE PERFIL */
+
+.aumiau-user-copy {
+    align-items: center;
+    text-align: center;
+}
+
+
+/* NOME E E-MAIL CENTRALIZADOS NO MENU ABERTO */
+
+.aumiau-user-panel__identity {
+    justify-items: center;
+    width: 100%;
+    text-align: center;
+}
+
+.aumiau-user-panel__identity strong,
+.aumiau-user-panel__identity span {
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+
+/* BOTÃO DE TEMA */
+
+#header .aumiau-theme-toggle {
+    display: inline-grid;
+    flex: 0 0 42px;
+    width: 42px;
+    min-width: 42px;
+    height: 42px;
+    min-height: 42px;
+    padding: 0;
+    place-items: center;
+
+    background: #ffffff;
+    color: #7b3fc6;
+    border: 1px solid #e5d2f6;
+    border-radius: 50%;
+
+    line-height: 0;
+    cursor: pointer;
+    appearance: none;
+}
+
+#header .aumiau-theme-toggle:hover {
+    background: #fff2de;
+    border-color: #7b3fc6;
+    transform: translateY(-1px);
+}
+
+.aumiau-theme-icon {
+    display: none;
+    width: 21px;
+    height: 21px;
+
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* No tema claro mostramos a lua: ela indica que o clique ativará o tema escuro. */
+
+html:not([data-theme]) .aumiau-theme-icon--moon, html[data-theme="light"] .aumiau-theme-icon--moon {
+    display: block;
+}
+
+/*No tema escuro mostramos o sol: ele indica que o clique ativará o tema claro. */
+
+html[data-theme="dark"] .aumiau-theme-icon--sun {
+    display: block;
+}
+
+html[data-theme="dark"] .aumiau-theme-icon--moon {
+    display: none;
+}
+
+html[data-theme="dark"] #header .aumiau-theme-toggle {
+    background: #2d211c;
+    color: #ffad33;
+    border-color: #5b4437;
+}
+
+html[data-theme="dark"] #header .aumiau-theme-toggle:hover {
+    background: #3a291f;
+    border-color: #ffad33;
+}
+
+
+/* BOTÃO VER SITE NO TEMA CLARO */
+
+html[data-theme="light"] #header #user-tools .aumiau-view-site, html[data-theme="light"] #header #user-tools .aumiau-view-site:link, html[data-theme="light"] #header #user-tools .aumiau-view-site:visited {
+    background: #ffffff !important;
+    color: #6d36b3 !important;
+    border-color: #7b3fc6 !important;
+}
+
+html[data-theme="light"] #header #user-tools .aumiau-view-site:hover {
+    background: #7b3fc6 !important;
+    color: #ffffff !important;
+    border-color: #7b3fc6 !important;
+}
+
+#header #user-tools .aumiau-view-site svg {
+    stroke: currentColor !important;
+}
+
+
+/* RETIRA OS SUBLINHADOS DOS LINKS DO ADMIN */
+
+body a, body a:link, body a:visited, body a:hover, body a:focus, body a:active {
+    text-decoration: none !important;
+}
+
+/*O Django também cria uma linha usando border-bottom nos links do cabeçalho.*/
+
+#header #user-tools a:not(.aumiau-view-site) {
+    border-bottom: 0 !important;
+}
+
+/* Mantém indicação acessível para navegação pelo teclado */
+
+body a:focus-visible, #header button:focus-visible {
+    outline: 2px solid #ff9800;
+    outline-offset: 3px;
+}
+
 /* RESPONSIVIDADE */
 
 @media (max-width: 1000px) {

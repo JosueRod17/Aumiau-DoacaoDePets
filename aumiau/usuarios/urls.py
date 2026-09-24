@@ -1,6 +1,5 @@
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import LogoutView
 from django.urls import path
-from .forms import LoginEmailForm
 
 from . import views
 
@@ -17,11 +16,7 @@ urlpatterns = [
 
     path(
         'entrar/',
-        LoginView.as_view(
-            template_name='usuarios/login.html',
-            authentication_form=LoginEmailForm,
-            redirect_authenticated_user=True,
-        ),
+        views.LoginUsuarioView.as_view(),
         name='login',
     ),
 

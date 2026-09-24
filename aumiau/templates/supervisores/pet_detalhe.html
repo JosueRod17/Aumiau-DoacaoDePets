@@ -1,0 +1,219 @@
+{% extends 'supervisores/base.html' %}
+
+{% block title %}{{ pet.nome }} | Supervisor AuMiau{% endblock %}
+
+{% block content %}
+    <a href="{% url 'supervisores:pets_lista' %}{% if pet.status == 'pendente' %}?status=pendente{% endif %}" class="supervisor-voltar">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m15 18-6-6 6-6"></path>
+        </svg>
+        Voltar para a listagem
+    </a>
+
+    <header class="supervisor-detalhe-cabecalho">
+        <div>
+            <span class="supervisor-etiqueta">Análise de anúncio</span>
+            <h1>{{ pet.nome }}</h1>
+            <p>Cadastrado em {{ pet.criado_em|date:"d/m/Y \à\s H:i" }}</p>
+        </div>
+
+        <span class="supervisor-status supervisor-status--{{ pet.status }} supervisor-status--grande">
+            {{ pet.get_status_display }}
+        </span>
+    </header>
+
+    <div class="supervisor-detalhe-grade">
+        <section class="supervisor-detalhe-principal">
+            <article class="supervisor-card supervisor-pet-card">
+                <div class="supervisor-pet-card__imagem">
+                    {% if pet.foto_principal %}
+                        <img src="{{ pet.foto_principal.url }}" alt="Foto de {{ pet.nome }}">
+                    {% else %}
+                        <div class="supervisor-sem-foto">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="7" cy="7.5" r="2.2"></circle>
+                                <circle cx="17" cy="7.5" r="2.2"></circle>
+                                <circle cx="4.8" cy="12.3" r="2"></circle>
+                                <circle cx="19.2" cy="12.3" r="2"></circle>
+                                <path d="M12 11.2c-3.2 0-6.4 3.4-6.4 6.1 0 2 1.6 3.2 3.5 3.2 1.2 0 2-.6 2.9-.6s1.7.6 2.9.6c1.9 0 3.5-1.2 3.5-3.2 0-2.7-3.2-6.1-6.4-6.1Z"></path>
+                            </svg>
+                            <span>Sem foto principal</span>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="supervisor-pet-card__conteudo">
+                    <div class="supervisor-pet-card__titulo">
+                        <div>
+                            <h2>{{ pet.nome }}</h2>
+                            <p>{{ pet.get_especie_display }} · {{ pet.raca }}</p>
+                        </div>
+
+                        {% if pet.destaque %}
+                            <span class="supervisor-destaque">Destaque</span>
+                        {% endif %}
+                    </div>
+
+                    <dl class="supervisor-informacoes">
+                        <div>
+                            <dt>Gênero</dt>
+                            <dd>{{ pet.get_genero_display }}</dd>
+                        </div>
+                        <div>
+                            <dt>Porte</dt>
+                            <dd>{{ pet.get_porte_display }}</dd>
+                        </div>
+                        <div>
+                            <dt>Idade</dt>
+                            <dd>{{ pet.idade_formatada }}</dd>
+                        </div>
+                        <div>
+                            <dt>Localização</dt>
+                            <dd>{{ pet.cidade }}/{{ pet.estado }}</dd>
+                        </div>
+                    </dl>
+
+                    <div class="supervisor-descricao">
+                        <h3>Descrição do anúncio</h3>
+                        <p>{{ pet.descricao|linebreaksbr|default:"Nenhuma descrição informada." }}</p>
+                    </div>
+
+                    <div class="supervisor-saude">
+                        <h3>Saúde e características</h3>
+
+                        <div class="supervisor-chips">
+                            <span class="{% if pet.vacinado %}is-positive{% endif %}">Vacinado</span>
+                            <span class="{% if pet.castrado %}is-positive{% endif %}">Castrado</span>
+                            <span class="{% if pet.vermifugado %}is-positive{% endif %}">Vermifugado</span>
+                            <span class="{% if pet.microchipado %}is-positive{% endif %}">Microchipado</span>
+                            <span class="{% if pet.necessidades_especiais %}is-warning{% endif %}">Necessidades especiais</span>
+                        </div>
+
+                        {% if pet.necessidades_especiais and pet.descricao_necessidades_especiais %}
+                            <p class="supervisor-observacao">
+                                {{ pet.descricao_necessidades_especiais }}
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+
+            {% if pet.fotos.all %}
+                <article class="supervisor-card">
+                    <header class="supervisor-card__cabecalho">
+                        <div>
+                            <h2>Galeria do anúncio</h2>
+                            <p>Outras imagens enviadas pelo responsável.</p>
+                        </div>
+                    </header>
+
+                    <div class="supervisor-galeria">
+                        {% for foto in pet.fotos.all %}
+                            <figure>
+                                <img src="{{ foto.imagem.url }}" alt="{{ foto.legenda|default:pet.nome }}">
+                                {% if foto.legenda %}<figcaption>{{ foto.legenda }}</figcaption>{% endif %}
+                            </figure>
+                        {% endfor %}
+                    </div>
+                </article>
+            {% endif %}
+        </section>
+
+        <aside class="supervisor-detalhe-lateral">
+            <article class="supervisor-card supervisor-responsavel">
+                <span class="supervisor-card__etiqueta">Responsável</span>
+
+                {% if pet.ong %}
+                    <h2>{{ pet.ong.nome }}</h2>
+                    <p>ONG parceira · {{ pet.ong.cidade }}/{{ pet.ong.estado }}</p>
+                {% elif pet.responsavel %}
+                    <h2>{% firstof pet.responsavel.get_full_name pet.responsavel.username %}</h2>
+                    <p>{{ pet.responsavel.email|default:"E-mail não informado" }}</p>
+                {% else %}
+                    <h2>Não informado</h2>
+                    <p>Este anúncio não possui responsável associado.</p>
+                {% endif %}
+            </article>
+
+            <article class="supervisor-card supervisor-auditoria">
+                <span class="supervisor-card__etiqueta">Auditoria</span>
+
+                <dl>
+                    <div>
+                        <dt>Criado por</dt>
+                        <dd>{% firstof pet.criado_por.get_full_name pet.criado_por.username "Não informado" %}</dd>
+                    </div>
+                    <div>
+                        <dt>Última moderação</dt>
+                        <dd>{{ pet.moderado_em|date:"d/m/Y H:i"|default:"Ainda não moderado" }}</dd>
+                    </div>
+                    <div>
+                        <dt>Moderado por</dt>
+                        <dd>{% firstof pet.moderado_por.get_full_name pet.moderado_por.username "—" %}</dd>
+                    </div>
+                </dl>
+            </article>
+
+            {% if pet.motivo_rejeicao %}
+                <article class="supervisor-card supervisor-rejeicao">
+                    <span class="supervisor-card__etiqueta">Motivo da rejeição</span>
+                    <p>{{ pet.motivo_rejeicao }}</p>
+                </article>
+            {% endif %}
+
+            {% if pode_moderar %}
+                <article class="supervisor-card supervisor-moderacao">
+                    <span class="supervisor-card__etiqueta">Decisão</span>
+                    <h2>Moderar anúncio</h2>
+
+                    {% if pet.status != 'publicado' %}
+                        <form method="post" action="{% url 'supervisores:moderar_pet' pet.id 'publicar' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="supervisor-acao supervisor-acao--aprovar" data-confirm="Publicar este anúncio no site?">
+                                Publicar anúncio
+                            </button>
+                        </form>
+                    {% endif %}
+
+                    {% if pet.status != 'adotado' %}
+                        <form method="post" action="{% url 'supervisores:moderar_pet' pet.id 'adotar' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="supervisor-acao supervisor-acao--adotado" data-confirm="Marcar {{ pet.nome }} como adotado?">
+                                Marcar como adotado
+                            </button>
+                        </form>
+                    {% endif %}
+
+                    {% if pet.status != 'arquivado' %}
+                        <form method="post" action="{% url 'supervisores:moderar_pet' pet.id 'arquivar' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="supervisor-acao supervisor-acao--neutra" data-confirm="Arquivar este anúncio?">
+                                Arquivar anúncio
+                            </button>
+                        </form>
+                    {% endif %}
+
+                    {% if pet.status == 'rejeitado' or pet.status == 'arquivado' %}
+                        <form method="post" action="{% url 'supervisores:moderar_pet' pet.id 'reabrir' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="supervisor-acao supervisor-acao--neutra">
+                                Enviar para nova análise
+                            </button>
+                        </form>
+                    {% endif %}
+
+                    {% if pet.status != 'rejeitado' %}
+                        <form method="post" action="{% url 'supervisores:moderar_pet' pet.id 'rejeitar' %}" class="supervisor-rejeitar-form">
+                            {% csrf_token %}
+                            <label for="motivo-rejeicao">Motivo da rejeição</label>
+                            <textarea id="motivo-rejeicao" name="motivo_rejeicao" rows="3" required placeholder="Explique o que precisa ser corrigido"></textarea>
+                            <button type="submit" class="supervisor-acao supervisor-acao--rejeitar" data-confirm="Rejeitar este anúncio?">
+                                Rejeitar anúncio
+                            </button>
+                        </form>
+                    {% endif %}
+                </article>
+            {% endif %}
+        </aside>
+    </div>
+{% endblock %}

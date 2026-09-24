@@ -26,6 +26,7 @@ def home(request):
 
     destino_anuncio = reverse('pets:anunciar')
     destino_admin = reverse('admin:index')
+    destino_supervisor = reverse('supervisores:dashboard')
 
     next_seguro = url_has_allowed_host_and_scheme(
         url=login_next,
@@ -36,6 +37,7 @@ def home(request):
     destino_permitido = (
         login_next == destino_anuncio
         or login_next.startswith(destino_admin)
+        or login_next.startswith(destino_supervisor)
     )
 
     if (
@@ -123,6 +125,11 @@ def home(request):
         'cadastro_form': CadastroUsuarioForm(),
         'abrir_login': bool(login_next),
         'login_next': login_next,
+        'login_aviso': (
+            'Entre com uma conta de supervisor para acessar o painel.'
+            if login_next.startswith(destino_supervisor)
+            else 'Para anunciar um pet, entre na sua conta ou crie um cadastro.'
+        ),
 
         'conta_form': conta_form,
         'senha_form': senha_form,

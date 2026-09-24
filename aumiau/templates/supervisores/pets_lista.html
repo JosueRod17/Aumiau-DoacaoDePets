@@ -1,0 +1,64 @@
+{% extends 'supervisores/base.html' %}
+
+{% block title %}Pets | Supervisor AuMiau{% endblock %}
+
+{% block content %}
+    <header class="supervisor-pagina-cabecalho">
+        <div>
+            <span class="supervisor-etiqueta">Anúncios</span>
+            <h1>
+                {% if status_atual == 'pendente' %}
+                    Fila de moderação
+                {% else %}
+                    Todos os pets
+                {% endif %}
+            </h1>
+            <p>{{ total_resultados }} registro{{ total_resultados|pluralize }} encontrado{{ total_resultados|pluralize }}.</p>
+        </div>
+    </header>
+
+    <section class="supervisor-card supervisor-card--lista">
+        <form method="get" class="supervisor-filtros">
+            <label class="supervisor-busca">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7"></circle>
+                    <path d="m20 20-4-4"></path>
+                </svg>
+
+                <input
+                    type="search"
+                    name="busca"
+                    value="{{ busca }}"
+                    placeholder="Buscar por nome, raça, cidade ou responsável"
+                >
+            </label>
+
+            <label class="supervisor-select">
+                <span class="sr-only">Filtrar por status</span>
+                <select name="status">
+                    <option value="">Todos os status</option>
+
+                    {% for valor, rotulo in status_opcoes %}
+                        <option value="{{ valor }}" {% if status_atual == valor %}selected{% endif %}>
+                            {{ rotulo }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </label>
+
+            <button type="submit" class="supervisor-botao supervisor-botao--primario">
+                Filtrar
+            </button>
+
+            {% if busca or status_atual %}
+                <a href="{% url 'supervisores:pets_lista' %}" class="supervisor-filtros__limpar">
+                    Limpar filtros
+                </a>
+            {% endif %}
+        </form>
+
+        {% include 'supervisores/partials/_tabela_pets.html' with pets=pets %}
+
+        {% include 'supervisores/partials/_paginacao.html' %}
+    </section>
+{% endblock %}

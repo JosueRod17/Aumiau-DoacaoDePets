@@ -1,0 +1,109 @@
+{% extends 'supervisores/base.html' %}
+
+{% block title %}Usuários | Supervisor AuMiau{% endblock %}
+
+{% block content %}
+    <header class="supervisor-pagina-cabecalho">
+        <div>
+            <span class="supervisor-etiqueta">Comunidade</span>
+            <h1>Usuários cadastrados</h1>
+            <p>{{ total_resultados }} conta{{ total_resultados|pluralize }} encontrada{{ total_resultados|pluralize }}.</p>
+        </div>
+    </header>
+
+    <section class="supervisor-card supervisor-card--lista">
+        <form method="get" class="supervisor-filtros">
+            <label class="supervisor-busca">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7"></circle>
+                    <path d="m20 20-4-4"></path>
+                </svg>
+
+                <input
+                    type="search"
+                    name="busca"
+                    value="{{ busca }}"
+                    placeholder="Buscar por nome, e-mail, cidade ou UF"
+                >
+            </label>
+
+            <label class="supervisor-select">
+                <span class="sr-only">Filtrar por situação</span>
+                <select name="situacao">
+                    <option value="">Todas as contas</option>
+                    <option value="ativos" {% if situacao_atual == 'ativos' %}selected{% endif %}>Ativas</option>
+                    <option value="inativos" {% if situacao_atual == 'inativos' %}selected{% endif %}>Inativas</option>
+                </select>
+            </label>
+
+            <button type="submit" class="supervisor-botao supervisor-botao--primario">Filtrar</button>
+
+            {% if busca or situacao_atual %}
+                <a href="{% url 'supervisores:usuarios_lista' %}" class="supervisor-filtros__limpar">Limpar filtros</a>
+            {% endif %}
+        </form>
+
+        <div class="supervisor-tabela-wrapper">
+            <table class="supervisor-tabela">
+                <thead>
+                    <tr>
+                        <th>Usuário</th>
+                        <th>Telefone</th>
+                        <th>Localização</th>
+                        <th>Situação</th>
+                        <th>Cadastro</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for usuario in usuarios %}
+                        <tr>
+                            <td>
+                                <div class="supervisor-entidade">
+                                    <span class="supervisor-entidade__icone">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <circle cx="12" cy="8" r="4"></circle>
+                                            <path d="M4 21a8 8 0 0 1 16 0"></path>
+                                        </svg>
+                                    </span>
+
+                                    <span>
+                                        <strong>{% firstof usuario.get_full_name usuario.username %}</strong>
+                                        <small>{{ usuario.email|default:usuario.username }}</small>
+                                    </span>
+                                </div>
+                            </td>
+                            <td>{{ usuario.perfil.telefone|default:"Não informado" }}</td>
+                            <td>
+                                {% if usuario.perfil.cidade %}
+                                    {{ usuario.perfil.cidade }}/{{ usuario.perfil.estado }}
+                                {% else %}
+                                    <span class="supervisor-texto-suave">Não informada</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if usuario.is_active %}
+                                    <span class="supervisor-status supervisor-status--publicado">Ativa</span>
+                                {% else %}
+                                    <span class="supervisor-status supervisor-status--arquivado">Inativa</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ usuario.date_joined|date:"d/m/Y" }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5">
+                                <div class="supervisor-vazio supervisor-vazio--tabela">
+                                    <strong>Nenhum usuário encontrado.</strong>
+                                    <p>Altere os filtros para realizar outra busca.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% include 'supervisores/partials/_paginacao.html' %}
+    </section>
+{% endblock %}

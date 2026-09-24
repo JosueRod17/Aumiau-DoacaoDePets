@@ -1,0 +1,277 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR" data-supervisor-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}{{ titulo_pagina|default:"Supervisor" }} | AuMiau{% endblock %}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="{% static 'css/supervisor.css' %}?v=1">
+
+    <script>
+        (() => {
+            try {
+                const tema = localStorage.getItem('aumiau-supervisor-theme');
+                document.documentElement.dataset.supervisorTheme =
+                    tema === 'dark' ? 'dark' : 'light';
+            } catch (_) {
+                document.documentElement.dataset.supervisorTheme = 'light';
+            }
+        })();
+    </script>
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="supervisor-body">
+    <div class="supervisor-app">
+        <aside class="supervisor-sidebar" id="supervisor-sidebar">
+            <div class="supervisor-sidebar__topo">
+                <a href="{% url 'supervisores:dashboard' %}" class="supervisor-logo">
+                    <img src="{% static 'img/aumiau-logo-horizontal.png' %}" alt="AuMiau">
+                </a>
+
+                <button
+                    type="button"
+                    class="supervisor-sidebar__fechar"
+                    data-sidebar-close
+                    aria-label="Fechar menu"
+                >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="m6 6 12 12"></path>
+                        <path d="m18 6-12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="supervisor-identidade">
+                <span class="supervisor-identidade__icone">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path>
+                        <path d="m9 12 2 2 4-4"></path>
+                    </svg>
+                </span>
+
+                <span>
+                    <strong>Supervisor</strong>
+                    <small>Central AuMiau</small>
+                </span>
+            </div>
+
+            <nav class="supervisor-nav" aria-label="Navegação do supervisor">
+                <p class="supervisor-nav__titulo">Visão geral</p>
+
+                <a
+                    href="{% url 'supervisores:dashboard' %}"
+                    class="supervisor-nav__link {% if pagina_ativa == 'dashboard' %}is-active{% endif %}"
+                >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <rect x="3" y="3" width="7" height="7" rx="2"></rect>
+                        <rect x="14" y="3" width="7" height="7" rx="2"></rect>
+                        <rect x="3" y="14" width="7" height="7" rx="2"></rect>
+                        <rect x="14" y="14" width="7" height="7" rx="2"></rect>
+                    </svg>
+                    <span>Dashboard</span>
+                </a>
+
+                {% if perms.pets.view_pet %}
+                    <p class="supervisor-nav__titulo">Anúncios</p>
+
+                    <a
+                        href="{% url 'supervisores:pets_lista' %}?status=pendente"
+                        class="supervisor-nav__link {% if pagina_ativa == 'moderacao' %}is-active{% endif %}"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path>
+                            <path d="M12 8v5"></path>
+                            <path d="M12 17h.01"></path>
+                        </svg>
+                        <span>Moderação</span>
+                        {% if pets_pendentes %}
+                            <small class="supervisor-nav__contador">{{ pets_pendentes }}</small>
+                        {% endif %}
+                    </a>
+
+                    <a
+                        href="{% url 'supervisores:pets_lista' %}"
+                        class="supervisor-nav__link {% if pagina_ativa == 'pets' %}is-active{% endif %}"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="7" cy="7.5" r="2.2"></circle>
+                            <circle cx="17" cy="7.5" r="2.2"></circle>
+                            <circle cx="4.8" cy="12.3" r="2"></circle>
+                            <circle cx="19.2" cy="12.3" r="2"></circle>
+                            <path d="M12 11.2c-3.2 0-6.4 3.4-6.4 6.1 0 2 1.6 3.2 3.5 3.2 1.2 0 2-.6 2.9-.6s1.7.6 2.9.6c1.9 0 3.5-1.2 3.5-3.2 0-2.7-3.2-6.1-6.4-6.1Z"></path>
+                        </svg>
+                        <span>Todos os pets</span>
+                    </a>
+                {% endif %}
+
+                {% if perms.ongs.view_ong or perms.auth.view_user %}
+                    <p class="supervisor-nav__titulo">Comunidade</p>
+                {% endif %}
+
+                {% if perms.ongs.view_ong %}
+                    <a
+                        href="{% url 'supervisores:ongs_lista' %}"
+                        class="supervisor-nav__link {% if pagina_ativa == 'ongs' %}is-active{% endif %}"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M4 21V9l8-6 8 6v12"></path>
+                            <path d="M9 21v-5h6v5"></path>
+                            <path d="M9 11h.01"></path>
+                            <path d="M15 11h.01"></path>
+                        </svg>
+                        <span>ONGs parceiras</span>
+                    </a>
+                {% endif %}
+
+                {% if perms.auth.view_user %}
+                    <a
+                        href="{% url 'supervisores:usuarios_lista' %}"
+                        class="supervisor-nav__link {% if pagina_ativa == 'usuarios' %}is-active{% endif %}"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M16 11a4 4 0 0 0 0-8"></path>
+                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                        </svg>
+                        <span>Usuários</span>
+                    </a>
+                {% endif %}
+            </nav>
+
+            <a href="{% url 'home' %}" class="supervisor-sidebar__site">
+                <span>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M15 3h6v6"></path>
+                        <path d="m10 14 11-11"></path>
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    </svg>
+                </span>
+
+                <span>
+                    <strong>Visualizar o site</strong>
+                    <small>Abrir página inicial</small>
+                </span>
+            </a>
+        </aside>
+
+        <button
+            type="button"
+            class="supervisor-overlay"
+            data-sidebar-close
+            aria-label="Fechar menu"
+        ></button>
+
+        <section class="supervisor-workspace">
+            <header class="supervisor-topbar">
+                <div class="supervisor-topbar__titulo">
+                    <button
+                        type="button"
+                        class="supervisor-menu-mobile"
+                        data-sidebar-open
+                        aria-label="Abrir menu"
+                        aria-controls="supervisor-sidebar"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M4 6h16"></path>
+                            <path d="M4 12h16"></path>
+                            <path d="M4 18h16"></path>
+                        </svg>
+                    </button>
+
+                    <div>
+                        <small>Painel do supervisor</small>
+                        <strong>{{ titulo_pagina|default:"AuMiau" }}</strong>
+                    </div>
+                </div>
+
+                <div class="supervisor-topbar__acoes">
+                    <a href="{% url 'home' %}" class="supervisor-botao supervisor-botao--contorno">
+                        Ver site
+                    </a>
+
+                    <button
+                        type="button"
+                        class="supervisor-tema"
+                        data-supervisor-theme-toggle
+                        aria-label="Ativar tema escuro"
+                    >
+                        <svg class="supervisor-tema__lua" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+
+                        <svg class="supervisor-tema__sol" viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="12" r="4"></circle>
+                            <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M6.35 17.65l-1.42 1.42M19.07 4.93l-1.42 1.42"></path>
+                        </svg>
+                    </button>
+
+                    <details class="supervisor-perfil" data-supervisor-profile>
+                        <summary class="supervisor-perfil__gatilho">
+                            <span class="supervisor-perfil__avatar">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <circle cx="12" cy="8" r="4"></circle>
+                                    <path d="M4 21a8 8 0 0 1 16 0"></path>
+                                </svg>
+                            </span>
+
+                            <span class="supervisor-perfil__texto">
+                                <small>Supervisor</small>
+                                <strong>{% firstof user.first_name user.get_short_name user.get_username %}</strong>
+                            </span>
+
+                            <svg class="supervisor-perfil__seta" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="m7 10 5 5 5-5"></path>
+                            </svg>
+                        </summary>
+
+                        <div class="supervisor-perfil__painel">
+                            <div class="supervisor-perfil__identidade">
+                                <strong>{% firstof user.get_full_name user.get_username %}</strong>
+                                <span>{{ user.email|default:"Conta de supervisão" }}</span>
+                            </div>
+
+                            {% if user.perfil %}
+                                <a href="{% url 'home' %}?conta=1">Minha conta</a>
+                            {% endif %}
+
+                            {% if user.is_superuser %}
+                                <a href="{% url 'admin:index' %}">Django Admin</a>
+                            {% endif %}
+
+                            <form method="post" action="{% url 'usuarios:logout' %}">
+                                {% csrf_token %}
+                                <button type="submit">Sair da conta</button>
+                            </form>
+                        </div>
+                    </details>
+                </div>
+            </header>
+
+            {% if messages %}
+                <div class="supervisor-mensagens" aria-live="polite">
+                    {% for message in messages %}
+                        <div class="supervisor-mensagem supervisor-mensagem--{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <main class="supervisor-conteudo">
+                {% block content %}{% endblock %}
+            </main>
+        </section>
+    </div>
+
+    <script src="{% static 'js/supervisor.js' %}?v=1" defer></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

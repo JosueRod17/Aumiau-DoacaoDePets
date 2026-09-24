@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Acesso restrito | AuMiau{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/supervisor.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+    <section class="supervisor-acesso-negado">
+        <div class="supervisor-acesso-negado__card">
+            <span class="supervisor-acesso-negado__icone">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path>
+                    <path d="M12 8v5"></path>
+                    <path d="M12 17h.01"></path>
+                </svg>
+            </span>
+
+            <span class="supervisor-etiqueta">Área restrita</span>
+            <h1>Acesso não autorizado</h1>
+            <p>{{ mensagem_acesso_negado }}</p>
+
+            <a href="{% url 'home' %}" class="supervisor-botao supervisor-botao--primario">
+                Voltar para a página inicial
+            </a>
+        </div>
+    </section>
+{% endblock %}

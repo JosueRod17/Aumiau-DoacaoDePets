@@ -1,0 +1,125 @@
+{% extends 'supervisores/base.html' %}
+
+{% block title %}ONGs | Supervisor AuMiau{% endblock %}
+
+{% block content %}
+    <header class="supervisor-pagina-cabecalho">
+        <div>
+            <span class="supervisor-etiqueta">Comunidade</span>
+            <h1>ONGs parceiras</h1>
+            <p>{{ total_resultados }} ONG{{ total_resultados|pluralize }} encontrada{{ total_resultados|pluralize }}.</p>
+        </div>
+    </header>
+
+    <section class="supervisor-card supervisor-card--lista">
+        <form method="get" class="supervisor-filtros">
+            <label class="supervisor-busca">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7"></circle>
+                    <path d="m20 20-4-4"></path>
+                </svg>
+
+                <input
+                    type="search"
+                    name="busca"
+                    value="{{ busca }}"
+                    placeholder="Buscar por nome, cidade ou UF"
+                >
+            </label>
+
+            <label class="supervisor-select">
+                <span class="sr-only">Filtrar por situação</span>
+                <select name="situacao">
+                    <option value="">Todas as situações</option>
+                    <option value="aprovadas" {% if situacao_atual == 'aprovadas' %}selected{% endif %}>Aprovadas</option>
+                    <option value="pendentes" {% if situacao_atual == 'pendentes' %}selected{% endif %}>Pendentes</option>
+                </select>
+            </label>
+
+            <button type="submit" class="supervisor-botao supervisor-botao--primario">
+                Filtrar
+            </button>
+
+            {% if busca or situacao_atual %}
+                <a href="{% url 'supervisores:ongs_lista' %}" class="supervisor-filtros__limpar">Limpar filtros</a>
+            {% endif %}
+        </form>
+
+        <div class="supervisor-tabela-wrapper">
+            <table class="supervisor-tabela">
+                <thead>
+                    <tr>
+                        <th>Organização</th>
+                        <th>Localização</th>
+                        <th>Pets vinculados</th>
+                        <th>Situação</th>
+                        <th>Cadastro</th>
+                        {% if pode_moderar_ongs %}<th>Ação</th>{% endif %}
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for ong in ongs %}
+                        <tr>
+                            <td>
+                                <div class="supervisor-entidade">
+                                    <span class="supervisor-entidade__icone supervisor-entidade__icone--ong">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="M4 21V9l8-6 8 6v12"></path>
+                                            <path d="M9 21v-5h6v5"></path>
+                                        </svg>
+                                    </span>
+
+                                    <span>
+                                        <strong>{{ ong.nome }}</strong>
+                                        <small>{{ ong.descricao|truncatechars:70|default:"Sem descrição" }}</small>
+                                    </span>
+                                </div>
+                            </td>
+                            <td>{{ ong.cidade }}/{{ ong.estado }}</td>
+                            <td>{{ ong.total_pets }}</td>
+                            <td>
+                                {% if ong.aprovada %}
+                                    <span class="supervisor-status supervisor-status--publicado">Aprovada</span>
+                                {% else %}
+                                    <span class="supervisor-status supervisor-status--pendente">Pendente</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ ong.criado_em|date:"d/m/Y" }}</td>
+                            {% if pode_moderar_ongs %}
+                                <td>
+                                    {% if ong.aprovada %}
+                                        <form method="post" action="{% url 'supervisores:moderar_ong' ong.id 'reabrir' %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="supervisor-tabela__botao supervisor-tabela__botao--neutro" data-confirm="Enviar {{ ong.nome }} para nova análise?">
+                                                Reabrir
+                                            </button>
+                                        </form>
+                                    {% else %}
+                                        <form method="post" action="{% url 'supervisores:moderar_ong' ong.id 'aprovar' %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="supervisor-tabela__botao supervisor-tabela__botao--aprovar" data-confirm="Aprovar {{ ong.nome }} como parceira?">
+                                                Aprovar
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="{% if pode_moderar_ongs %}6{% else %}5{% endif %}">
+                                <div class="supervisor-vazio supervisor-vazio--tabela">
+                                    <strong>Nenhuma ONG encontrada.</strong>
+                                    <p>Altere os filtros ou aguarde novos cadastros.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% include 'supervisores/partials/_paginacao.html' %}
+    </section>
+{% endblock %}

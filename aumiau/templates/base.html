@@ -59,15 +59,21 @@
 
                         <span>{{ user.email }}</span>
 
-                        {% if not user.is_superuser %}
+                        {% if not user.is_superuser and user.perfil %}
                         <a href="{% url 'home' %}?conta=1" class="perfil-menu__conta" data-dialog-open="conta-dialog" aria-haspopup="dialog" aria-controls="conta-dialog">
                             Minha conta
                         </a>
                         {% endif %}
 
-                        {% if user.is_staff %}
+                        {% if tem_acesso_supervisor %}
+                        <a href="{% url 'supervisores:dashboard' %}" class="perfil-menu__conta">
+                            Painel do supervisor
+                        </a>
+                        {% endif %}
+
+                        {% if user.is_superuser %}
                         <a href="{% url 'admin:index' %}" class="perfil-menu__conta">
-                            Painel administrativo
+                            Django Admin
                         </a>
                         {% endif %}
 

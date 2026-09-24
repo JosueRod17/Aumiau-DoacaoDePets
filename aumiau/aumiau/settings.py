@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'pets.apps.PetsConfig',
     'ongs.apps.OngsConfig',
     'usuarios.apps.UsuariosConfig',
+    'supervisores.apps.SupervisoresConfig',
 ]
 
 MIDDLEWARE = [
@@ -65,6 +66,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'supervisores.context_processors.acesso_supervisor',
             ],
         },
     },
