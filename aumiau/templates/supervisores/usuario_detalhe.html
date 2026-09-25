@@ -1,0 +1,80 @@
+{% extends 'supervisores/base.html' %}
+
+{% block title %}Usuário | Painel Admin AuMiau{% endblock %}
+
+{% block content %}
+    <a href="{% url 'supervisores:usuarios_lista' %}" class="supervisor-voltar">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>
+        Voltar para usuários
+    </a>
+
+    <header class="supervisor-detalhe-cabecalho">
+        <div>
+            <span class="supervisor-etiqueta">Conta cadastrada</span>
+            <h1>{% firstof usuario_detalhe.get_full_name usuario_detalhe.username %}</h1>
+            <p>Membro desde {{ usuario_detalhe.date_joined|date:"d/m/Y" }}</p>
+        </div>
+
+        <span class="supervisor-status {% if usuario_detalhe.is_active %}supervisor-status--publicado{% else %}supervisor-status--arquivado{% endif %} supervisor-status--grande">
+            {% if usuario_detalhe.is_active %}Conta ativa{% else %}Conta inativa{% endif %}
+        </span>
+    </header>
+
+    <div class="supervisor-detalhe-grade">
+        <section class="supervisor-detalhe-principal">
+            <article class="supervisor-card supervisor-formulario__secao">
+                <header class="supervisor-card__cabecalho">
+                    <div>
+                        <span class="supervisor-card__etiqueta">Perfil</span>
+                        <h2>Dados do usuário</h2>
+                    </div>
+                </header>
+
+                <dl class="supervisor-informacoes">
+                    <div><dt>Nome</dt><dd>{% firstof usuario_detalhe.get_full_name "Não informado" %}</dd></div>
+                    <div><dt>Usuário</dt><dd>{{ usuario_detalhe.username }}</dd></div>
+                    <div><dt>E-mail</dt><dd>{{ usuario_detalhe.email|default:"Não informado" }}</dd></div>
+                    <div><dt>Telefone</dt><dd>{{ usuario_detalhe.perfil.telefone|default:"Não informado" }}</dd></div>
+                    <div><dt>Localização</dt><dd>{% if usuario_detalhe.perfil.cidade %}{{ usuario_detalhe.perfil.cidade }}/{{ usuario_detalhe.perfil.estado }}{% else %}Não informada{% endif %}</dd></div>
+                    <div><dt>Último acesso</dt><dd>{{ usuario_detalhe.last_login|date:"d/m/Y H:i"|default:"Nunca acessou" }}</dd></div>
+                </dl>
+            </article>
+
+            <article class="supervisor-card supervisor-card--tabela">
+                <header class="supervisor-card__cabecalho">
+                    <div>
+                        <span class="supervisor-card__etiqueta">Anúncios</span>
+                        <h2>Pets sob responsabilidade</h2>
+                        <p>{{ total_pets_usuario }} pet{{ total_pets_usuario|pluralize }} vinculado{{ total_pets_usuario|pluralize }} a esta conta.</p>
+                    </div>
+                </header>
+                {% include 'supervisores/partials/_tabela_pets.html' with pets=pets %}
+            </article>
+        </section>
+
+        <aside class="supervisor-detalhe-lateral">
+            <article class="supervisor-card supervisor-auditoria">
+                <span class="supervisor-card__etiqueta">Conta</span>
+                <dl>
+                    <div><dt>Data do cadastro</dt><dd>{{ usuario_detalhe.date_joined|date:"d/m/Y H:i" }}</dd></div>
+                    <div><dt>Estado atual</dt><dd>{% if usuario_detalhe.is_active %}Ativa{% else %}Inativa{% endif %}</dd></div>
+                </dl>
+            </article>
+
+            {% if pode_gerenciar %}
+                <article class="supervisor-card supervisor-moderacao">
+                    <span class="supervisor-card__etiqueta">Segurança</span>
+                    <h2>Gerenciar conta</h2>
+                    <form method="post" action="{% url 'supervisores:alterar_status_usuario' usuario_detalhe.id usuario_detalhe.is_active|yesno:'inativar,ativar' %}" class="supervisor-rejeitar-form">
+                        {% csrf_token %}
+                        <label for="motivo-status-usuario">Motivo da alteração</label>
+                        <textarea id="motivo-status-usuario" name="motivo" rows="3" required placeholder="Registre o motivo desta ação"></textarea>
+                        <button type="submit" class="supervisor-acao {% if usuario_detalhe.is_active %}supervisor-acao--rejeitar{% else %}supervisor-acao--aprovar{% endif %}" data-confirm="{% if usuario_detalhe.is_active %}Inativar{% else %}Reativar{% endif %} esta conta?">
+                            {% if usuario_detalhe.is_active %}Inativar conta{% else %}Reativar conta{% endif %}
+                        </button>
+                    </form>
+                </article>
+            {% endif %}
+        </aside>
+    </div>
+{% endblock %}

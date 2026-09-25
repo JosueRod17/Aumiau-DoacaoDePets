@@ -1,13 +1,13 @@
-<div class="supervisor-tabela-wrapper">
+<div class="supervisor-tabela-wrapper" role="region" aria-label="Lista de pets" tabindex="0">
     <table class="supervisor-tabela">
         <thead>
             <tr>
-                <th>Pet</th>
-                <th>Responsável</th>
-                <th>Localização</th>
-                <th>Status</th>
-                <th>Cadastro</th>
-                <th><span class="sr-only">Ações</span></th>
+                <th scope="col">Pet</th>
+                <th scope="col">Responsável</th>
+                <th scope="col">Localização</th>
+                <th scope="col">Status</th>
+                <th scope="col">Cadastro</th>
+                <th scope="col"><span class="sr-only">Ações</span></th>
             </tr>
         </thead>
 
@@ -57,7 +57,7 @@
 
                     <td>
                         <a href="{% url 'supervisores:pet_detalhe' pet.id %}" class="supervisor-tabela__acao">
-                            Analisar
+                            {% if pet.status == 'pendente' %}Analisar{% else %}Ver detalhes{% endif %}
                         </a>
                     </td>
                 </tr>

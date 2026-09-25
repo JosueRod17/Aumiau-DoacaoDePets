@@ -1,0 +1,118 @@
+{% extends 'supervisores/base.html' %}
+
+{% block title %}{{ ong.nome }} | Painel Admin AuMiau{% endblock %}
+
+{% block content %}
+    <a href="{% url 'supervisores:ongs_lista' %}" class="supervisor-voltar">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>
+        Voltar para ONGs
+    </a>
+
+    <header class="supervisor-detalhe-cabecalho">
+        <div>
+            <span class="supervisor-etiqueta">Organização parceira</span>
+            <h1>{{ ong.nome }}</h1>
+            <p>Cadastrada em {{ ong.criado_em|date:"d/m/Y \à\s H:i" }}</p>
+        </div>
+
+        <div class="supervisor-cabecalho-acoes">
+            {% if pode_editar %}
+                <a href="{% url 'supervisores:ong_editar' ong.id %}" class="supervisor-botao supervisor-botao--contorno">Editar cadastro</a>
+            {% endif %}
+            <span class="supervisor-status supervisor-status--{{ ong.status }} supervisor-status--grande">{{ ong.get_status_display }}</span>
+        </div>
+    </header>
+
+    <div class="supervisor-detalhe-grade">
+        <section class="supervisor-detalhe-principal">
+            <article class="supervisor-card supervisor-formulario__secao">
+                <header class="supervisor-card__cabecalho">
+                    <div>
+                        <span class="supervisor-card__etiqueta">Cadastro</span>
+                        <h2>Informações da ONG</h2>
+                    </div>
+                </header>
+
+                <dl class="supervisor-informacoes">
+                    <div><dt>Nome</dt><dd>{{ ong.nome }}</dd></div>
+                    <div><dt>Localização</dt><dd>{{ ong.cidade }}/{{ ong.estado }}</dd></div>
+                    <div><dt>Pets vinculados</dt><dd>{{ ong.total_pets }}</dd></div>
+                    <div><dt>Última atualização</dt><dd>{{ ong.atualizado_em|date:"d/m/Y H:i" }}</dd></div>
+                </dl>
+
+                <div class="supervisor-descricao">
+                    <h3>Sobre a organização</h3>
+                    <p>{{ ong.descricao|linebreaksbr|default:"Nenhuma descrição informada." }}</p>
+                </div>
+            </article>
+
+            <article class="supervisor-card supervisor-card--tabela">
+                <header class="supervisor-card__cabecalho">
+                    <div>
+                        <span class="supervisor-card__etiqueta">Anúncios</span>
+                        <h2>Pets vinculados</h2>
+                        <p>Últimos animais cadastrados por esta ONG.</p>
+                    </div>
+                </header>
+
+                {% include 'supervisores/partials/_tabela_pets.html' with pets=pets %}
+            </article>
+        </section>
+
+        <aside class="supervisor-detalhe-lateral">
+            <article class="supervisor-card supervisor-auditoria">
+                <span class="supervisor-card__etiqueta">Auditoria</span>
+                <dl>
+                    <div><dt>Última moderação</dt><dd>{{ ong.moderado_em|date:"d/m/Y H:i"|default:"Ainda não moderada" }}</dd></div>
+                    <div><dt>Moderada por</dt><dd>{% firstof ong.moderado_por.get_full_name ong.moderado_por.username "—" %}</dd></div>
+                </dl>
+            </article>
+
+            {% if ong.motivo_rejeicao %}
+                <article class="supervisor-card supervisor-rejeicao">
+                    <span class="supervisor-card__etiqueta">Motivo da decisão</span>
+                    <p>{{ ong.motivo_rejeicao }}</p>
+                </article>
+            {% endif %}
+
+            {% if pode_moderar %}
+                <article class="supervisor-card supervisor-moderacao">
+                    <span class="supervisor-card__etiqueta">Decisão</span>
+                    <h2>Moderar ONG</h2>
+
+                    {% if 'aprovar' in acoes_disponiveis %}
+                        <form method="post" action="{% url 'supervisores:moderar_ong' ong.id 'aprovar' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="supervisor-acao supervisor-acao--aprovar" data-confirm="Aprovar {{ ong.nome }} como parceira?">Aprovar ONG</button>
+                        </form>
+                    {% endif %}
+
+                    {% if 'rejeitar' in acoes_disponiveis %}
+                        <form method="post" action="{% url 'supervisores:moderar_ong' ong.id 'rejeitar' %}" class="supervisor-rejeitar-form">
+                            {% csrf_token %}
+                            <label for="motivo-rejeicao-ong">Motivo da rejeição</label>
+                            <textarea id="motivo-rejeicao-ong" name="motivo" rows="3" required placeholder="Explique o que precisa ser corrigido"></textarea>
+                            <button type="submit" class="supervisor-acao supervisor-acao--rejeitar" data-confirm="Rejeitar o cadastro desta ONG?">Rejeitar cadastro</button>
+                        </form>
+                    {% endif %}
+
+                    {% if 'suspender' in acoes_disponiveis %}
+                        <form method="post" action="{% url 'supervisores:moderar_ong' ong.id 'suspender' %}" class="supervisor-rejeitar-form">
+                            {% csrf_token %}
+                            <label for="motivo-suspensao-ong">Motivo da suspensão</label>
+                            <textarea id="motivo-suspensao-ong" name="motivo" rows="3" required placeholder="Informe o motivo da suspensão"></textarea>
+                            <button type="submit" class="supervisor-acao supervisor-acao--rejeitar" data-confirm="Suspender esta ONG e arquivar seus anúncios publicados?">Suspender ONG</button>
+                        </form>
+                    {% endif %}
+
+                    {% if 'reabrir' in acoes_disponiveis %}
+                        <form method="post" action="{% url 'supervisores:moderar_ong' ong.id 'reabrir' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="supervisor-acao supervisor-acao--neutra" data-confirm="Enviar esta ONG para nova análise?">Enviar para nova análise</button>
+                        </form>
+                    {% endif %}
+                </article>
+            {% endif %}
+        </aside>
+    </div>
+{% endblock %}

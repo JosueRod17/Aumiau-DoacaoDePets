@@ -66,13 +66,13 @@
         {% endif %}
 
         {% if pode_ver_ongs %}
-            <a href="{% url 'admin:ongs_ong_changelist' %}?aprovada__exact=1" class="aumiau-kpi aumiau-kpi--brown">
+            <a href="{% url 'admin:ongs_ong_changelist' %}?status__exact=aprovada" class="aumiau-kpi aumiau-kpi--brown">
                 <span>ONGs aprovadas</span>
                 <strong>{{ ongs_aprovadas }}</strong>
                 <small>Parceiras ativas</small>
             </a>
 
-            <a href="{% url 'admin:ongs_ong_changelist' %}?aprovada__exact=0" class="aumiau-kpi aumiau-kpi--cream">
+            <a href="{% url 'admin:ongs_ong_changelist' %}?status__exact=pendente" class="aumiau-kpi aumiau-kpi--cream">
                 <span>ONGs pendentes</span>
                 <strong>{{ ongs_pendentes }}</strong>
                 <small>Aguardando análise</small>

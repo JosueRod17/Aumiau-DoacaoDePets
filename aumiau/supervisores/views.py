@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Count, Q
@@ -12,14 +13,37 @@ from django.views.decorators.http import require_POST
 from ongs.models import Ong
 from pets.models import Pet
 
+from .forms import (
+    FotoPetSupervisorFormSet,
+    OngSupervisorForm,
+    PetSupervisorForm,
+)
+from .models import RegistroAtividade
 from .permissions import (
     GRUPO_SUPERVISORES,
     supervisor_permission_required,
     supervisor_required,
+    superuser_required,
 )
+from .services import registrar_atividade
 
 
 ITENS_POR_PAGINA = 12
+
+TRANSICOES_PET = {
+    Pet.Status.PENDENTE: {'publicar', 'rejeitar', 'arquivar'},
+    Pet.Status.PUBLICADO: {'adotar', 'arquivar'},
+    Pet.Status.ADOTADO: {'arquivar', 'reabrir'},
+    Pet.Status.REJEITADO: {'reabrir', 'arquivar'},
+    Pet.Status.ARQUIVADO: {'reabrir'},
+}
+
+TRANSICOES_ONG = {
+    Ong.Status.PENDENTE: {'aprovar', 'rejeitar'},
+    Ong.Status.APROVADA: {'suspender'},
+    Ong.Status.REJEITADA: {'reabrir'},
+    Ong.Status.SUSPENSA: {'reabrir'},
+}
 
 
 def _usuarios_comuns():
@@ -51,7 +75,13 @@ def dashboard(request):
 
     pode_ver_pets = request.user.has_perm('pets.view_pet')
     pode_ver_ongs = request.user.has_perm('ongs.view_ong')
-    pode_ver_usuarios = request.user.has_perm('auth.view_user')
+    pode_ver_usuarios = request.user.has_perms((
+        'auth.view_user',
+        'usuarios.view_perfil',
+    ))
+    pode_ver_atividades = request.user.has_perm(
+        'supervisores.view_registroatividade'
+    )
 
     contexto = {
         'pagina_ativa': 'dashboard',
@@ -59,6 +89,7 @@ def dashboard(request):
         'pode_ver_pets': pode_ver_pets,
         'pode_ver_ongs': pode_ver_ongs,
         'pode_ver_usuarios': pode_ver_usuarios,
+        'pode_ver_atividades': pode_ver_atividades,
         'total_pets': 0,
         'pets_pendentes': 0,
         'pets_publicados': 0,
@@ -151,7 +182,7 @@ def dashboard(request):
             total=Count('pk'),
             pendentes=Count(
                 'pk',
-                filter=Q(aprovada=False),
+                filter=Q(status=Ong.Status.PENDENTE),
             ),
         )
 
@@ -169,6 +200,12 @@ def dashboard(request):
                 date_joined__gte=ultimos_30_dias,
             ).count(),
         })
+
+    contexto['atividades_recentes'] = (
+        RegistroAtividade.objects.select_related('supervisor')[:6]
+        if pode_ver_atividades
+        else []
+    )
 
     return render(
         request,
@@ -212,13 +249,22 @@ def pets_lista(request):
         pets,
     )
 
+    titulos_por_status = {
+        Pet.Status.PENDENTE: 'Fila de moderação',
+        Pet.Status.PUBLICADO: 'Pets publicados',
+        Pet.Status.ADOTADO: 'Pets adotados',
+        Pet.Status.REJEITADO: 'Anúncios rejeitados',
+        Pet.Status.ARQUIVADO: 'Anúncios arquivados',
+    }
+    titulo_lista = titulos_por_status.get(status, 'Todos os pets')
+
     contexto = {
         'pagina_ativa': (
             'moderacao'
             if status == Pet.Status.PENDENTE
             else 'pets'
         ),
-        'titulo_pagina': 'Moderação de pets',
+        'titulo_pagina': titulo_lista,
         'pets': pagina,
         'pagina': pagina,
         'intervalo_paginas': intervalo_paginas,
@@ -228,17 +274,103 @@ def pets_lista(request):
         'total_resultados': pagina.paginator.count,
     }
 
-    contexto['titulo_pagina'] = (
-        'Fila de moderação'
-        if status == Pet.Status.PENDENTE
-        else 'Pets cadastrados'
-    )
-
     return render(
         request,
         'supervisores/pets_lista.html',
         contexto,
     )
+
+
+def _salvar_formulario_pet(request, pet, criando=False):
+    form = PetSupervisorForm(
+        request.POST or None,
+        request.FILES or None,
+        instance=pet,
+    )
+    fotos_formset = FotoPetSupervisorFormSet(
+        request.POST or None,
+        request.FILES or None,
+        instance=pet,
+        prefix='fotos',
+    )
+
+    if (
+        request.method == 'POST'
+        and form.is_valid()
+        and fotos_formset.is_valid()
+    ):
+        with transaction.atomic():
+            pet = form.save(commit=False)
+
+            if criando:
+                pet.criado_por = request.user
+                pet.status = Pet.Status.PENDENTE
+
+            pet.save()
+            fotos_formset.instance = pet
+            fotos_formset.save()
+
+            registrar_atividade(
+                request.user,
+                (
+                    RegistroAtividade.Acao.CADASTROU
+                    if criando
+                    else RegistroAtividade.Acao.EDITOU
+                ),
+                'pet',
+                pet,
+                (
+                    f'Cadastrou o pet {pet.nome}.'
+                    if criando
+                    else f'Atualizou os dados de {pet.nome}.'
+                ),
+            )
+
+        messages.success(
+            request,
+            (
+                'Pet cadastrado e enviado para moderação.'
+                if criando
+                else 'Dados do pet atualizados com sucesso.'
+            ),
+        )
+
+        return redirect(
+            'supervisores:pet_detalhe',
+            pet_id=pet.pk,
+        )
+
+    return render(
+        request,
+        'supervisores/pet_form.html',
+        {
+            'pagina_ativa': 'pets',
+            'titulo_pagina': (
+                'Cadastrar pet'
+                if criando
+                else f'Editar {pet.nome}'
+            ),
+            'form': form,
+            'fotos_formset': fotos_formset,
+            'pet': None if criando else pet,
+            'criando': criando,
+        },
+    )
+
+
+@supervisor_permission_required('pets.add_pet')
+def pet_criar(request):
+    return _salvar_formulario_pet(
+        request,
+        Pet(),
+        criando=True,
+    )
+
+
+@supervisor_permission_required('pets.change_pet')
+def pet_editar(request, pet_id):
+    pet = get_object_or_404(Pet, pk=pet_id)
+    return _salvar_formulario_pet(request, pet)
 
 
 @supervisor_permission_required('pets.view_pet')
@@ -267,14 +399,21 @@ def pet_detalhe(request, pet_id):
             'titulo_pagina': f'Análise de {pet.nome}',
             'pet': pet,
             'pode_moderar': request.user.has_perm(
+                'supervisores.moderar_pet'
+            ),
+            'pode_editar': request.user.has_perm(
                 'pets.change_pet'
+            ),
+            'acoes_disponiveis': TRANSICOES_PET.get(
+                pet.status,
+                set(),
             ),
         },
     )
 
 
 @require_POST
-@supervisor_permission_required('pets.change_pet')
+@supervisor_permission_required('supervisores.moderar_pet')
 def moderar_pet(request, pet_id, acao):
     acoes_permitidas = {
         'publicar': Pet.Status.PUBLICADO,
@@ -285,13 +424,6 @@ def moderar_pet(request, pet_id, acao):
     }
 
     novo_status = acoes_permitidas.get(acao)
-
-    if not novo_status:
-        messages.error(request, 'Ação de moderação inválida.')
-        return redirect(
-            'supervisores:pet_detalhe',
-            pet_id=pet_id,
-        )
 
     motivo_rejeicao = request.POST.get(
         'motivo_rejeicao',
@@ -314,45 +446,6 @@ def moderar_pet(request, pet_id, acao):
 
     agora = timezone.now()
 
-    with transaction.atomic():
-        pet = get_object_or_404(
-            Pet.objects.select_for_update(),
-            pk=pet_id,
-        )
-
-        pet.status = novo_status
-        pet.moderado_por = request.user
-        pet.moderado_em = agora
-
-        campos_atualizados = [
-            'status',
-            'moderado_por',
-            'moderado_em',
-            'atualizado_em',
-        ]
-
-        if novo_status == Pet.Status.PUBLICADO:
-            pet.publicado_em = agora
-            pet.motivo_rejeicao = ''
-            campos_atualizados.extend([
-                'publicado_em',
-                'motivo_rejeicao',
-            ])
-
-        if novo_status == Pet.Status.ADOTADO:
-            pet.adotado_em = agora
-            campos_atualizados.append('adotado_em')
-
-        if novo_status == Pet.Status.REJEITADO:
-            pet.motivo_rejeicao = motivo_rejeicao
-            campos_atualizados.append('motivo_rejeicao')
-
-        if novo_status == Pet.Status.PENDENTE:
-            pet.motivo_rejeicao = ''
-            campos_atualizados.append('motivo_rejeicao')
-
-        pet.save(update_fields=campos_atualizados)
-
     mensagens = {
         'publicar': 'Anúncio publicado com sucesso.',
         'rejeitar': 'Anúncio rejeitado.',
@@ -360,6 +453,106 @@ def moderar_pet(request, pet_id, acao):
         'arquivar': 'Anúncio arquivado.',
         'reabrir': 'Anúncio enviado novamente para análise.',
     }
+
+    with transaction.atomic():
+        pet = get_object_or_404(
+            Pet.objects.select_for_update().select_related('ong'),
+            pk=pet_id,
+        )
+
+        if (
+            not novo_status
+            or acao not in TRANSICOES_PET.get(pet.status, set())
+        ):
+            messages.error(
+                request,
+                'Essa mudança de status não é permitida.',
+            )
+            return redirect(
+                'supervisores:pet_detalhe',
+                pet_id=pet_id,
+            )
+
+        if (
+            novo_status == Pet.Status.PUBLICADO
+            and pet.ong_id
+            and pet.ong.status != Ong.Status.APROVADA
+        ):
+            messages.error(
+                request,
+                'A ONG responsável precisa estar aprovada antes da publicação.',
+            )
+            return redirect(
+                'supervisores:pet_detalhe',
+                pet_id=pet_id,
+            )
+
+        pet.status = novo_status
+        pet.moderado_por = request.user
+        pet.moderado_em = agora
+
+        campos_atualizados = {
+            'status',
+            'moderado_por',
+            'moderado_em',
+            'atualizado_em',
+        }
+
+        if novo_status == Pet.Status.PUBLICADO:
+            pet.publicado_em = agora
+            pet.adotado_em = None
+            pet.motivo_rejeicao = ''
+            campos_atualizados.update({
+                'publicado_em',
+                'adotado_em',
+                'motivo_rejeicao',
+            })
+
+        if novo_status == Pet.Status.ADOTADO:
+            pet.adotado_em = agora
+            pet.motivo_rejeicao = ''
+            campos_atualizados.update({
+                'adotado_em',
+                'motivo_rejeicao',
+            })
+
+        if novo_status == Pet.Status.REJEITADO:
+            pet.motivo_rejeicao = motivo_rejeicao
+            pet.publicado_em = None
+            pet.adotado_em = None
+            campos_atualizados.update({
+                'motivo_rejeicao',
+                'publicado_em',
+                'adotado_em',
+            })
+
+        if novo_status == Pet.Status.PENDENTE:
+            pet.motivo_rejeicao = ''
+            pet.publicado_em = None
+            pet.adotado_em = None
+            campos_atualizados.update({
+                'motivo_rejeicao',
+                'publicado_em',
+                'adotado_em',
+            })
+
+        pet.save(update_fields=list(campos_atualizados))
+
+        acoes_registro = {
+            'publicar': RegistroAtividade.Acao.PUBLICOU,
+            'rejeitar': RegistroAtividade.Acao.REJEITOU,
+            'adotar': RegistroAtividade.Acao.ADOTOU,
+            'arquivar': RegistroAtividade.Acao.ARQUIVOU,
+            'reabrir': RegistroAtividade.Acao.REABRIU,
+        }
+
+        registrar_atividade(
+            request.user,
+            acoes_registro[acao],
+            'pet',
+            pet,
+            f'{mensagens[acao][:-1]}: {pet.nome}.',
+        )
 
     messages.success(request, mensagens[acao])
 
@@ -380,10 +573,15 @@ def ongs_lista(request):
         .order_by('-criado_em')
     )
 
-    if situacao == 'aprovadas':
-        ongs = ongs.filter(aprovada=True)
-    elif situacao == 'pendentes':
-        ongs = ongs.filter(aprovada=False)
+    filtros_status = {
+        'aprovadas': Ong.Status.APROVADA,
+        'pendentes': Ong.Status.PENDENTE,
+        'rejeitadas': Ong.Status.REJEITADA,
+        'suspensas': Ong.Status.SUSPENSA,
+    }
+
+    if situacao in filtros_status:
+        ongs = ongs.filter(status=filtros_status[situacao])
     else:
         situacao = ''
 
@@ -412,38 +610,226 @@ def ongs_lista(request):
             'situacao_atual': situacao,
             'total_resultados': pagina.paginator.count,
             'pode_moderar_ongs': request.user.has_perm(
-                'ongs.change_ong'
+                'supervisores.moderar_ong'
+            ),
+            'pode_adicionar_ong': request.user.has_perm(
+                'ongs.add_ong'
+            ),
+        },
+    )
+
+
+def _salvar_formulario_ong(request, ong, criando=False):
+    form = OngSupervisorForm(
+        request.POST or None,
+        instance=ong,
+    )
+
+    if request.method == 'POST' and form.is_valid():
+        with transaction.atomic():
+            ong = form.save()
+
+            registrar_atividade(
+                request.user,
+                (
+                    RegistroAtividade.Acao.CADASTROU
+                    if criando
+                    else RegistroAtividade.Acao.EDITOU
+                ),
+                'ong',
+                ong,
+                (
+                    f'Cadastrou a ONG {ong.nome}.'
+                    if criando
+                    else f'Atualizou os dados da ONG {ong.nome}.'
+                ),
+            )
+
+        messages.success(
+            request,
+            (
+                'ONG cadastrada e enviada para análise.'
+                if criando
+                else 'Dados da ONG atualizados com sucesso.'
+            ),
+        )
+
+        return redirect(
+            'supervisores:ong_detalhe',
+            ong_id=ong.pk,
+        )
+
+    return render(
+        request,
+        'supervisores/ong_form.html',
+        {
+            'pagina_ativa': 'ongs',
+            'titulo_pagina': (
+                'Cadastrar ONG'
+                if criando
+                else f'Editar {ong.nome}'
+            ),
+            'form': form,
+            'ong': None if criando else ong,
+            'criando': criando,
+        },
+    )
+
+
+@supervisor_permission_required('ongs.add_ong')
+def ong_criar(request):
+    return _salvar_formulario_ong(
+        request,
+        Ong(),
+        criando=True,
+    )
+
+
+@supervisor_permission_required('ongs.change_ong')
+def ong_editar(request, ong_id):
+    ong = get_object_or_404(Ong, pk=ong_id)
+    return _salvar_formulario_ong(request, ong)
+
+
+@supervisor_permission_required('ongs.view_ong')
+def ong_detalhe(request, ong_id):
+    ong = get_object_or_404(
+        Ong.objects
+        .select_related('moderado_por')
+        .annotate(total_pets=Count('pets')),
+        pk=ong_id,
+    )
+
+    pets = (
+        ong.pets
+        .select_related('responsavel')
+        .order_by('-criado_em')[:8]
+    )
+
+    return render(
+        request,
+        'supervisores/ong_detalhe.html',
+        {
+            'pagina_ativa': 'ongs',
+            'titulo_pagina': ong.nome,
+            'ong': ong,
+            'pets': pets,
+            'pode_editar': request.user.has_perm('ongs.change_ong'),
+            'pode_moderar': request.user.has_perm(
+                'supervisores.moderar_ong'
+            ),
+            'acoes_disponiveis': TRANSICOES_ONG.get(
+                ong.status,
+                set(),
             ),
         },
     )
 
 
 @require_POST
-@supervisor_permission_required('ongs.change_ong')
+@supervisor_permission_required('supervisores.moderar_ong')
 def moderar_ong(request, ong_id, acao):
-    if acao not in {'aprovar', 'reabrir'}:
-        messages.error(request, 'Ação de moderação inválida.')
-        return redirect('supervisores:ongs_lista')
+    novos_status = {
+        'aprovar': Ong.Status.APROVADA,
+        'rejeitar': Ong.Status.REJEITADA,
+        'suspender': Ong.Status.SUSPENSA,
+        'reabrir': Ong.Status.PENDENTE,
+    }
+    motivo = request.POST.get('motivo', '').strip()
 
-    ong = get_object_or_404(Ong, pk=ong_id)
-    ong.aprovada = acao == 'aprovar'
-    ong.save(update_fields=['aprovada'])
-
-    if ong.aprovada:
-        messages.success(
-            request,
-            f'A ONG {ong.nome} foi aprovada.',
-        )
-    else:
-        messages.success(
-            request,
-            f'A ONG {ong.nome} voltou para análise.',
+    with transaction.atomic():
+        ong = get_object_or_404(
+            Ong.objects.select_for_update(),
+            pk=ong_id,
         )
 
-    return redirect('supervisores:ongs_lista')
+        if (
+            acao not in novos_status
+            or acao not in TRANSICOES_ONG.get(ong.status, set())
+        ):
+            messages.error(
+                request,
+                'Essa mudança de situação não é permitida.',
+            )
+            return redirect(
+                'supervisores:ong_detalhe',
+                ong_id=ong.pk,
+            )
+
+        if acao in {'rejeitar', 'suspender'} and not motivo:
+            messages.error(
+                request,
+                'Informe o motivo antes de continuar.',
+            )
+            return redirect(
+                'supervisores:ong_detalhe',
+                ong_id=ong.pk,
+            )
+
+        ong.status = novos_status[acao]
+        ong.motivo_rejeicao = (
+            motivo if acao in {'rejeitar', 'suspender'} else ''
+        )
+        ong.moderado_por = request.user
+        ong.moderado_em = timezone.now()
+        ong.save(update_fields=[
+            'status',
+            'aprovada',
+            'motivo_rejeicao',
+            'moderado_por',
+            'moderado_em',
+            'atualizado_em',
+        ])
+
+        pets_arquivados = 0
+
+        if acao == 'suspender':
+            pets_arquivados = ong.pets.filter(
+                status=Pet.Status.PUBLICADO,
+            ).update(
+                status=Pet.Status.ARQUIVADO,
+                moderado_por=request.user,
+                moderado_em=ong.moderado_em,
+                atualizado_em=ong.moderado_em,
+            )
+
+        acoes_registro = {
+            'aprovar': RegistroAtividade.Acao.APROVOU,
+            'rejeitar': RegistroAtividade.Acao.REJEITOU,
+            'suspender': RegistroAtividade.Acao.ARQUIVOU,
+            'reabrir': RegistroAtividade.Acao.REABRIU,
+        }
+
+        registrar_atividade(
+            request.user,
+            acoes_registro[acao],
+            'ong',
+            ong,
+            f'{ong.get_status_display()}: ONG {ong.nome}.',
+        )
+
+    mensagens_ong = {
+        'aprovar': f'A ONG {ong.nome} foi aprovada.',
+        'rejeitar': f'O cadastro de {ong.nome} foi rejeitado.',
+        'suspender': (
+            f'A ONG {ong.nome} foi suspensa. '
+            f'{pets_arquivados} anúncio(s) publicado(s) foram arquivados.'
+        ),
+        'reabrir': f'A ONG {ong.nome} voltou para análise.',
+    }
+
+    messages.success(request, mensagens_ong[acao])
+
+    return redirect(
+        'supervisores:ong_detalhe',
+        ong_id=ong.pk,
+    )
 
 
-@supervisor_permission_required('auth.view_user')
+@supervisor_permission_required(
+    'auth.view_user',
+    'usuarios.view_perfil',
+)
 def usuarios_lista(request):
     busca = request.GET.get('busca', '').strip()
     situacao = request.GET.get('situacao', '').strip()
@@ -488,3 +874,264 @@ def usuarios_lista(request):
             'total_resultados': pagina.paginator.count,
         },
     )
+
+
+@supervisor_permission_required(
+    'auth.view_user',
+    'usuarios.view_perfil',
+)
+def usuario_detalhe(request, usuario_id):
+    usuario = get_object_or_404(
+        _usuarios_comuns().select_related('perfil'),
+        pk=usuario_id,
+    )
+
+    pets = (
+        usuario.pets_sob_responsabilidade
+        .select_related('ong')
+        .order_by('-criado_em')[:8]
+    )
+
+    return render(
+        request,
+        'supervisores/usuario_detalhe.html',
+        {
+            'pagina_ativa': 'usuarios',
+            'titulo_pagina': 'Detalhes do usuário',
+            'usuario_detalhe': usuario,
+            'pets': pets,
+            'total_pets_usuario': (
+                usuario.pets_sob_responsabilidade.count()
+            ),
+            'pode_gerenciar': request.user.has_perm(
+                'supervisores.gerenciar_usuarios'
+            ),
+        },
+    )
+
+
+@require_POST
+@supervisor_permission_required('supervisores.gerenciar_usuarios')
+def alterar_status_usuario(request, usuario_id, acao):
+    if acao not in {'ativar', 'inativar'}:
+        messages.error(request, 'Ação de usuário inválida.')
+        return redirect(
+            'supervisores:usuario_detalhe',
+            usuario_id=usuario_id,
+        )
+
+    motivo = request.POST.get('motivo', '').strip()
+
+    if not motivo:
+        messages.error(
+            request,
+            'Informe o motivo da alteração da conta.',
+        )
+        return redirect(
+            'supervisores:usuario_detalhe',
+            usuario_id=usuario_id,
+        )
+
+    with transaction.atomic():
+        usuario = get_object_or_404(
+            _usuarios_comuns().select_for_update(),
+            pk=usuario_id,
+        )
+
+        if usuario.pk == request.user.pk:
+            messages.error(
+                request,
+                'Você não pode alterar o estado da própria conta.',
+            )
+            return redirect(
+                'supervisores:usuario_detalhe',
+                usuario_id=usuario.pk,
+            )
+
+        novo_estado = acao == 'ativar'
+
+        if usuario.is_active == novo_estado:
+            messages.info(
+                request,
+                'A conta já está com a situação solicitada.',
+            )
+            return redirect(
+                'supervisores:usuario_detalhe',
+                usuario_id=usuario.pk,
+            )
+
+        usuario.is_active = novo_estado
+        usuario.save(update_fields=['is_active'])
+
+        registrar_atividade(
+            request.user,
+            (
+                RegistroAtividade.Acao.ATIVOU
+                if usuario.is_active
+                else RegistroAtividade.Acao.DESATIVOU
+            ),
+            'usuario',
+            usuario,
+            (
+                f'{"Ativou" if usuario.is_active else "Inativou"} '
+                f'a conta {usuario.get_username()}. Motivo: {motivo}'
+            ),
+        )
+
+    messages.success(
+        request,
+        (
+            'Conta reativada com sucesso.'
+            if usuario.is_active
+            else 'Conta inativada com sucesso.'
+        ),
+    )
+
+    return redirect(
+        'supervisores:usuario_detalhe',
+        usuario_id=usuario.pk,
+    )
+
+
+@supervisor_permission_required('supervisores.view_registroatividade')
+def atividades_lista(request):
+    busca = request.GET.get('busca', '').strip()
+    acao = request.GET.get('acao', '').strip()
+
+    atividades = (
+        RegistroAtividade.objects
+        .select_related('supervisor')
+    )
+
+    acoes_validas = {
+        valor for valor, _ in RegistroAtividade.Acao.choices
+    }
+
+    if acao in acoes_validas:
+        atividades = atividades.filter(acao=acao)
+    else:
+        acao = ''
+
+    if busca:
+        atividades = atividades.filter(
+            Q(descricao__icontains=busca)
+            | Q(supervisor__first_name__icontains=busca)
+            | Q(supervisor__last_name__icontains=busca)
+            | Q(supervisor__username__icontains=busca)
+        )
+
+    pagina, intervalo_paginas = _paginacao(
+        request,
+        atividades,
+    )
+
+    return render(
+        request,
+        'supervisores/atividades_lista.html',
+        {
+            'pagina_ativa': 'atividades',
+            'titulo_pagina': 'Histórico de atividades',
+            'atividades': pagina,
+            'pagina': pagina,
+            'intervalo_paginas': intervalo_paginas,
+            'busca': busca,
+            'acao_atual': acao,
+            'acoes_opcoes': RegistroAtividade.Acao.choices,
+            'total_resultados': pagina.paginator.count,
+        },
+    )
+
+
+@superuser_required
+def equipe_lista(request):
+    busca = request.GET.get('busca', '').strip()
+    usuarios = (
+        get_user_model().objects
+        .filter(is_superuser=False)
+        .annotate(
+            total_grupos_supervisor=Count(
+                'groups',
+                filter=Q(groups__name=GRUPO_SUPERVISORES),
+            )
+        )
+        .order_by('first_name', 'last_name', 'username')
+    )
+
+    if busca:
+        usuarios = usuarios.filter(
+            Q(first_name__icontains=busca)
+            | Q(last_name__icontains=busca)
+            | Q(username__icontains=busca)
+            | Q(email__icontains=busca)
+        )
+
+    pagina, intervalo_paginas = _paginacao(request, usuarios)
+
+    return render(
+        request,
+        'supervisores/equipe_lista.html',
+        {
+            'pagina_ativa': 'equipe',
+            'titulo_pagina': 'Equipe de supervisão',
+            'usuarios_equipe': pagina,
+            'pagina': pagina,
+            'intervalo_paginas': intervalo_paginas,
+            'busca': busca,
+            'total_resultados': pagina.paginator.count,
+        },
+    )
+
+
+@require_POST
+@superuser_required
+def alterar_supervisor(request, usuario_id, acao):
+    if acao not in {'promover', 'remover'}:
+        messages.error(request, 'Ação de equipe inválida.')
+        return redirect('supervisores:equipe_lista')
+
+    with transaction.atomic():
+        usuario = get_object_or_404(
+            get_user_model().objects
+            .select_for_update()
+            .filter(is_superuser=False),
+            pk=usuario_id,
+        )
+        grupo, _ = Group.objects.get_or_create(
+            name=GRUPO_SUPERVISORES,
+        )
+        possui_acesso = usuario.groups.filter(pk=grupo.pk).exists()
+
+        if (
+            (acao == 'promover' and possui_acesso)
+            or (acao == 'remover' and not possui_acesso)
+        ):
+            messages.info(
+                request,
+                'O acesso dessa conta já está atualizado.',
+            )
+            return redirect('supervisores:equipe_lista')
+
+        if acao == 'promover':
+            usuario.groups.add(grupo)
+
+            if usuario.is_staff:
+                usuario.is_staff = False
+                usuario.save(update_fields=['is_staff'])
+
+            atividade = RegistroAtividade.Acao.PROMOVEU
+            mensagem = f'{usuario.get_username()} agora é supervisor.'
+        else:
+            usuario.groups.remove(grupo)
+            atividade = RegistroAtividade.Acao.REMOVEU_ACESSO
+            mensagem = f'O acesso de {usuario.get_username()} foi removido.'
+
+        registrar_atividade(
+            request.user,
+            atividade,
+            'usuario',
+            usuario,
+            mensagem,
+        )
+    messages.success(request, mensagem)
+
+    return redirect('supervisores:equipe_lista')

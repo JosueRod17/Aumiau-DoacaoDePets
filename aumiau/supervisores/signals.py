@@ -11,9 +11,14 @@ PERMISSOES_SUPERVISOR = (
     ('pets', 'change_pet'),
     ('pets', 'view_fotopet'),
     ('ongs', 'view_ong'),
+    ('ongs', 'add_ong'),
     ('ongs', 'change_ong'),
     ('auth', 'view_user'),
     ('usuarios', 'view_perfil'),
+    ('supervisores', 'view_registroatividade'),
+    ('supervisores', 'moderar_pet'),
+    ('supervisores', 'moderar_ong'),
+    ('supervisores', 'gerenciar_usuarios'),
 )
 
 

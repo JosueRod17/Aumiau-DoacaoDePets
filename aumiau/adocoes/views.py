@@ -16,7 +16,9 @@ def home(request):
     login_next = request.GET.get('next', '')
 
     pets = Pet.objects.filter(status=Pet.Status.PUBLICADO,)
-    ongs_aprovadas = Ong.objects.filter(aprovada=True)
+    ongs_aprovadas = Ong.objects.filter(
+        status=Ong.Status.APROVADA,
+    )
 
     if localizacao:
         pets = pets.filter(

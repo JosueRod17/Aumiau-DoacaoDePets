@@ -1,0 +1,60 @@
+{% extends 'supervisores/base.html' %}
+
+{% block title %}Equipe | Painel Admin AuMiau{% endblock %}
+
+{% block content %}
+    <header class="supervisor-pagina-cabecalho">
+        <div>
+            <span class="supervisor-etiqueta">Acesso interno</span>
+            <h1>Equipe de supervisão</h1>
+            <p>Conceda ou remova acesso ao Painel Admin sem transformar a conta em superusuário.</p>
+        </div>
+    </header>
+
+    <section class="supervisor-card supervisor-card--lista">
+        <form method="get" class="supervisor-filtros">
+            <label class="supervisor-busca">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+                <input type="search" name="busca" value="{{ busca }}" aria-label="Buscar pessoas para a equipe" placeholder="Buscar por nome, usuário ou e-mail">
+            </label>
+            <button type="submit" class="supervisor-botao supervisor-botao--primario">Buscar</button>
+            {% if busca %}<a href="{% url 'supervisores:equipe_lista' %}" class="supervisor-filtros__limpar">Limpar busca</a>{% endif %}
+        </form>
+
+        <div class="supervisor-tabela-wrapper" role="region" aria-label="Usuários e acesso de supervisão" tabindex="0">
+            <table class="supervisor-tabela">
+                <thead>
+                    <tr>
+                        <th scope="col">Usuário</th>
+                        <th scope="col">E-mail</th>
+                        <th scope="col">Conta</th>
+                        <th scope="col">Acesso ao painel</th>
+                        <th scope="col"><span class="sr-only">Ações</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for usuario in usuarios_equipe %}
+                        <tr>
+                            <td>{% firstof usuario.get_full_name usuario.username %}<small class="supervisor-tabela__secundario">@{{ usuario.username }}</small></td>
+                            <td>{{ usuario.email|default:"Não informado" }}</td>
+                            <td>{% if usuario.is_active %}<span class="supervisor-status supervisor-status--publicado">Ativa</span>{% else %}<span class="supervisor-status supervisor-status--arquivado">Inativa</span>{% endif %}</td>
+                            <td>{% if usuario.total_grupos_supervisor %}<span class="supervisor-status supervisor-status--adotado">Supervisor</span>{% else %}<span class="supervisor-status supervisor-status--neutro">Usuário</span>{% endif %}</td>
+                            <td>
+                                <form method="post" action="{% url 'supervisores:alterar_supervisor' usuario.id usuario.total_grupos_supervisor|yesno:'remover,promover' %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="supervisor-tabela__botao {% if usuario.total_grupos_supervisor %}supervisor-tabela__botao--neutro{% else %}supervisor-tabela__botao--aprovar{% endif %}" data-confirm="{% if usuario.total_grupos_supervisor %}Remover o acesso de {{ usuario.username }}?{% else %}Conceder acesso de supervisor a {{ usuario.username }}?{% endif %}">
+                                        {% if usuario.total_grupos_supervisor %}Remover acesso{% else %}Tornar supervisor{% endif %}
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="5"><div class="supervisor-vazio supervisor-vazio--tabela"><strong>Nenhum usuário encontrado.</strong><p>Altere a busca e tente novamente.</p></div></td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% include 'supervisores/partials/_paginacao.html' %}
+    </section>
+{% endblock %}

@@ -181,11 +181,11 @@ class AuMiauAdminSite(AdminSite):
         if pode_ver_ongs:
             contexto_dashboard.update({
                 'ongs_aprovadas': Ong.objects.filter(
-                    aprovada=True,
+                    status=Ong.Status.APROVADA,
                 ).count(),
 
                 'ongs_pendentes': Ong.objects.filter(
-                    aprovada=False,
+                    status=Ong.Status.PENDENTE,
                 ).count(),
             })
 

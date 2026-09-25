@@ -194,4 +194,33 @@
             {% include 'supervisores/partials/_tabela_pets.html' with pets=ultimos_pets %}
         </section>
     {% endif %}
+
+    {% if pode_ver_atividades %}
+        <section class="supervisor-card supervisor-card--tabela">
+            <header class="supervisor-card__cabecalho">
+                <div>
+                    <span class="supervisor-card__etiqueta">Auditoria</span>
+                    <h2>Atividades recentes</h2>
+                    <p>Últimas decisões e alterações feitas pela equipe.</p>
+                </div>
+                <a href="{% url 'supervisores:atividades_lista' %}">Ver histórico</a>
+            </header>
+
+            <div class="supervisor-atividade-lista">
+                {% for atividade in atividades_recentes %}
+                    <article class="supervisor-atividade-item">
+                        <span class="supervisor-atividade-item__icone" aria-hidden="true">
+                            <svg viewBox="0 0 24 24"><path d="M12 8v4l3 2"></path><circle cx="12" cy="12" r="9"></circle></svg>
+                        </span>
+                        <span>
+                            <strong>{{ atividade.descricao }}</strong>
+                            <small>{% firstof atividade.supervisor.get_full_name atividade.supervisor.username "Conta removida" %} · {{ atividade.criado_em|date:"d/m/Y H:i" }}</small>
+                        </span>
+                    </article>
+                {% empty %}
+                    <div class="supervisor-vazio"><strong>Nenhuma atividade registrada.</strong><p>As próximas ações feitas no painel aparecerão aqui.</p></div>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
 {% endblock %}

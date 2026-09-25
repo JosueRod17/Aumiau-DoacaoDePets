@@ -1,0 +1,64 @@
+{% extends 'supervisores/base.html' %}
+
+{% block title %}Histórico | Painel Admin AuMiau{% endblock %}
+
+{% block content %}
+    <header class="supervisor-pagina-cabecalho">
+        <div>
+            <span class="supervisor-etiqueta">Auditoria</span>
+            <h1>Histórico de atividades</h1>
+            <p>{{ total_resultados }} registro{{ total_resultados|pluralize }} encontrado{{ total_resultados|pluralize }}.</p>
+        </div>
+    </header>
+
+    <section class="supervisor-card supervisor-card--lista">
+        <form method="get" class="supervisor-filtros">
+            <label class="supervisor-busca">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+                <input type="search" name="busca" value="{{ busca }}" aria-label="Buscar no histórico" placeholder="Buscar por descrição ou supervisor">
+            </label>
+
+            <label class="supervisor-select">
+                <span class="sr-only">Filtrar por ação</span>
+                <select name="acao">
+                    <option value="">Todas as ações</option>
+                    {% for valor, rotulo in acoes_opcoes %}
+                        <option value="{{ valor }}" {% if acao_atual == valor %}selected{% endif %}>{{ rotulo }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+
+            <button type="submit" class="supervisor-botao supervisor-botao--primario">Filtrar</button>
+            {% if busca or acao_atual %}<a href="{% url 'supervisores:atividades_lista' %}" class="supervisor-filtros__limpar">Limpar filtros</a>{% endif %}
+        </form>
+
+        <div class="supervisor-tabela-wrapper" role="region" aria-label="Histórico de atividades" tabindex="0">
+            <table class="supervisor-tabela">
+                <thead>
+                    <tr>
+                        <th scope="col">Data</th>
+                        <th scope="col">Responsável</th>
+                        <th scope="col">Ação</th>
+                        <th scope="col">Registro</th>
+                        <th scope="col">Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for atividade in atividades %}
+                        <tr>
+                            <td><time datetime="{{ atividade.criado_em|date:'c' }}">{{ atividade.criado_em|date:"d/m/Y H:i" }}</time></td>
+                            <td>{% firstof atividade.supervisor.get_full_name atividade.supervisor.username "Conta removida" %}</td>
+                            <td><span class="supervisor-status supervisor-status--neutro">{{ atividade.get_acao_display }}</span></td>
+                            <td>{{ atividade.entidade|capfirst }} #{{ atividade.objeto_id|default:"—" }}</td>
+                            <td>{{ atividade.descricao }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="5"><div class="supervisor-vazio supervisor-vazio--tabela"><strong>Nenhuma atividade encontrada.</strong><p>As ações realizadas no painel aparecerão aqui.</p></div></td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% include 'supervisores/partials/_paginacao.html' %}
+    </section>
+{% endblock %}

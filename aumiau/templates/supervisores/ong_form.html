@@ -1,0 +1,44 @@
+{% extends 'supervisores/base.html' %}
+
+{% block title %}{% if criando %}Cadastrar ONG{% else %}Editar {{ ong.nome }}{% endif %} | Painel Admin AuMiau{% endblock %}
+
+{% block content %}
+    <a href="{% if ong %}{% url 'supervisores:ong_detalhe' ong.id %}{% else %}{% url 'supervisores:ongs_lista' %}{% endif %}" class="supervisor-voltar">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>
+        Voltar
+    </a>
+
+    <header class="supervisor-pagina-cabecalho">
+        <div>
+            <span class="supervisor-etiqueta">Organizações parceiras</span>
+            <h1>{% if criando %}Cadastrar nova ONG{% else %}Editar {{ ong.nome }}{% endif %}</h1>
+            <p>{% if criando %}A ONG será criada como pendente para revisão.{% else %}Atualize os dados públicos da organização.{% endif %}</p>
+        </div>
+    </header>
+
+    <form method="post" class="supervisor-formulario supervisor-formulario--estreito">
+        {% csrf_token %}
+
+        <section class="supervisor-card supervisor-formulario__secao">
+            {% if form.non_field_errors %}<div class="supervisor-formulario__erro-geral" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+
+            <div class="supervisor-formulario__grade">
+                {% for field in form %}
+                    <div class="supervisor-campo{% if field.name == 'nome' or field.name == 'descricao' %} supervisor-campo--largo{% endif %}{% if field.errors %} has-error{% endif %}">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} <span aria-hidden="true">*</span>{% endif %}</label>
+                        {{ field }}
+                        {% if field.help_text %}<small class="supervisor-campo__ajuda">{{ field.help_text }}</small>{% endif %}
+                        {% for error in field.errors %}<small class="supervisor-campo__erro">{{ error }}</small>{% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <div class="supervisor-formulario__acoes">
+            <a href="{% if ong %}{% url 'supervisores:ong_detalhe' ong.id %}{% else %}{% url 'supervisores:ongs_lista' %}{% endif %}" class="supervisor-botao supervisor-botao--contorno">Cancelar</a>
+            <button type="submit" class="supervisor-botao supervisor-botao--primario">
+                {% if criando %}Cadastrar ONG{% else %}Salvar alterações{% endif %}
+            </button>
+        </div>
+    </form>
+{% endblock %}

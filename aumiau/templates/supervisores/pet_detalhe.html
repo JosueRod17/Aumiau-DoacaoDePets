@@ -3,7 +3,7 @@
 {% block title %}{{ pet.nome }} | Supervisor AuMiau{% endblock %}
 
 {% block content %}
-    <a href="{% url 'supervisores:pets_lista' %}{% if pet.status == 'pendente' %}?status=pendente{% endif %}" class="supervisor-voltar">
+    <a href="{% url 'supervisores:pets_lista' %}?status={{ pet.status }}" class="supervisor-voltar">
         <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="m15 18-6-6 6-6"></path>
         </svg>
@@ -17,9 +17,16 @@
             <p>Cadastrado em {{ pet.criado_em|date:"d/m/Y \à\s H:i" }}</p>
         </div>
 
-        <span class="supervisor-status supervisor-status--{{ pet.status }} supervisor-status--grande">
-            {{ pet.get_status_display }}
-        </span>
+        <div class="supervisor-cabecalho-acoes">
+            {% if pode_editar %}
+                <a href="{% url 'supervisores:pet_editar' pet.id %}" class="supervisor-botao supervisor-botao--contorno">
+                    Editar cadastro
+                </a>
+            {% endif %}
+            <span class="supervisor-status supervisor-status--{{ pet.status }} supervisor-status--grande">
+                {{ pet.get_status_display }}
+            </span>
+        </div>
     </header>
 
     <div class="supervisor-detalhe-grade">
@@ -82,11 +89,11 @@
                         <h3>Saúde e características</h3>
 
                         <div class="supervisor-chips">
-                            <span class="{% if pet.vacinado %}is-positive{% endif %}">Vacinado</span>
-                            <span class="{% if pet.castrado %}is-positive{% endif %}">Castrado</span>
-                            <span class="{% if pet.vermifugado %}is-positive{% endif %}">Vermifugado</span>
-                            <span class="{% if pet.microchipado %}is-positive{% endif %}">Microchipado</span>
-                            <span class="{% if pet.necessidades_especiais %}is-warning{% endif %}">Necessidades especiais</span>
+                            <span class="{% if pet.vacinado %}is-positive{% endif %}">{% if pet.vacinado %}Vacinado{% else %}Não vacinado{% endif %}</span>
+                            <span class="{% if pet.castrado %}is-positive{% endif %}">{% if pet.castrado %}Castrado{% else %}Não castrado{% endif %}</span>
+                            <span class="{% if pet.vermifugado %}is-positive{% endif %}">{% if pet.vermifugado %}Vermifugado{% else %}Não vermifugado{% endif %}</span>
+                            <span class="{% if pet.microchipado %}is-positive{% endif %}">{% if pet.microchipado %}Microchipado{% else %}Sem microchip{% endif %}</span>
+                            <span class="{% if pet.necessidades_especiais %}is-warning{% endif %}">{% if pet.necessidades_especiais %}Possui necessidades especiais{% else %}Sem necessidades especiais informadas{% endif %}</span>
                         </div>
 
                         {% if pet.necessidades_especiais and pet.descricao_necessidades_especiais %}
@@ -166,7 +173,7 @@
                     <span class="supervisor-card__etiqueta">Decisão</span>
                     <h2>Moderar anúncio</h2>
 
-                    {% if pet.status != 'publicado' %}
+                    {% if 'publicar' in acoes_disponiveis %}
                         <form method="post" action="{% url 'supervisores:moderar_pet' pet.id 'publicar' %}">
                             {% csrf_token %}
                             <button type="submit" class="supervisor-acao supervisor-acao--aprovar" data-confirm="Publicar este anúncio no site?">
@@ -175,7 +182,7 @@
                         </form>
                     {% endif %}
 
-                    {% if pet.status != 'adotado' %}
+                    {% if 'adotar' in acoes_disponiveis %}
                         <form method="post" action="{% url 'supervisores:moderar_pet' pet.id 'adotar' %}">
                             {% csrf_token %}
                             <button type="submit" class="supervisor-acao supervisor-acao--adotado" data-confirm="Marcar {{ pet.nome }} como adotado?">
@@ -184,7 +191,7 @@
                         </form>
                     {% endif %}
 
-                    {% if pet.status != 'arquivado' %}
+                    {% if 'arquivar' in acoes_disponiveis %}
                         <form method="post" action="{% url 'supervisores:moderar_pet' pet.id 'arquivar' %}">
                             {% csrf_token %}
                             <button type="submit" class="supervisor-acao supervisor-acao--neutra" data-confirm="Arquivar este anúncio?">
@@ -193,7 +200,7 @@
                         </form>
                     {% endif %}
 
-                    {% if pet.status == 'rejeitado' or pet.status == 'arquivado' %}
+                    {% if 'reabrir' in acoes_disponiveis %}
                         <form method="post" action="{% url 'supervisores:moderar_pet' pet.id 'reabrir' %}">
                             {% csrf_token %}
                             <button type="submit" class="supervisor-acao supervisor-acao--neutra">
@@ -202,7 +209,7 @@
                         </form>
                     {% endif %}
 
-                    {% if pet.status != 'rejeitado' %}
+                    {% if 'rejeitar' in acoes_disponiveis %}
                         <form method="post" action="{% url 'supervisores:moderar_pet' pet.id 'rejeitar' %}" class="supervisor-rejeitar-form">
                             {% csrf_token %}
                             <label for="motivo-rejeicao">Motivo da rejeição</label>
@@ -211,6 +218,10 @@
                                 Rejeitar anúncio
                             </button>
                         </form>
+                    {% endif %}
+
+                    {% if not acoes_disponiveis %}
+                        <p class="supervisor-texto-suave">Não há novas ações disponíveis para este status.</p>
                     {% endif %}
                 </article>
             {% endif %}

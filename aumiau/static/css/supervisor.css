@@ -2,6 +2,8 @@
     --sv-roxo: #7b3fc6;
     --sv-roxo-escuro: #6530aa;
     --sv-laranja: #ff9200;
+    --sv-laranja-texto: #934900;
+    --sv-laranja-contraste: #a45100;
     --sv-marrom: #351c0e;
     --sv-verde: #248455;
     --sv-vermelho: #b42318;
@@ -32,6 +34,8 @@ html[data-supervisor-theme="dark"] {
     --sv-roxo: #ad7ce7;
     --sv-roxo-escuro: #c39aec;
     --sv-laranja: #ffad33;
+    --sv-laranja-texto: #ffc875;
+    --sv-laranja-contraste: #a45100;
     --sv-sombra: 0 18px 48px rgba(0, 0, 0, 0.24);
     --sv-sombra-suave: 0 8px 24px rgba(0, 0, 0, 0.18);
     color-scheme: dark;
@@ -80,6 +84,39 @@ html[data-supervisor-theme="dark"] {
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
     border: 0;
+}
+
+.supervisor-skip-link {
+    position: fixed;
+    z-index: 999;
+    top: 10px;
+    left: 10px;
+    padding: 11px 16px;
+    color: #ffffff;
+    background: var(--sv-roxo-escuro);
+    border-radius: 10px;
+    box-shadow: var(--sv-sombra);
+    font-size: 13px;
+    font-weight: 800;
+    transform: translateY(calc(-100% - 20px));
+    transition: transform 0.16s ease;
+}
+
+.supervisor-skip-link:focus {
+    transform: translateY(0);
+}
+
+.supervisor-body :where(
+    a,
+    button,
+    input,
+    select,
+    textarea,
+    summary,
+    [tabindex]
+):focus-visible {
+    outline: 3px solid var(--sv-roxo);
+    outline-offset: 3px;
 }
 
 .supervisor-app {
@@ -159,7 +196,7 @@ html[data-supervisor-theme="dark"] {
     height: 38px;
     place-items: center;
     color: #ffffff;
-    background: linear-gradient(145deg, var(--sv-laranja), #ffb13d);
+    background: linear-gradient(145deg, var(--sv-laranja-contraste), #c86a00);
     border-radius: 12px;
     box-shadow: 0 7px 15px rgba(255, 146, 0, 0.2);
 }
@@ -244,7 +281,7 @@ html[data-supervisor-theme="dark"] {
     padding: 0 6px;
     place-items: center;
     color: #ffffff;
-    background: var(--sv-laranja);
+    background: var(--sv-laranja-contraste);
     border-radius: 999px;
     font-size: 10px;
     font-weight: 800;
@@ -596,7 +633,11 @@ html[data-supervisor-theme="dark"] .supervisor-tema {
 }
 
 .supervisor-mensagem {
-    padding: 13px 15px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 32px;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 10px 11px 15px;
     color: var(--sv-texto);
     background: var(--sv-superficie);
     border: 1px solid var(--sv-borda);
@@ -604,6 +645,35 @@ html[data-supervisor-theme="dark"] .supervisor-tema {
     border-radius: 12px;
     box-shadow: var(--sv-sombra-suave);
     font-size: 12px;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.supervisor-mensagem.is-leaving {
+    opacity: 0;
+    transform: translateX(18px);
+}
+
+.supervisor-mensagem__fechar {
+    display: grid;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    place-items: center;
+    color: var(--sv-texto-suave);
+    background: transparent;
+    border: 0;
+    border-radius: 9px;
+    cursor: pointer;
+}
+
+.supervisor-mensagem__fechar:hover {
+    color: var(--sv-texto);
+    background: var(--sv-creme);
+}
+
+.supervisor-mensagem__fechar svg {
+    width: 17px;
+    height: 17px;
 }
 
 .supervisor-mensagem--success {
@@ -625,8 +695,8 @@ html[data-supervisor-theme="dark"] .supervisor-tema {
 .supervisor-etiqueta,
 .supervisor-card__etiqueta {
     display: inline-flex;
-    color: var(--sv-laranja);
-    font-size: 10px;
+    color: var(--sv-laranja-texto);
+    font-size: 11px;
     font-weight: 800;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -764,7 +834,7 @@ html[data-supervisor-theme="dark"] .supervisor-tema {
 }
 
 .supervisor-kpi--laranja {
-    --kpi-cor: var(--sv-laranja);
+    --kpi-cor: var(--sv-laranja-texto);
     --kpi-cor-suave: rgba(255, 146, 0, 0.15);
 }
 
@@ -1096,6 +1166,12 @@ html[data-supervisor-theme="dark"] .supervisor-tema {
 
 .supervisor-tabela-wrapper {
     overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--sv-roxo) var(--sv-creme);
+}
+
+.supervisor-tabela-wrapper:focus-visible {
+    border-radius: 12px;
 }
 
 .supervisor-tabela {
@@ -1182,7 +1258,7 @@ html[data-supervisor-theme="dark"] .supervisor-tema {
 }
 
 .supervisor-entidade__icone--ong {
-    color: var(--sv-laranja);
+    color: var(--sv-laranja-texto);
     background: color-mix(in srgb, var(--sv-laranja) 12%, var(--sv-superficie));
 }
 
@@ -1365,7 +1441,8 @@ html[data-supervisor-theme="dark"] .supervisor-status--arquivado {
 }
 
 .supervisor-pet-card__imagem {
-    min-height: 390px;
+    aspect-ratio: 4 / 3;
+    min-height: 0;
     overflow: hidden;
     background: var(--sv-creme);
     border-radius: 17px;
@@ -1375,15 +1452,17 @@ html[data-supervisor-theme="dark"] .supervisor-status--arquivado {
     display: block;
     width: 100%;
     height: 100%;
-    min-height: 390px;
+    aspect-ratio: 4 / 3;
+    min-height: 0;
     object-fit: cover;
+    object-position: center;
 }
 
 .supervisor-sem-foto {
     display: grid;
     width: 100%;
     height: 100%;
-    min-height: 390px;
+    min-height: 0;
     place-items: center;
     align-content: center;
     gap: 12px;
@@ -1652,6 +1731,332 @@ html[data-supervisor-theme="dark"] .supervisor-status--arquivado {
     line-height: 1.5;
 }
 
+/* FORMULÁRIOS E TELAS OPERACIONAIS */
+
+.supervisor-cabecalho-acoes {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.supervisor-formulario {
+    display: grid;
+    gap: 20px;
+}
+
+.supervisor-formulario--estreito {
+    width: min(100%, 920px);
+}
+
+.supervisor-formulario__secao {
+    padding: 26px;
+}
+
+.supervisor-formulario__grade {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.supervisor-campo {
+    display: grid;
+    min-width: 0;
+    align-content: start;
+    gap: 7px;
+}
+
+.supervisor-campo--largo {
+    grid-column: 1 / -1;
+}
+
+.supervisor-campo > label:not(.supervisor-checkbox) {
+    color: var(--sv-texto);
+    font-size: 12px;
+    font-weight: 750;
+}
+
+.supervisor-form__controle {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    color: var(--sv-texto);
+    background: var(--sv-papel);
+    border: 1px solid var(--sv-borda);
+    border-radius: 12px;
+    outline: none;
+}
+
+textarea.supervisor-form__controle {
+    min-height: 100px;
+    resize: vertical;
+    line-height: 1.55;
+}
+
+select.supervisor-form__controle {
+    cursor: pointer;
+}
+
+input[type="file"].supervisor-form__controle {
+    padding: 7px;
+}
+
+.supervisor-form__controle:focus {
+    border-color: var(--sv-roxo);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--sv-roxo) 12%, transparent);
+}
+
+.supervisor-campo.has-error .supervisor-form__controle {
+    border-color: var(--sv-vermelho);
+}
+
+.supervisor-campo__ajuda,
+.supervisor-campo__erro {
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+.supervisor-campo__ajuda {
+    color: var(--sv-texto-suave);
+}
+
+.supervisor-campo__erro {
+    color: var(--sv-vermelho);
+    font-weight: 700;
+}
+
+.supervisor-formulario__erro-geral {
+    padding: 13px 15px;
+    color: var(--sv-vermelho);
+    background: color-mix(in srgb, var(--sv-vermelho) 8%, var(--sv-superficie));
+    border: 1px solid color-mix(in srgb, var(--sv-vermelho) 30%, var(--sv-borda));
+    border-radius: 12px;
+    font-size: 12px;
+}
+
+.supervisor-formulario__erro-geral .errorlist {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.supervisor-checkbox {
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    color: var(--sv-texto);
+    background: var(--sv-papel);
+    border: 1px solid var(--sv-borda);
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.supervisor-checkbox input,
+.supervisor-checkbox .supervisor-form__controle {
+    flex: 0 0 18px;
+    width: 18px;
+    min-height: 18px;
+    margin: 0;
+    padding: 0;
+    accent-color: var(--sv-roxo);
+}
+
+.supervisor-formulario__acoes {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.supervisor-galeria-form {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.supervisor-galeria-form__item {
+    display: grid;
+    align-content: start;
+    gap: 12px;
+    padding: 15px;
+    background: var(--sv-papel);
+    border: 1px solid var(--sv-borda);
+    border-radius: 15px;
+}
+
+.supervisor-galeria-form__item > img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 11px;
+}
+
+.supervisor-atividade-lista {
+    display: grid;
+    gap: 2px;
+}
+
+.supervisor-atividade-item {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 13px 4px;
+    border-bottom: 1px solid var(--sv-borda);
+}
+
+.supervisor-atividade-item:last-child {
+    border-bottom: 0;
+}
+
+.supervisor-atividade-item__icone {
+    display: grid;
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    place-items: center;
+    color: var(--sv-roxo);
+    background: color-mix(in srgb, var(--sv-roxo) 10%, var(--sv-superficie));
+    border-radius: 12px;
+}
+
+.supervisor-atividade-item__icone svg {
+    width: 19px;
+    height: 19px;
+}
+
+.supervisor-atividade-item > span:last-child {
+    display: grid;
+    min-width: 0;
+    gap: 4px;
+}
+
+.supervisor-atividade-item strong {
+    color: var(--sv-texto);
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.supervisor-atividade-item small,
+.supervisor-tabela__secundario {
+    display: block;
+    margin-top: 3px;
+    color: var(--sv-texto-suave);
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+.supervisor-status--aprovada {
+    color: #1f6b3a;
+    background: #e6f6ec;
+}
+
+.supervisor-status--rejeitada,
+.supervisor-status--suspensa {
+    color: #9b1c1c;
+    background: #fde9e9;
+}
+
+.supervisor-status--neutro {
+    color: #5e554f;
+    background: #eeeae7;
+}
+
+html[data-supervisor-theme="dark"] .supervisor-status--aprovada {
+    color: #8ce0ad;
+    background: #173b27;
+}
+
+html[data-supervisor-theme="dark"] .supervisor-status--rejeitada,
+html[data-supervisor-theme="dark"] .supervisor-status--suspensa {
+    color: #ffaaaa;
+    background: #4a1e1e;
+}
+
+html[data-supervisor-theme="dark"] .supervisor-status--neutro {
+    color: #d2c5bd;
+    background: #40342e;
+}
+
+/* LEGIBILIDADE */
+
+.supervisor-body input,
+.supervisor-body select,
+.supervisor-body textarea {
+    font-size: 13px;
+}
+
+.supervisor-identidade small,
+.supervisor-nav__titulo,
+.supervisor-nav__contador,
+.supervisor-sidebar__site small,
+.supervisor-topbar__titulo small,
+.supervisor-perfil__texto small,
+.supervisor-etiqueta,
+.supervisor-card__etiqueta,
+.supervisor-kpi > small,
+.supervisor-card__cabecalho > a,
+.supervisor-fila__texto small,
+.supervisor-fila__item time,
+.supervisor-vazio p,
+.supervisor-filtros__limpar,
+.supervisor-pet-resumo small,
+.supervisor-entidade small,
+.supervisor-status,
+.supervisor-tabela__acao,
+.supervisor-tabela__botao,
+.supervisor-paginacao > a,
+.supervisor-paginacao > span,
+.supervisor-paginacao__paginas > a,
+.supervisor-paginacao__paginas > span,
+.supervisor-destaque,
+.supervisor-informacoes dt,
+.supervisor-auditoria dt,
+.supervisor-chips span,
+.supervisor-galeria figcaption,
+.supervisor-rejeitar-form label {
+    font-size: 11px;
+}
+
+.supervisor-kpi > span:not(.supervisor-kpi__icone),
+.supervisor-card__cabecalho p,
+.supervisor-responsavel p,
+.supervisor-grafico__info,
+.supervisor-fila__texto strong,
+.supervisor-pet-resumo strong,
+.supervisor-entidade strong,
+.supervisor-informacoes dd,
+.supervisor-auditoria dd,
+.supervisor-descricao p,
+.supervisor-observacao,
+.supervisor-rejeicao p,
+.supervisor-acao,
+.supervisor-rejeitar-form textarea {
+    font-size: 12px;
+}
+
+.supervisor-busca input,
+.supervisor-select select {
+    font-size: 13px;
+}
+
+.supervisor-tabela th {
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+.supervisor-tabela td {
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.supervisor-status--grande {
+    font-size: 12px;
+}
+
 /* ACESSO NEGADO */
 
 .supervisor-acesso-negado {
@@ -1717,8 +2122,8 @@ html[data-supervisor-theme="dark"] .supervisor-status--arquivado {
     .supervisor-pet-card__imagem,
     .supervisor-pet-card__imagem > img,
     .supervisor-sem-foto {
-        min-height: 340px;
-        max-height: 470px;
+        min-height: 0;
+        max-height: none;
     }
 }
 
@@ -1747,9 +2152,17 @@ html[data-supervisor-theme="dark"] .supervisor-status--arquivado {
     .supervisor-moderacao {
         grid-column: 1 / -1;
     }
+
+    .supervisor-galeria-form {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 @media (max-width: 880px) {
+    .supervisor-body.is-sidebar-open {
+        overflow: hidden;
+    }
+
     .supervisor-sidebar {
         width: min(300px, calc(100vw - 48px));
         transform: translateX(-105%);
@@ -1829,6 +2242,11 @@ html[data-supervisor-theme="dark"] .supervisor-status--arquivado {
         flex-direction: column;
     }
 
+    .supervisor-cabecalho-acoes {
+        width: 100%;
+        justify-content: space-between;
+    }
+
     .supervisor-kpis {
         grid-template-columns: 1fr;
     }
@@ -1860,6 +2278,34 @@ html[data-supervisor-theme="dark"] .supervisor-status--arquivado {
     .supervisor-card,
     .supervisor-pet-card {
         padding: 18px;
+    }
+
+    .supervisor-card.supervisor-card--lista {
+        padding: 0;
+    }
+
+    .supervisor-formulario__grade,
+    .supervisor-galeria-form {
+        grid-template-columns: 1fr;
+    }
+
+    .supervisor-formulario__secao {
+        padding: 18px;
+    }
+
+    .supervisor-formulario__acoes {
+        align-items: stretch;
+        flex-direction: column-reverse;
+    }
+
+    .supervisor-formulario__acoes .supervisor-botao {
+        width: 100%;
+    }
+
+    .supervisor-body input,
+    .supervisor-body select,
+    .supervisor-body textarea {
+        font-size: 16px;
     }
 
     .supervisor-paginacao__paginas {

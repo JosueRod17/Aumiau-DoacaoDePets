@@ -1,0 +1,104 @@
+{% extends 'supervisores/base.html' %}
+
+{% block title %}{% if criando %}Cadastrar pet{% else %}Editar {{ pet.nome }}{% endif %} | Painel Admin AuMiau{% endblock %}
+
+{% block content %}
+    <a href="{% if pet %}{% url 'supervisores:pet_detalhe' pet.id %}{% else %}{% url 'supervisores:pets_lista' %}{% endif %}" class="supervisor-voltar">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>
+        Voltar
+    </a>
+
+    <header class="supervisor-pagina-cabecalho">
+        <div>
+            <span class="supervisor-etiqueta">Cadastro de anúncio</span>
+            <h1>{% if criando %}Cadastrar novo pet{% else %}Editar {{ pet.nome }}{% endif %}</h1>
+            <p>Preencha os dados com atenção. Novos anúncios começam na fila de moderação.</p>
+        </div>
+    </header>
+
+    <form method="post" enctype="multipart/form-data" class="supervisor-formulario">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="supervisor-formulario__erro-geral" role="alert">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <section class="supervisor-card supervisor-formulario__secao">
+            <header class="supervisor-card__cabecalho">
+                <div>
+                    <span class="supervisor-card__etiqueta">Informações</span>
+                    <h2>Dados do pet</h2>
+                    <p>Os campos marcados com * são obrigatórios.</p>
+                </div>
+            </header>
+
+            <div class="supervisor-formulario__grade">
+                {% for field in form %}
+                    <div class="supervisor-campo{% if field.name == 'descricao' or field.name == 'descricao_necessidades_especiais' %} supervisor-campo--largo{% endif %}{% if field.errors %} has-error{% endif %}">
+                        {% if field.field.widget.input_type == 'checkbox' %}
+                            <label class="supervisor-checkbox" for="{{ field.id_for_label }}">
+                                {{ field }}
+                                <span>{{ field.label }}</span>
+                            </label>
+                        {% else %}
+                            <label for="{{ field.id_for_label }}">
+                                {{ field.label }}{% if field.field.required %} <span aria-hidden="true">*</span>{% endif %}
+                            </label>
+                            {{ field }}
+                        {% endif %}
+
+                        {% if field.help_text %}<small class="supervisor-campo__ajuda">{{ field.help_text }}</small>{% endif %}
+                        {% for error in field.errors %}<small class="supervisor-campo__erro">{{ error }}</small>{% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="supervisor-card supervisor-formulario__secao">
+            <header class="supervisor-card__cabecalho">
+                <div>
+                    <span class="supervisor-card__etiqueta">Galeria</span>
+                    <h2>Fotos adicionais</h2>
+                    <p>Você pode manter até 6 fotos extras, com no máximo 5 MB cada.</p>
+                </div>
+            </header>
+
+            {{ fotos_formset.management_form }}
+
+            {% if fotos_formset.non_form_errors %}
+                <div class="supervisor-formulario__erro-geral" role="alert">{{ fotos_formset.non_form_errors }}</div>
+            {% endif %}
+
+            <div class="supervisor-galeria-form">
+                {% for foto_form in fotos_formset %}
+                    <article class="supervisor-galeria-form__item">
+                        {% for hidden in foto_form.hidden_fields %}{{ hidden }}{% endfor %}
+
+                        {% if foto_form.instance.pk and foto_form.instance.imagem %}
+                            <img src="{{ foto_form.instance.imagem.url }}" alt="Foto cadastrada de {{ pet.nome }}">
+                        {% endif %}
+
+                        {% for field in foto_form.visible_fields %}
+                            <div class="supervisor-campo{% if field.errors %} has-error{% endif %}">
+                                {% if field.name == 'DELETE' %}
+                                    <label class="supervisor-checkbox" for="{{ field.id_for_label }}">{{ field }} <span>Remover esta foto</span></label>
+                                {% else %}
+                                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field }}
+                                {% endif %}
+                                {% for error in field.errors %}<small class="supervisor-campo__erro">{{ error }}</small>{% endfor %}
+                            </div>
+                        {% endfor %}
+                    </article>
+                {% endfor %}
+            </div>
+        </section>
+
+        <div class="supervisor-formulario__acoes">
+            <a href="{% if pet %}{% url 'supervisores:pet_detalhe' pet.id %}{% else %}{% url 'supervisores:pets_lista' %}{% endif %}" class="supervisor-botao supervisor-botao--contorno">Cancelar</a>
+            <button type="submit" class="supervisor-botao supervisor-botao--primario">
+                {% if criando %}Cadastrar pet{% else %}Salvar alterações{% endif %}
+            </button>
+        </div>
+    </form>
+{% endblock %}

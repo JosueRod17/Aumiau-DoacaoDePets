@@ -6,15 +6,15 @@
     <header class="supervisor-pagina-cabecalho">
         <div>
             <span class="supervisor-etiqueta">Anúncios</span>
-            <h1>
-                {% if status_atual == 'pendente' %}
-                    Fila de moderação
-                {% else %}
-                    Todos os pets
-                {% endif %}
-            </h1>
+            <h1>{{ titulo_pagina }}</h1>
             <p>{{ total_resultados }} registro{{ total_resultados|pluralize }} encontrado{{ total_resultados|pluralize }}.</p>
         </div>
+
+        {% if perms.pets.add_pet %}
+            <a href="{% url 'supervisores:pet_criar' %}" class="supervisor-botao supervisor-botao--primario">
+                Cadastrar pet
+            </a>
+        {% endif %}
     </header>
 
     <section class="supervisor-card supervisor-card--lista">
@@ -29,6 +29,7 @@
                     type="search"
                     name="busca"
                     value="{{ busca }}"
+                    aria-label="Buscar pets"
                     placeholder="Buscar por nome, raça, cidade ou responsável"
                 >
             </label>

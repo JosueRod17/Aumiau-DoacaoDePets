@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
-    <link rel="stylesheet" href="{% static 'css/supervisor.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'css/supervisor.css' %}?v=4">
 
     <script>
         (() => {
@@ -28,6 +28,10 @@
 </head>
 
 <body class="supervisor-body">
+    <a class="supervisor-skip-link" href="#conteudo-principal">
+        Pular para o conte&uacute;do principal
+    </a>
+
     <div class="supervisor-app">
         <aside class="supervisor-sidebar" id="supervisor-sidebar">
             <div class="supervisor-sidebar__topo">
@@ -68,6 +72,7 @@
                 <a
                     href="{% url 'supervisores:dashboard' %}"
                     class="supervisor-nav__link {% if pagina_ativa == 'dashboard' %}is-active{% endif %}"
+                    {% if pagina_ativa == 'dashboard' %}aria-current="page"{% endif %}
                 >
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <rect x="3" y="3" width="7" height="7" rx="2"></rect>
@@ -84,6 +89,7 @@
                     <a
                         href="{% url 'supervisores:pets_lista' %}?status=pendente"
                         class="supervisor-nav__link {% if pagina_ativa == 'moderacao' %}is-active{% endif %}"
+                        {% if pagina_ativa == 'moderacao' %}aria-current="page"{% endif %}
                     >
                         <svg viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path>
@@ -91,14 +97,15 @@
                             <path d="M12 17h.01"></path>
                         </svg>
                         <span>Moderação</span>
-                        {% if pets_pendentes %}
-                            <small class="supervisor-nav__contador">{{ pets_pendentes }}</small>
+                        {% if pets_pendentes_menu %}
+                            <small class="supervisor-nav__contador">{{ pets_pendentes_menu }}</small>
                         {% endif %}
                     </a>
 
                     <a
                         href="{% url 'supervisores:pets_lista' %}"
                         class="supervisor-nav__link {% if pagina_ativa == 'pets' %}is-active{% endif %}"
+                        {% if pagina_ativa == 'pets' %}aria-current="page"{% endif %}
                     >
                         <svg viewBox="0 0 24 24" aria-hidden="true">
                             <circle cx="7" cy="7.5" r="2.2"></circle>
@@ -111,7 +118,7 @@
                     </a>
                 {% endif %}
 
-                {% if perms.ongs.view_ong or perms.auth.view_user %}
+                {% if perms.ongs.view_ong or perms.auth.view_user and perms.usuarios.view_perfil %}
                     <p class="supervisor-nav__titulo">Comunidade</p>
                 {% endif %}
 
@@ -119,6 +126,7 @@
                     <a
                         href="{% url 'supervisores:ongs_lista' %}"
                         class="supervisor-nav__link {% if pagina_ativa == 'ongs' %}is-active{% endif %}"
+                        {% if pagina_ativa == 'ongs' %}aria-current="page"{% endif %}
                     >
                         <svg viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M4 21V9l8-6 8 6v12"></path>
@@ -130,10 +138,11 @@
                     </a>
                 {% endif %}
 
-                {% if perms.auth.view_user %}
+                {% if perms.auth.view_user and perms.usuarios.view_perfil %}
                     <a
                         href="{% url 'supervisores:usuarios_lista' %}"
                         class="supervisor-nav__link {% if pagina_ativa == 'usuarios' %}is-active{% endif %}"
+                        {% if pagina_ativa == 'usuarios' %}aria-current="page"{% endif %}
                     >
                         <svg viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
@@ -142,6 +151,40 @@
                             <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
                         </svg>
                         <span>Usuários</span>
+                    </a>
+                {% endif %}
+
+                {% if perms.supervisores.view_registroatividade or request.user.is_superuser %}
+                    <p class="supervisor-nav__titulo">Gest&atilde;o</p>
+                {% endif %}
+
+                {% if perms.supervisores.view_registroatividade %}
+                    <a
+                        href="{% url 'supervisores:atividades_lista' %}"
+                        class="supervisor-nav__link {% if pagina_ativa == 'atividades' %}is-active{% endif %}"
+                        {% if pagina_ativa == 'atividades' %}aria-current="page"{% endif %}
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M12 7v5l3 2"></path>
+                        </svg>
+                        <span>Hist&oacute;rico</span>
+                    </a>
+                {% endif %}
+
+                {% if request.user.is_superuser %}
+                    <a
+                        href="{% url 'supervisores:equipe_lista' %}"
+                        class="supervisor-nav__link {% if pagina_ativa == 'equipe' %}is-active{% endif %}"
+                        {% if pagina_ativa == 'equipe' %}aria-current="page"{% endif %}
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M17 11a4 4 0 1 0-1.2-7.8"></path>
+                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                        </svg>
+                        <span>Equipe</span>
                     </a>
                 {% endif %}
             </nav>
@@ -178,6 +221,7 @@
                         data-sidebar-open
                         aria-label="Abrir menu"
                         aria-controls="supervisor-sidebar"
+                        aria-expanded="false"
                     >
                         <svg viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M4 6h16"></path>
@@ -214,7 +258,12 @@
                     </button>
 
                     <details class="supervisor-perfil" data-supervisor-profile>
-                        <summary class="supervisor-perfil__gatilho">
+                        <summary
+                            class="supervisor-perfil__gatilho"
+                            aria-label="Abrir menu do perfil de {% firstof user.get_full_name user.get_username %}"
+                            aria-controls="supervisor-profile-panel"
+                            aria-expanded="false"
+                        >
                             <span class="supervisor-perfil__avatar">
                                 <svg viewBox="0 0 24 24" aria-hidden="true">
                                     <circle cx="12" cy="8" r="4"></circle>
@@ -232,7 +281,7 @@
                             </svg>
                         </summary>
 
-                        <div class="supervisor-perfil__painel">
+                        <div class="supervisor-perfil__painel" id="supervisor-profile-panel">
                             <div class="supervisor-perfil__identidade">
                                 <strong>{% firstof user.get_full_name user.get_username %}</strong>
                                 <span>{{ user.email|default:"Conta de supervisão" }}</span>
@@ -243,7 +292,7 @@
                             {% endif %}
 
                             {% if user.is_superuser %}
-                                <a href="{% url 'admin:index' %}">Django Admin</a>
+                                <a href="{% url 'admin:index' %}">Painel Admin</a>
                             {% endif %}
 
                             <form method="post" action="{% url 'usuarios:logout' %}">
@@ -258,20 +307,36 @@
             {% if messages %}
                 <div class="supervisor-mensagens" aria-live="polite">
                     {% for message in messages %}
-                        <div class="supervisor-mensagem supervisor-mensagem--{{ message.tags }}">
-                            {{ message }}
+                        <div
+                            class="supervisor-mensagem supervisor-mensagem--{{ message.tags }}"
+                            data-supervisor-message
+                            role="{% if 'error' in message.tags %}alert{% else %}status{% endif %}"
+                            aria-atomic="true"
+                        >
+                            <span>{{ message }}</span>
+                            <button
+                                type="button"
+                                class="supervisor-mensagem__fechar"
+                                data-message-close
+                                aria-label="Fechar mensagem"
+                            >
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="m6 6 12 12"></path>
+                                    <path d="m18 6-12 12"></path>
+                                </svg>
+                            </button>
                         </div>
                     {% endfor %}
                 </div>
             {% endif %}
 
-            <main class="supervisor-conteudo">
+            <main class="supervisor-conteudo" id="conteudo-principal" tabindex="-1">
                 {% block content %}{% endblock %}
             </main>
         </section>
     </div>
 
-    <script src="{% static 'js/supervisor.js' %}?v=1" defer></script>
+    <script src="{% static 'js/supervisor.js' %}?v=4" defer></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

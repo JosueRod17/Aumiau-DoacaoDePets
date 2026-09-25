@@ -72,3 +72,18 @@ def supervisor_permission_required(*permissoes):
         return wrapper
 
     return decorator
+
+
+def superuser_required(view_func):
+    @wraps(view_func)
+    @supervisor_required
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_superuser:
+            return _acesso_negado(
+                request,
+                'Somente o administrador principal pode gerenciar a equipe.',
+            )
+
+        return view_func(request, *args, **kwargs)
+
+    return wrapper
