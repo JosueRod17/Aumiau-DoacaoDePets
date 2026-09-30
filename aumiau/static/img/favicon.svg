@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">AuMiau — favicon de adoção de animais</title>
+  <desc id="desc">Pegada de animal branca sobre fundo roxo.</desc>
+
+  <rect width="512" height="512" rx="128" fill="#6E4BBC"/>
+
+  <!-- Quatro dedos da pegada -->
+  <g fill="#FFFFFF">
+    <ellipse cx="151" cy="204" rx="31" ry="54" transform="rotate(-28 151 204)"/>
+    <ellipse cx="220" cy="166" rx="31" ry="55" transform="rotate(-10 220 166)"/>
+    <ellipse cx="292" cy="166" rx="31" ry="55" transform="rotate(10 292 166)"/>
+    <ellipse cx="361" cy="204" rx="31" ry="54" transform="rotate(28 361 204)"/>
+
+    <!-- Almofada central -->
+    <path d="M256 250c-25-22-66-15-83 17-22 42 9 105 83 132 74-27 105-90 83-132-17-32-58-39-83-17Z"/>
+  </g>
+</svg>

@@ -1,0 +1,128 @@
+{
+  "ongs": [
+    {
+      "codigo": "demo-ong-sp",
+      "nome": "Casa das Patinhas",
+      "cidade": "São Paulo",
+      "estado": "SP",
+      "descricao": "A Casa das Patinhas acolhe cães e gatos em lares temporários e acompanha cada etapa até o encontro com uma família. Nosso cuidado inclui rotina, socialização e orientação para uma adoção responsável.",
+      "foto": "ong-01.jpg"
+    },
+    {
+      "codigo": "demo-ong-rj",
+      "nome": "Abraço Animal",
+      "cidade": "Rio de Janeiro",
+      "estado": "RJ",
+      "descricao": "No Abraço Animal, o acolhimento começa com atenção à saúde, à socialização e ao jeito de cada pet. Buscamos famílias dispostas a oferecer tempo, carinho e um lar seguro.",
+      "foto": "ong-02.jpg"
+    },
+    {
+      "codigo": "demo-ong-pr",
+      "nome": "Lar de Todas as Patas",
+      "cidade": "Curitiba",
+      "estado": "PR",
+      "descricao": "O Lar de Todas as Patas dedica cuidado a cães, gatos e pequenos animais. Compartilhamos a rotina e as necessidades de cada um para ajudar a encontrar famílias preparadas para recebê-los.",
+      "foto": "ong-03.jpg"
+    }
+  ],
+  "pets": [
+    {
+      "codigo": "demo-pet-01", "nome": "Paçoca", "especie": "cachorro", "raca": "Sem raça definida",
+      "genero": "femea", "porte": "medio", "idade_anos": 3, "idade_meses": 2,
+      "ong": "demo-ong-sp", "status": "publicado", "destaque": true,
+      "vacinado": true, "castrado": true, "vermifugado": true,
+      "descricao": "Paçoca é uma companheira tranquila que adora acompanhar a rotina da casa e descansar depois dos passeios. Gosta de conhecer pessoas com calma e de brincar com brinquedos macios. Procura uma família que tenha tempo para passeios diários e respeite seu período de adaptação.",
+      "foto": "cachorro-01.jpg"
+    },
+    {
+      "codigo": "demo-pet-02", "nome": "Pipoco", "especie": "cachorro", "raca": "Sem raça definida",
+      "genero": "macho", "porte": "medio", "idade_anos": 2, "idade_meses": 0,
+      "ong": "demo-ong-rj", "status": "publicado", "destaque": true,
+      "vacinado": true, "castrado": true, "vermifugado": true, "microchipado": true,
+      "descricao": "Curioso e cheio de energia, Pipoco transforma um passeio simples em uma grande exploração. Ele adora jogos de farejar e companhia durante o dia. Vai se dar bem com uma família que goste de atividades ao ar livre e ensine uma rotina com paciência.",
+      "foto": "cachorro-02.jpg"
+    },
+    {
+      "codigo": "demo-pet-03", "nome": "Nuvem", "especie": "cachorro", "raca": "Desconheço",
+      "genero": "femea", "porte": "pequeno", "idade_anos": 8, "idade_meses": 0,
+      "ong": "demo-ong-pr", "status": "publicado", "destaque": false,
+      "vacinado": true, "castrado": true, "vermifugado": true,
+      "necessidades_especiais": true,
+      "descricao_necessidades_especiais": "Por ser idosa, precisa de uma rotina tranquila e acompanhamento veterinário regular.",
+      "descricao": "Nuvem prefere passeios curtos, um cantinho confortável e companhia tranquila. Ela se aproxima no próprio tempo e aprecia uma rotina calma e previsível. Uma família paciente poderá oferecer os cuidados e o aconchego que esta pequena merece.",
+      "foto": "cachorro-03.jpg"
+    },
+    {
+      "codigo": "demo-pet-04", "nome": "Amendoim", "especie": "cachorro", "raca": "Sem raça definida",
+      "genero": "macho", "porte": "medio", "idade_anos": 0, "idade_meses": 9,
+      "ong": "demo-ong-sp", "status": "publicado", "destaque": false,
+      "vacinado": true, "castrado": false, "vermifugado": true,
+      "descricao": "Amendoim é um jovem explorador que se anima com brinquedos, cheiros novos e pequenos desafios. Ainda está aprendendo os limites da casa e precisa de uma rotina equilibrada de brincadeiras e descanso. Uma família presente vai ajudá-lo a crescer com segurança.",
+      "foto": "cachorro-04.jpg"
+    },
+    {
+      "codigo": "demo-pet-05", "nome": "Jatobá", "especie": "cachorro", "raca": "Desconheço",
+      "genero": "macho", "porte": "grande", "idade_anos": 0, "idade_meses": 7,
+      "ong": "demo-ong-rj", "status": "pendente", "destaque": false,
+      "vacinado": false, "castrado": false, "vermifugado": true,
+      "descricao": "Jatobá é um filhote brincalhão que gosta de descobrir o jardim e cochilar depois das atividades. Está aprendendo a conviver com uma rotina e vai precisar de orientação, tempo e muitas brincadeiras apropriadas para sua idade.",
+      "foto": "cachorro-05.jpg"
+    },
+    {
+      "codigo": "demo-pet-06", "nome": "Cafuné", "especie": "cachorro", "raca": "Sem raça definida",
+      "genero": "femea", "porte": "grande", "idade_anos": 4, "idade_meses": 0,
+      "ong": "demo-ong-pr", "status": "adotado", "destaque": false,
+      "vacinado": true, "castrado": true, "vermifugado": true,
+      "descricao": "Cafuné gosta de companhia, passeios tranquilos e um lugar confortável para descansar. Carinhosa e atenta, encontrou uma família preparada para recebê-la e começar uma nova rotina juntos.",
+      "foto": "cachorro-06.jpg"
+    },
+    {
+      "codigo": "demo-pet-07", "nome": "Aurora", "especie": "gato", "raca": "Sem raça definida",
+      "genero": "femea", "porte": "pequeno", "idade_anos": 2, "idade_meses": 6,
+      "ong": "demo-ong-sp", "status": "publicado", "destaque": true,
+      "vacinado": true, "castrado": true, "vermifugado": true,
+      "descricao": "Aurora gosta de observar a casa de um lugar alto e perseguir brinquedos com movimentos delicados. No começo, prefere se aproximar devagar; depois se torna uma companhia para momentos de leitura e descanso. Precisa de um ambiente protegido e enriquecido.",
+      "foto": "gato-01.jpg"
+    },
+    {
+      "codigo": "demo-pet-08", "nome": "Dengo", "especie": "gato", "raca": "Desconheço",
+      "genero": "macho", "porte": "medio", "idade_anos": 5, "idade_meses": 0,
+      "ong": "demo-ong-rj", "status": "publicado", "destaque": false,
+      "vacinado": true, "castrado": true, "vermifugado": true,
+      "descricao": "Dengo é um gato adulto que aprecia escovação, brincadeiras curtas e uma boa janela protegida para observar o movimento. Tem um jeito mais reservado e gosta de ter espaço para se aproximar no próprio tempo.",
+      "foto": "gato-02.jpg"
+    },
+    {
+      "codigo": "demo-pet-09", "nome": "Dominó", "especie": "gato", "raca": "Sem raça definida",
+      "genero": "macho", "porte": "pequeno", "idade_anos": 1, "idade_meses": 4,
+      "ong": "demo-ong-pr", "status": "publicado", "destaque": false,
+      "vacinado": true, "castrado": true, "vermifugado": true, "microchipado": true,
+      "descricao": "Dominó alterna momentos de brincadeira com longos cochilos em um lugar ensolarado. Caixas de papelão e brinquedos de perseguir estão entre seus favoritos. Gosta de explorar a casa e procura um ambiente protegido para continuar suas descobertas.",
+      "foto": "gato-03.jpg"
+    },
+    {
+      "codigo": "demo-pet-10", "nome": "Pinguinho", "especie": "gato", "raca": "Sem raça definida",
+      "genero": "macho", "porte": "pequeno", "idade_anos": 0, "idade_meses": 0,
+      "ong": "demo-ong-sp", "status": "pendente", "destaque": false,
+      "vacinado": false, "castrado": false, "vermifugado": false,
+      "descricao": "Pinguinho é um filhote muito novinho que ainda precisa de acolhimento e acompanhamento de perto. Sua rotina inclui descanso, alimentação adequada à idade e cuidados constantes enquanto cresce e ganha autonomia.",
+      "foto": "gato-04.jpg"
+    },
+    {
+      "codigo": "demo-pet-11", "nome": "Algodão", "especie": "coelho", "raca": "Desconheço",
+      "genero": "femea", "porte": "pequeno", "idade_anos": 1, "idade_meses": 2,
+      "ong": "demo-ong-pr", "status": "publicado", "destaque": false,
+      "vacinado": false, "castrado": false, "vermifugado": false,
+      "descricao": "Algodão gosta de explorar um espaço seguro, descansar em esconderijos e se aproximar quando se sente à vontade. Precisa de uma família que conheça os cuidados próprios dos coelhos, ofereça alimentação adequada e espaço para se movimentar.",
+      "foto": "coelho-01.jpg"
+    },
+    {
+      "codigo": "demo-pet-12", "nome": "Fubá", "especie": "ave", "raca": "Calopsita",
+      "genero": "macho", "porte": "pequeno", "idade_anos": 2, "idade_meses": 0,
+      "ong": "demo-ong-rj", "status": "publicado", "destaque": false,
+      "vacinado": false, "castrado": false, "vermifugado": false,
+      "descricao": "Fubá é uma calopsita curiosa que presta atenção aos sons e movimentos da casa. Precisa de um ambiente seguro, estímulos diários e uma família disposta a conhecer os cuidados específicos com aves.",
+      "foto": "ave-01.jpg"
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+[data-pet-identity] [hidden] { display: none !important; }
 :root {
     --sv-roxo: #7b3fc6;
     --sv-roxo-escuro: #6530aa;
@@ -1269,6 +1270,8 @@ html[data-supervisor-theme="dark"] .supervisor-tema {
 
 .supervisor-status {
     display: inline-flex;
+    white-space: nowrap;
+    flex-shrink: 0;
     min-height: 25px;
     align-items: center;
     padding: 0 10px;
@@ -1749,6 +1752,41 @@ html[data-supervisor-theme="dark"] .supervisor-status--arquivado {
     width: min(100%, 920px);
 }
 
+.supervisor-formulario--pet {
+    width: min(100%, 1100px);
+}
+
+.supervisor-formulario__orientacao {
+    margin: 0;
+    color: var(--sv-texto-suave);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.supervisor-formulario__orientacao > span {
+    color: var(--sv-vermelho);
+    font-weight: 700;
+}
+
+.supervisor-demonstracao {
+    margin: 0 0 22px;
+    padding: 12px 16px;
+    border: 1px solid var(--sv-borda);
+    border-radius: 12px;
+    background: var(--sv-creme);
+    color: var(--sv-texto);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.supervisor-formulario__grade--saude .supervisor-checkbox {
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid var(--sv-borda);
+    border-radius: 12px;
+    background: var(--sv-papel);
+}
+
 .supervisor-formulario__secao {
     padding: 26px;
 }
@@ -2203,6 +2241,122 @@ html[data-supervisor-theme="dark"] .supervisor-status--neutro {
     .supervisor-kpis {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+
+    .supervisor-tabela-wrapper {
+        overflow-x: visible;
+    }
+
+    .supervisor-tabela,
+    .supervisor-tabela tbody,
+    .supervisor-tabela tbody tr {
+        display: block;
+        width: 100%;
+    }
+
+    .supervisor-tabela thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+
+    .supervisor-tabela tbody {
+        padding: 12px;
+    }
+
+    .supervisor-tabela tbody tr {
+        margin-bottom: 12px;
+        padding: 8px 14px;
+        background: var(--sv-superficie);
+        border: 1px solid var(--sv-borda);
+        border-radius: 14px;
+        box-shadow: var(--sv-sombra-suave);
+    }
+
+    .supervisor-tabela tbody tr:last-child {
+        margin-bottom: 0;
+    }
+
+    .supervisor-tabela tbody td {
+        display: flex;
+        min-width: 0;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 0;
+        overflow-wrap: anywhere;
+        text-align: right;
+    }
+
+    .supervisor-tabela tbody td:not([colspan])::before {
+        flex: 0 0 38%;
+        color: var(--sv-texto-suave);
+        content: attr(data-label);
+        font-size: 11px;
+        font-weight: 750;
+        text-align: left;
+    }
+
+    .supervisor-tabela tbody td:first-child:not([colspan]) {
+        align-items: flex-start;
+        flex-direction: column;
+        text-align: left;
+    }
+
+    .supervisor-tabela tbody td:first-child:not([colspan])::before {
+        display: none;
+    }
+
+    .supervisor-tabela tbody td[data-label="Ações"] {
+        display: block;
+        padding-top: 14px;
+        text-align: left;
+    }
+
+    .supervisor-tabela tbody td[data-label="Ações"]::before {
+        display: none;
+    }
+
+    .supervisor-tabela__acao,
+    .supervisor-tabela__botao,
+    .supervisor-tabela td form {
+        width: 100%;
+    }
+
+    .supervisor-tabela__acao,
+    .supervisor-tabela__botao {
+        min-height: 44px;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .supervisor-pet-resumo,
+    .supervisor-entidade {
+        min-width: 0;
+        max-width: 100%;
+        text-align: left;
+    }
+
+    .supervisor-pet-resumo > span:last-child,
+    .supervisor-entidade > span:last-child {
+        min-width: 0;
+    }
+
+    .supervisor-pet-resumo strong,
+    .supervisor-entidade strong,
+    .supervisor-pet-resumo small,
+    .supervisor-entidade small {
+        max-width: 100%;
+    }
+
+    .supervisor-tabela tbody td[colspan] {
+        display: block;
+        padding: 0;
+        text-align: center;
+    }
 }
 
 @media (max-width: 700px) {
@@ -2244,7 +2398,14 @@ html[data-supervisor-theme="dark"] .supervisor-status--neutro {
 
     .supervisor-cabecalho-acoes {
         width: 100%;
-        justify-content: space-between;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+
+    .supervisor-pagina-cabecalho > .supervisor-botao,
+    .supervisor-detalhe-cabecalho > .supervisor-botao,
+    .supervisor-cabecalho-acoes > .supervisor-botao {
+        width: 100%;
     }
 
     .supervisor-kpis {
@@ -2264,6 +2425,20 @@ html[data-supervisor-theme="dark"] .supervisor-status--neutro {
     .supervisor-select select,
     .supervisor-filtros .supervisor-botao {
         width: 100%;
+    }
+
+    .supervisor-busca {
+        min-width: 0;
+    }
+
+    .supervisor-select {
+        width: 100%;
+    }
+
+    .supervisor-filtros__limpar {
+        align-self: center;
+        min-height: 44px;
+        align-content: center;
     }
 
     .supervisor-detalhe-lateral {
@@ -2311,9 +2486,49 @@ html[data-supervisor-theme="dark"] .supervisor-status--neutro {
     .supervisor-paginacao__paginas {
         display: none;
     }
+
+    .supervisor-paginacao {
+        gap: 8px;
+        padding: 14px 12px;
+    }
+
+    .supervisor-paginacao > a,
+    .supervisor-paginacao > span {
+        min-width: 44px;
+        min-height: 44px;
+        height: auto;
+        padding: 8px;
+        text-align: center;
+    }
 }
 
 @media (max-width: 420px) {
+    .supervisor-topbar {
+        gap: 8px;
+        padding-inline: 12px;
+    }
+
+    .supervisor-topbar__titulo {
+        gap: 7px;
+    }
+
+    .supervisor-topbar__acoes {
+        gap: 6px;
+    }
+
+    .supervisor-conteudo {
+        padding-inline: 12px;
+    }
+
+    .supervisor-card__cabecalho,
+    .supervisor-pet-card__titulo {
+        flex-wrap: wrap;
+    }
+
+    .supervisor-acesso-negado__card {
+        padding: 24px 16px;
+    }
+
     .supervisor-topbar__titulo small {
         display: none;
     }
@@ -2323,9 +2538,15 @@ html[data-supervisor-theme="dark"] .supervisor-status--neutro {
     }
 
     .supervisor-tema {
-        flex-basis: 39px;
-        width: 39px;
-        height: 39px;
+        flex-basis: 44px;
+        width: 44px;
+        height: 44px;
+    }
+
+    .supervisor-perfil__gatilho {
+        min-width: 44px;
+        min-height: 44px;
+        justify-content: center;
     }
 
     .supervisor-perfil__avatar {

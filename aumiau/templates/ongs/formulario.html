@@ -1,0 +1,28 @@
+{% extends 'ongs/base.html' %}
+{% block title %}{% if criando %}Cadastrar ONG{% else %}Editar ONG{% endif %} | AuMiau{% endblock %}
+{% block ongs_content %}
+<section class="ongs-container ongs-form-page">
+    <a class="ongs-back" href="{% url 'ongs:painel' %}">← Painel da ONG</a>
+    <div class="ongs-page-heading"><p class="ongs-eyebrow">Mais cuidado. Mais recomeços.</p><h1>{% if criando %}Cadastre sua ONG{% else %}Editar {{ ong.nome }}{% endif %}</h1><p>Faça parte de uma rede que aproxima animais de um novo lar.</p></div>
+    <div class="ongs-form-layout">
+        <form method="post" enctype="multipart/form-data" class="ongs-form" novalidate>
+            {% csrf_token %}
+            <h2>Informações da organização</h2>
+            {% if form.errors %}<div class="ongs-form__errors" role="alert">Confira os campos indicados para continuar.{{ form.non_field_errors }}</div>{% endif %}
+            <div class="ongs-form__grid">
+                {% for field in form %}
+                <div class="ongs-form__field {% if field.name == 'nome' or field.name == 'descricao' %}ongs-form__field--wide{% endif %}">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} <span aria-hidden="true">*</span>{% else %} <small>(opcional)</small>{% endif %}</label>
+                    {{ field }}
+                    {% if field.help_text %}<small id="{{ field.id_for_label }}_helptext">{{ field.help_text }}</small>{% endif %}
+                    {% for error in field.errors %}<p class="ongs-field-error">{{ error }}</p>{% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+            <p class="ongs-form__notice">{% if criando %}Após o envio, nossa equipe analisará o cadastro. Você pode acompanhar tudo no painel da ONG.{% else %}Ao salvar, a ONG volta para análise. Seu perfil e os pets vinculados ficam fora da busca pública até a nova aprovação.{% endif %}</p>
+            <div class="ongs-actions"><button type="submit" class="ongs-button">{% if criando %}Enviar cadastro para análise{% else %}Salvar e enviar para análise{% endif %}</button><a class="ongs-text-link" href="{% url 'ongs:painel' %}">Cancelar</a></div>
+        </form>
+        <aside class="ongs-aside"><span class="ongs-icon" aria-hidden="true">🐾</span><h2>Juntos por mais finais felizes</h2><ol><li><strong>Cadastre sua ONG</strong><p>Conte quem vocês são e onde atuam.</p></li><li><strong>Acompanhe a análise</strong><p>O status e eventuais ajustes aparecem no seu painel.</p></li><li><strong>Encontre novos lares</strong><p>Após a aprovação, anuncie os pets da ONG.</p></li></ol><p>Informe apenas contatos da organização autorizados para divulgação pública.</p></aside>
+    </div>
+</section>
+{% endblock %}

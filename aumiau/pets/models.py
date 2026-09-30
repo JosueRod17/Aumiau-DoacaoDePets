@@ -1,14 +1,44 @@
 from django.conf import settings
 from django.core.validators import MaxValueValidator
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Q
+from django.utils import timezone
 
 from usuarios.models import UF_CHOICES
 
 
+class PetQuerySet(models.QuerySet):
+    def publicos(self):
+        return self.filter(status='publicado').filter(
+            Q(ong__isnull=True) | Q(ong__status='aprovada')
+        )
+
+    def gerenciaveis_por(self, usuario):
+        if not usuario.is_authenticated:
+            return self.none()
+        return self.filter(
+            Q(ong__isnull=True, responsavel=usuario)
+            | Q(ong__isnull=True, responsavel__isnull=True, criado_por=usuario)
+            | Q(ong__responsavel=usuario)
+        ).distinct()
+
+
 class Pet(models.Model):
+    objects = PetQuerySet.as_manager()
+
     class Especie(models.TextChoices):
         CACHORRO = 'cachorro', 'Cachorro'
         GATO = 'gato', 'Gato'
+        COELHO = 'coelho', 'Coelho'
+        HAMSTER = 'hamster', 'Hamster'
+        PORQUINHO_DA_INDIA = 'porquinho_da_india', 'Porquinho-da-índia'
+        AVE = 'ave', 'Ave'
+        PEIXE = 'peixe', 'Peixe'
+        TARTARUGA = 'tartaruga', 'Tartaruga / jabuti'
+        FURAO = 'furao', 'Furão'
+        CHINCHILA = 'chinchila', 'Chinchila'
+        REPTIL = 'reptil', 'Outro réptil'
         OUTRO = 'outro', 'Outro'
 
     class Genero(models.TextChoices):
@@ -23,16 +53,18 @@ class Pet(models.Model):
         NAO_INFORMADO = 'nao_informado', 'Não informado'
 
     class Status(models.TextChoices):
-        PENDENTE = 'pendente', 'Pendente'
+        RASCUNHO = 'rascunho', 'Rascunho'
+        PENDENTE = 'pendente', 'Em análise'
         PUBLICADO = 'publicado', 'Publicado'
         ADOTADO = 'adotado', 'Adotado'
         REJEITADO = 'rejeitado', 'Rejeitado'
         ARQUIVADO = 'arquivado', 'Arquivado'
 
     nome = models.CharField(max_length=80)
+    codigo_demonstracao = models.CharField(max_length=40, unique=True, null=True, blank=True, editable=False)
 
     especie = models.CharField(
-        max_length=10,
+        max_length=20,
         choices=Especie.choices,
     )
 
@@ -55,9 +87,12 @@ class Pet(models.Model):
         default=Porte.NAO_INFORMADO,
     )
 
+    data_nascimento = models.DateField('data de nascimento', null=True, blank=True)
+    idade_estimada_informada = models.BooleanField(default=False, editable=False)
+
     idade_anos = models.PositiveSmallIntegerField(
         default=0,
-        validators=[MaxValueValidator(40)],
+        validators=[MaxValueValidator(150)],
     )
 
     idade_meses = models.PositiveSmallIntegerField(
@@ -94,6 +129,8 @@ class Pet(models.Model):
     )
 
     vacinado = models.BooleanField(default=False)
+    email_contato = models.EmailField('e-mail público para contato', blank=True)
+    telefone_contato = models.CharField('telefone público para contato', max_length=20, blank=True)
     castrado = models.BooleanField(default=False)
     vermifugado = models.BooleanField(default=False)
     microchipado = models.BooleanField(default=False)
@@ -157,19 +194,38 @@ class Pet(models.Model):
     def __str__(self):
         return self.nome
 
+    def clean(self):
+        super().clean()
+        if self.data_nascimento and self.data_nascimento > timezone.localdate():
+            raise ValidationError({'data_nascimento': 'A data de nascimento não pode ser no futuro.'})
+
+    @property
+    def idade_atual(self):
+        if not self.data_nascimento:
+            return self.idade_anos, self.idade_meses
+        hoje = timezone.localdate()
+        meses = ((hoje.year - self.data_nascimento.year) * 12
+                 + hoje.month - self.data_nascimento.month
+                 - (hoje.day < self.data_nascimento.day))
+        return divmod(max(meses, 0), 12)
+
     @property
     def idade_formatada(self):
         partes = []
+        anos, meses = self.idade_atual
 
-        if self.idade_anos:
-            texto = 'ano' if self.idade_anos == 1 else 'anos'
-            partes.append(f'{self.idade_anos} {texto}')
+        if anos:
+            texto = 'ano' if anos == 1 else 'anos'
+            partes.append(f'{anos} {texto}')
 
-        if self.idade_meses:
-            texto = 'mês' if self.idade_meses == 1 else 'meses'
-            partes.append(f'{self.idade_meses} {texto}')
+        if meses:
+            texto = 'mês' if meses == 1 else 'meses'
+            partes.append(f'{meses} {texto}')
 
-        return ' e '.join(partes) or 'Idade não informada'
+        idade = ' e '.join(partes) or ('Menos de 1 mês' if self.data_nascimento or self.idade_estimada_informada else 'Idade não informada')
+        if not self.data_nascimento and self.idade_estimada_informada:
+            idade += ' (aprox.)'
+        return idade
 
 
 class FotoPet(models.Model):

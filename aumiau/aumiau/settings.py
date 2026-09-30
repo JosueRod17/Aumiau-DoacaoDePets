@@ -11,21 +11,48 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+
+from dotenv import load_dotenv
+from django.core.exceptions import ImproperlyConfigured
+
+from .data_settings import data_settings
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR.parent / '.env', override=False)
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-l*08z48*#-6mx8@ta_e^_c==p5czp&6k84rh(-r*5qevt95)w0'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '').strip() or 'django-insecure-l*08z48*#-6mx8@ta_e^_c==p5czp&6k84rh(-r*5qevt95)w0'
+DOCUMENT_HASH_KEY = os.environ.get('DOCUMENT_HASH_KEY', '').strip() or SECRET_KEY
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '').strip()
+GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', '').strip()
+GOOGLE_REDIRECT_URI = os.environ.get('GOOGLE_REDIRECT_URI', '').strip()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'true').lower() in ('true', '1', 'yes')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [host.strip() for host in os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',') if host.strip()]
+CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in os.environ.get('DJANGO_CSRF_TRUSTED_ORIGINS', '').split(',') if origin.strip()]
+if os.environ.get('RENDER') == 'true':
+    render_hostname = os.environ.get('RENDER_EXTERNAL_HOSTNAME', '').strip()
+    if render_hostname and render_hostname not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(render_hostname)
+    render_origin = f'https://{render_hostname}' if render_hostname else ''
+    if render_origin and render_origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(render_origin)
+if not DEBUG and not os.environ.get('DJANGO_SECRET_KEY', '').strip():
+    raise ImproperlyConfigured('Defina DJANGO_SECRET_KEY no ambiente antes de desativar DEBUG.')
+
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+if not DEBUG and os.environ.get('RENDER') == 'true':
+    # O TLS termina no proxy do Render; este cabeçalho conserva o esquema original.
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 # Application definition
@@ -53,6 +80,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+if not DEBUG:
+    MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
 
 ROOT_URLCONF = 'aumiau.urls'
 
@@ -67,6 +96,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'supervisores.context_processors.acesso_supervisor',
+                'usuarios.context_processors.acesso_google',
             ],
         },
     },
@@ -78,12 +108,9 @@ WSGI_APPLICATION = 'aumiau.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+AUMIAU_DATA_MODE, DATABASES, STORAGES = data_settings(BASE_DIR)
+if not DEBUG:
+    STORAGES['staticfiles'] = {'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage'}
 
 
 # Password validation
@@ -120,11 +147,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 LOGIN_URL = 'usuarios:login'
+AUTHENTICATION_BACKENDS = ['usuarios.backends.ContaBackend']
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
-TERMOS_VERSAO = '1.0'
+TERMOS_VERSAO = '1.1'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'

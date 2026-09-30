@@ -1,6 +1,6 @@
 {% extends 'supervisores/base.html' %}
 
-{% block title %}ONGs | Supervisor AuMiau{% endblock %}
+{% block title %}ONGs | AuMiau Admin{% endblock %}
 
 {% block content %}
     <header class="supervisor-pagina-cabecalho">
@@ -70,7 +70,7 @@
                 <tbody>
                     {% for ong in ongs %}
                         <tr>
-                            <td>
+                            <td data-label="Organização">
                                 <div class="supervisor-entidade">
                                     <span class="supervisor-entidade__icone supervisor-entidade__icone--ong">
                                         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -85,15 +85,15 @@
                                     </span>
                                 </div>
                             </td>
-                            <td>{{ ong.cidade }}/{{ ong.estado }}</td>
-                            <td>{{ ong.total_pets }}</td>
-                            <td>
+                            <td data-label="Localização">{{ ong.cidade }}/{{ ong.estado }}</td>
+                            <td data-label="Pets vinculados">{{ ong.total_pets }}</td>
+                            <td data-label="Situação">
                                 <span class="supervisor-status supervisor-status--{{ ong.status }}">
                                     {{ ong.get_status_display }}
                                 </span>
                             </td>
-                            <td>{{ ong.criado_em|date:"d/m/Y" }}</td>
-                            <td>
+                            <td data-label="Cadastro">{{ ong.criado_em|date:"d/m/Y" }}</td>
+                            <td data-label="Ações">
                                 <a href="{% url 'supervisores:ong_detalhe' ong.id %}" class="supervisor-tabela__acao">
                                     {% if ong.status == 'pendente' and pode_moderar_ongs %}Analisar{% else %}Ver detalhes{% endif %}
                                 </a>

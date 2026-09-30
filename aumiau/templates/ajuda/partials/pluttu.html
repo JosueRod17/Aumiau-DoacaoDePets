@@ -1,0 +1,27 @@
+<section class="pluttu ajuda-painel" id="pluttu" aria-labelledby="pluttu-titulo" data-pluttu>
+    <div class="pluttu-cabecalho">
+        <div class="pluttu-identidade"><span class="pluttu-avatar" aria-hidden="true">🐾</span><div><p class="ajuda-etiqueta">ASSISTENTE VIRTUAL</p><h2 id="pluttu-titulo">Converse com o Pluttu</h2></div></div>
+        <form method="post" action="{% url 'pluttu' %}" data-pluttu-limpar>{% csrf_token %}<input type="hidden" name="acao" value="limpar"><button class="pluttu-limpar" type="submit">Limpar conversa</button></form>
+    </div>
+    <p class="ajuda-descricao">Eu ajudo com as dúvidas da central. Se precisar de uma pessoa, encaminho você para o suporte por chamado.</p>
+    <div class="pluttu-historico" role="log" aria-label="Conversa com o Pluttu" aria-live="polite" aria-relevant="additions text" data-pluttu-historico>
+        <div class="pluttu-balao pluttu-balao--assistente"><strong>Pluttu</strong><p>Olá! Posso ajudar com adoção, anúncios, ONGs e sua conta. O que você precisa saber?</p></div>
+        {% for item in pluttu_historico %}
+        <div class="pluttu-balao pluttu-balao--usuario"><strong>Você</strong><p>{{ item.mensagem }}</p></div>
+        <div class="pluttu-balao pluttu-balao--assistente"><strong>Pluttu</strong>{% if item.resposta.pergunta %}<small>Da central de ajuda: {{ item.resposta.pergunta }}</small>{% endif %}<p>{{ item.resposta.texto }}</p>{% if item.resposta.url %}<a class="ajuda-link" href="{{ item.resposta.url }}">{{ item.resposta.rotulo }} →</a>{% endif %}{% if item.resposta.encaminhar %}<a class="ajuda-link" href="{% url 'chamado_novo' %}?pluttu=1">Encaminhar para a equipe →</a>{% endif %}</div>
+        {% endfor %}
+    </div>
+    <div class="pluttu-sugestoes" aria-label="Sugestões de perguntas">
+        <form method="post" action="{% url 'pluttu' %}" data-pluttu-sugestao>{% csrf_token %}<button name="mensagem" value="Como anunciar um pet?" type="submit">Anunciar um pet</button></form>
+        <form method="post" action="{% url 'pluttu' %}" data-pluttu-sugestao>{% csrf_token %}<button name="mensagem" value="Como cadastrar uma ONG?" type="submit">Cadastrar uma ONG</button></form>
+        <form method="post" action="{% url 'pluttu' %}" data-pluttu-sugestao>{% csrf_token %}<button name="mensagem" value="Por que meu anúncio está em análise?" type="submit">Anúncio em análise</button></form>
+    </div>
+    <form method="post" action="{% url 'pluttu' %}" class="pluttu-form" data-pluttu-form>
+        {% csrf_token %}
+        <div><label class="ajuda-sr" for="{{ pluttu_form.mensagem.id_for_label }}">{{ pluttu_form.mensagem.label }}</label>{{ pluttu_form.mensagem }}</div>
+        <button class="ajuda-botao ajuda-botao--laranja" type="submit">Enviar</button>
+    </form>
+    <p class="ajuda-erros" role="alert" data-pluttu-erro>{% for error in pluttu_form.mensagem.errors %}{{ error }}{% endfor %}</p>
+    <div class="pluttu-rodape"><p class="ajuda-nota">Não envie CPF, senhas ou dados de pagamento. As últimas 6 perguntas ficam nesta sessão. A conversa só será incluída no chamado se você autorizar.</p><a class="ajuda-link" href="{% url 'chamado_novo' %}?pluttu=1" data-pluttu-encaminhar>Falar com a equipe</a></div>
+    <noscript><p class="ajuda-nota">Você pode conversar normalmente; a página será atualizada a cada mensagem.</p></noscript>
+</section>

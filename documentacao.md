@@ -1,6 +1,8 @@
 # Documentação Django
 **Autor:** Josué Rodrigues da Silva
 
+> Este documento registra a criação inicial do projeto. Para executar este repositório existente, siga o [README](README.md#executar-no-windows) e use a `.venv` dentro de `Aumiau-DoacaoDePets`. O ambiente `venv` da pasta pai pertence a outra configuração.
+
 ## INICIO
 
 ### 1. Estar no local onde deseja criar o projeto

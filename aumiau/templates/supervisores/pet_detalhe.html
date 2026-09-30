@@ -1,6 +1,6 @@
 {% extends 'supervisores/base.html' %}
 
-{% block title %}{{ pet.nome }} | Supervisor AuMiau{% endblock %}
+{% block title %}{{ pet.nome }} | AuMiau Admin{% endblock %}
 
 {% block content %}
     <a href="{% url 'supervisores:pets_lista' %}?status={{ pet.status }}" class="supervisor-voltar">
@@ -28,6 +28,8 @@
             </span>
         </div>
     </header>
+
+    {% if pet.codigo_demonstracao %}<p class="supervisor-demonstracao"><strong>Demonstração</strong> · Cadastro fictício para visualizar o layout e testar os fluxos.</p>{% endif %}
 
     <div class="supervisor-detalhe-grade">
         <section class="supervisor-detalhe-principal">

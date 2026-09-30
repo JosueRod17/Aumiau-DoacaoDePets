@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.utils.html import format_html
 
 from .models import FotoPet, Pet
+from .admin_forms import PetAdminForm
 
 
 class FotoPetInline(admin.TabularInline):
@@ -23,6 +24,11 @@ class FotoPetInline(admin.TabularInline):
 
 @admin.register(Pet)
 class PetAdmin(admin.ModelAdmin):
+    form = PetAdminForm
+
+    class Media:
+        js = ('js/pet-admin.js', 'js/pets.js')
+
     inlines = (
         FotoPetInline,
     )
@@ -91,8 +97,11 @@ class PetAdmin(admin.ModelAdmin):
                     'nome',
                     'especie',
                     'raca',
+                    'raca_outra',
                     'genero',
                     'porte',
+                    'data_nascimento',
+                    'nascimento_desconhecido',
                     'idade_anos',
                     'idade_meses',
                 ),
@@ -104,6 +113,8 @@ class PetAdmin(admin.ModelAdmin):
                 'fields': (
                     'responsavel',
                     'ong',
+                    'email_contato',
+                    'telefone_contato',
                 ),
             },
         ),
@@ -223,6 +234,7 @@ class PetAdmin(admin.ModelAdmin):
     @admin.display(description='Status', ordering='status')
     def status_colorido(self, obj):
         cores = {
+            Pet.Status.RASCUNHO: ('#eeeeee', '#555555'),
             Pet.Status.PENDENTE: ('#fff2de', '#7a4b00'),
             Pet.Status.PUBLICADO: ('#e8f7ee', '#1f6b3a'),
             Pet.Status.ADOTADO: ('#f1e8ff', '#6d36b3'),
@@ -235,7 +247,7 @@ class PetAdmin(admin.ModelAdmin):
         return format_html(
             '<span style="background:{};color:{};'
             'padding:5px 10px;border-radius:999px;'
-            'font-weight:700;">{}</span>',
+            'font-weight:700;display:inline-flex;align-items:center;white-space:nowrap;line-height:1.4;">{}</span>',
             fundo,
             texto,
             obj.get_status_display(),

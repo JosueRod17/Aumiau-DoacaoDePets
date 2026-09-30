@@ -1,0 +1,13 @@
+<article class="pet-card">
+    <a class="pet-card__photo" href="{% url 'pets:detalhe' pet.pk %}" aria-label="Conhecer {{ pet.nome }}">
+        {% if pet.foto_principal %}<img src="{{ pet.foto_principal.url }}" alt="{{ pet.nome }}" loading="lazy">{% else %}<span class="pet-no-photo"><span aria-hidden="true">🐾</span> Foto não disponível</span>{% endif %}
+        {% if pet.destaque %}<span class="pet-card__featured">Destaque</span>{% endif %}
+    </a>
+    <div class="pet-card__body">
+        <div class="pet-card__title"><h3><a href="{% url 'pets:detalhe' pet.pk %}">{{ pet.nome }}</a></h3><span>{{ pet.idade_formatada }}</span></div>
+        <p>{{ pet.raca }} · {{ pet.get_especie_display }}</p>
+        <p class="pet-card__location">{{ pet.cidade }}, {{ pet.estado }}</p>
+        <div class="pet-tags">{% if pet.vacinado %}<span>Vacinado</span>{% endif %}{% if pet.castrado %}<span>Castrado</span>{% endif %}{% if pet.necessidades_especiais %}<span>Cuidados especiais</span>{% endif %}</div>
+        <a class="pet-button pet-button--small" href="{% url 'pets:detalhe' pet.pk %}#contato">Quero adotar <span aria-hidden="true">❤</span></a>
+    </div>
+</article>

@@ -1,0 +1,13 @@
+{% if field %}
+<div class="supervisor-campo{% if largo %} supervisor-campo--largo{% endif %}{% if field.errors %} has-error{% endif %}"
+    {% if field.name == 'raca_outra' %}data-other-breed{% elif field.name == 'data_nascimento' %}data-birth-date{% elif field.name == 'idade_anos' or field.name == 'idade_meses' %}data-estimated-age{% elif field.name == 'descricao_necessidades_especiais' %}data-special-needs{% endif %}>
+    {% if field.field.widget.input_type == 'checkbox' %}
+        <label class="supervisor-checkbox" for="{{ field.id_for_label }}">{{ field }}<span>{{ field.label }}</span></label>
+    {% else %}
+        <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} <span aria-hidden="true">*</span>{% endif %}</label>
+        {{ field }}
+    {% endif %}
+    {% if field.help_text %}<small class="supervisor-campo__ajuda">{{ field.help_text }}</small>{% endif %}
+    {% for error in field.errors %}<small class="supervisor-campo__erro">{{ error }}</small>{% endfor %}
+</div>
+{% endif %}

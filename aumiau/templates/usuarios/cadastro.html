@@ -45,6 +45,7 @@
 
             <form method="post" action="{% url 'usuarios:cadastro' %}" class="cadastro-form" data-uf-cidades-form>
                 {% csrf_token %}
+                {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
 
                 {% if form.non_field_errors %}
                     <div class="auth-erros-gerais cadastro-largura-total">
@@ -74,6 +75,13 @@
                     {% for error in form.email.errors %}
                         <p class="auth-erro">{{ error }}</p>
                     {% endfor %}
+                </div>
+
+                <div class="auth-campo cadastro-largura-total">
+                    <label for="{{ form.cpf.id_for_label }}">{{ form.cpf.label }}</label>
+                    {{ form.cpf }}
+                    <small class="conta-ajuda">{{ form.cpf.help_text }}</small>
+                    {% for error in form.cpf.errors %}<p class="auth-erro">{{ error }}</p>{% endfor %}
                 </div>
 
                 <div class="auth-campo cadastro-largura-total">
@@ -144,9 +152,9 @@
 
                         <label for="{{ form.aceite_termos.id_for_label }}">
                             Li e aceito os
-                            <strong>Termos de Uso</strong>
+                            <a href="{% url 'termos' %}" target="_blank" rel="noopener">Termos de Uso</a>
                             e a
-                            <strong>Política de Privacidade</strong>.
+                            <a href="{% url 'privacidade' %}" target="_blank" rel="noopener">Política de Privacidade</a>.
                         </label>
                     </div>
 
@@ -164,7 +172,7 @@
             <p class="auth-alternativa cadastro-alternativa">
                 Já possui uma conta?
 
-                <a href="{% url 'usuarios:login' %}">
+                <a href="{% url 'usuarios:login' %}{% if next %}?next={{ next|urlencode }}{% endif %}">
                     Entrar
                 </a>
             </p>

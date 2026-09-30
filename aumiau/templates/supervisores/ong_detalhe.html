@@ -1,6 +1,6 @@
 {% extends 'supervisores/base.html' %}
 
-{% block title %}{{ ong.nome }} | Painel Admin AuMiau{% endblock %}
+{% block title %}{{ ong.nome }} | AuMiau Admin{% endblock %}
 
 {% block content %}
     <a href="{% url 'supervisores:ongs_lista' %}" class="supervisor-voltar">
@@ -23,6 +23,8 @@
         </div>
     </header>
 
+    {% if ong.codigo_demonstracao %}<p class="supervisor-demonstracao"><strong>Demonstração</strong> · Organização fictícia para visualizar o layout e testar os fluxos.</p>{% endif %}
+
     <div class="supervisor-detalhe-grade">
         <section class="supervisor-detalhe-principal">
             <article class="supervisor-card supervisor-formulario__secao">
@@ -35,6 +37,12 @@
 
                 <dl class="supervisor-informacoes">
                     <div><dt>Nome</dt><dd>{{ ong.nome }}</dd></div>
+                    <div><dt>CNPJ</dt><dd>{{ ong.cnpj|default:"Cadastro anterior: ainda não informado" }}</dd></div>
+                    <div><dt>Razão social consultada</dt><dd>{{ ong.razao_social|default:"Ainda não consultada" }}</dd></div>
+                    <div><dt>Validação cadastral</dt><dd>{% if ong.cnpj_consultado_em %}{{ ong.cnpj_situacao }} · BrasilAPI em {{ ong.cnpj_consultado_em|date:"d/m/Y H:i" }}{% elif ong.cnpj_confirmado_manualmente %}Conferido documentalmente pela equipe{% else %}Aguardando conferência{% endif %}</dd></div>
+                    <div><dt>Responsável pelo cadastro</dt><dd>{% firstof ong.responsavel.get_full_name ong.responsavel.username "Não vinculado" %}</dd></div>
+                    <div><dt>E-mail público</dt><dd>{{ ong.email|default:"Não informado" }}</dd></div>
+                    <div><dt>Telefone público</dt><dd>{{ ong.telefone|default:"Não informado" }}</dd></div>
                     <div><dt>Localização</dt><dd>{{ ong.cidade }}/{{ ong.estado }}</dd></div>
                     <div><dt>Pets vinculados</dt><dd>{{ ong.total_pets }}</dd></div>
                     <div><dt>Última atualização</dt><dd>{{ ong.atualizado_em|date:"d/m/Y H:i" }}</dd></div>
@@ -83,6 +91,10 @@
                     {% if 'aprovar' in acoes_disponiveis %}
                         <form method="post" action="{% url 'supervisores:moderar_ong' ong.id 'aprovar' %}">
                             {% csrf_token %}
+                            {% if ong.cnpj_requer_conferencia %}
+                                <p>A consulta pública ainda não aceita este CNPJ alfanumérico. Confira o comprovante cadastral antes de aprovar.</p>
+                                <label><input type="checkbox" name="confirmar_cnpj" value="1" required> Conferi o comprovante do CNPJ e o vínculo com a organização.</label>
+                            {% endif %}
                             <button type="submit" class="supervisor-acao supervisor-acao--aprovar" data-confirm="Aprovar {{ ong.nome }} como parceira?">Aprovar ONG</button>
                         </form>
                     {% endif %}

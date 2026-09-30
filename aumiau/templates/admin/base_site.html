@@ -7,8 +7,13 @@
     <script src="{% static 'js/aumiau-theme.js' %}?v=3"></script>
 {% endblock %}
 
-{% block title %}
-    {% if title %}{{ title }} | {% endif %}AuMiau Admin
+{% block title %}{{ aumiau_admin_title|default:title|default:'Administração' }} | AuMiau Admin{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}?v=2">
+    <script src="{% static 'js/admin-pt.js' %}" defer></script>
+    <script src="{% static 'js/admin-mobile.js' %}?v=1" defer></script>
 {% endblock %}
 
 {% block extrastyle %}
@@ -27,7 +32,9 @@
 
     <link rel="stylesheet" href="{% static 'admin/css/aumiau-admin-v2.css' %}?v=2">
 
-    <link rel="stylesheet" href="{% static 'admin/css/aumiau-admin-pro.css' %}?v=3">
+    <link rel="stylesheet" href="{% static 'admin/css/aumiau-admin-pro.css' %}?v=4">
+
+    <link rel="stylesheet" href="{% static 'admin/css/aumiau-admin-mobile.css' %}?v=1">
 {% endblock %}
 
 {% block branding %}
@@ -118,7 +125,7 @@
         <header class="aumiau-page-heading">
             <span>Administração AuMiau</span>
 
-            <h1>{{ title }}</h1>
+            <h1>{{ aumiau_admin_title|default:title }}</h1>
 
             {% if subtitle %}
                 <p>{{ subtitle }}</p>

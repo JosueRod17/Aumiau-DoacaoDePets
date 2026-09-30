@@ -1,0 +1,13 @@
+{% load static %}
+{% if google_configurado %}
+<form method="post" action="{% url 'usuarios:google_iniciar' %}">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{% firstof next login_next '' %}">
+    <button type="submit" class="login-google">
+        <img src="{% static 'img/google-logo.png' %}" alt="" width="16" height="16">
+        <span>Continuar com Google</span>
+    </button>
+</form>
+{% else %}
+<p class="conta-ajuda">O acesso pelo Google ainda não está disponível. Use seu e-mail e senha.</p>
+{% endif %}

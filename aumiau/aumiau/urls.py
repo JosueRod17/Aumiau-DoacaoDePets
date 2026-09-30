@@ -21,13 +21,14 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('pets/', include('pets.urls')),
+    path('ongs/', include('ongs.urls')),
     path('usuarios/', include('usuarios.urls')),
     path('supervisor/', include('supervisores.urls')),
     path('admin/', admin.site.urls),
     path('', include('adocoes.urls')),
 ]
 
-if settings.DEBUG:
+if settings.DEBUG and settings.AUMIAU_DATA_MODE == 'local':
     urlpatterns += static(
         settings.MEDIA_URL,
         document_root=settings.MEDIA_ROOT,

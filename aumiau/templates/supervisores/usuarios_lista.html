@@ -1,6 +1,6 @@
 {% extends 'supervisores/base.html' %}
 
-{% block title %}Usuários | Supervisor AuMiau{% endblock %}
+{% block title %}Usuários | AuMiau Admin{% endblock %}
 
 {% block content %}
     <header class="supervisor-pagina-cabecalho">
@@ -60,7 +60,7 @@
                 <tbody>
                     {% for usuario in usuarios %}
                         <tr>
-                            <td>
+                            <td data-label="Usuário">
                                 <div class="supervisor-entidade">
                                     <span class="supervisor-entidade__icone">
                                         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -75,23 +75,23 @@
                                     </span>
                                 </div>
                             </td>
-                            <td>{{ usuario.perfil.telefone|default:"Não informado" }}</td>
-                            <td>
+                            <td data-label="Telefone">{{ usuario.perfil.telefone|default:"Não informado" }}</td>
+                            <td data-label="Localização">
                                 {% if usuario.perfil.cidade %}
                                     {{ usuario.perfil.cidade }}/{{ usuario.perfil.estado }}
                                 {% else %}
                                     <span class="supervisor-texto-suave">Não informada</span>
                                 {% endif %}
                             </td>
-                            <td>
+                            <td data-label="Situação">
                                 {% if usuario.is_active %}
                                     <span class="supervisor-status supervisor-status--publicado">Ativa</span>
                                 {% else %}
                                     <span class="supervisor-status supervisor-status--arquivado">Inativa</span>
                                 {% endif %}
                             </td>
-                            <td>{{ usuario.date_joined|date:"d/m/Y" }}</td>
-                            <td>
+                            <td data-label="Cadastro">{{ usuario.date_joined|date:"d/m/Y" }}</td>
+                            <td data-label="Ações">
                                 <a href="{% url 'supervisores:usuario_detalhe' usuario.id %}" class="supervisor-tabela__acao">Ver perfil</a>
                             </td>
                         </tr>

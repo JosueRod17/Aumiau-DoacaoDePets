@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Excluir minha conta | AuMiau{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/auth.css' %}">{% endblock %}
+{% block content %}
+<section class="auth-pagina">
+    <div class="conta-card conta-pagina-card">
+        <header class="conta-cabecalho"><h1>Excluir minha conta</h1><p>Esta ação é definitiva. Revise o que será removido antes de continuar.</p></header>
+        <ul class="conta-exclusao-aviso">
+            <li>Seu acesso e seus dados pessoais serão removidos, incluindo o vínculo com o Google.</li>
+            <li>Seus anúncios e ONGs sairão das páginas públicas. Contatos, descrições e fotos dos seus anúncios serão removidos.</li>
+            <li>Seus chamados de suporte serão excluídos. Referências históricas da conta ficarão anônimas.</li>
+            <li>Um identificador protegido do CPF é preservado apenas se houver banimento, para impedir novo cadastro.</li>
+        </ul>
+        {% if not user.has_usable_password and not google_confirmado %}
+            {% include 'usuarios/_google_confirmar.html' %}
+        {% endif %}
+        <form method="post" class="conta-form conta-form--senha">
+            {% csrf_token %}
+            {% if form.non_field_errors %}<div class="auth-erros-gerais conta-largura-total">{{ form.non_field_errors }}</div>{% endif %}
+            {% if form.senha %}<div class="auth-campo conta-largura-total">{{ form.senha.label_tag }}{{ form.senha }}{% for erro in form.senha.errors %}<p class="auth-erro">{{ erro }}</p>{% endfor %}</div>{% endif %}
+            <div class="auth-termos conta-largura-total"><div class="auth-termos__linha">{{ form.confirmacao }}{{ form.confirmacao.label_tag }}</div>{% for erro in form.confirmacao.errors %}<p class="auth-erro">{{ erro }}</p>{% endfor %}</div>
+            <div class="conta-acoes conta-largura-total">
+                <a href="{% url 'home' %}?conta=1" class="conta-botao conta-botao--cancelar">Cancelar</a>
+                <button type="submit" class="conta-botao conta-botao--excluir">Excluir definitivamente</button>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

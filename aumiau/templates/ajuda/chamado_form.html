@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Enviar mensagem | AuMiau{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/ajuda.css' %}">{% endblock %}
+{% block content %}
+<div class="ajuda-container ajuda-container--estreito">
+    <a class="ajuda-voltar" href="{% url 'ajuda' %}">← Central de ajuda</a>
+    <p class="ajuda-etiqueta">FALE CONOSCO</p>
+    <h1>Como podemos ajudar você?</h1>
+    <p class="ajuda-descricao">Envie sua dúvida, sugestão ou relato. A mensagem ficará disponível em Meus chamados, junto com a resposta quando houver.</p>
+    {% if pet %}<div class="ajuda-aviso"><strong>Interesse em adotar {{ pet.nome }}.</strong> Sua mensagem ficará vinculada a este anúncio. A equipe verificará a disponibilidade e responderá em Meus chamados. <a class="ajuda-link" href="{% url 'pets:detalhe' pet.pk %}">Rever anúncio</a></div>{% endif %}
+    <form class="ajuda-form ajuda-painel" method="post">
+        {% csrf_token %}
+        {% if form.errors %}<div class="ajuda-aviso ajuda-aviso--erro" role="alert">Confira os campos abaixo antes de enviar.</div>{% endif %}
+        {{ form.non_field_errors }}
+        {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+        {% for field in form.visible_fields %}
+        {% if field.name != 'incluir_conversa' %}
+        <div class="ajuda-campo">
+            <label for="{{ field.id_for_label }}">{{ field.label }} <span aria-hidden="true">*</span></label>
+            {{ field }}
+            {% if field.errors %}<div class="ajuda-erros" id="{{ field.id_for_label }}_errors">{{ field.errors }}</div>{% endif %}
+        </div>
+        {% endif %}
+        {% endfor %}
+        {% if form.contexto_pluttu %}
+        <section class="pluttu-encaminhamento" aria-labelledby="conversa-titulo">
+            <h2 id="conversa-titulo">Conversa com o Pluttu</h2>
+            <p class="ajuda-nota">Confira o histórico antes de autorizar o envio. Você também pode enviar sua mensagem sem anexar a conversa.</p>
+            <details><summary>Revisar conversa que será incluída</summary><div class="pluttu-transcricao">{{ form.contexto_pluttu }}</div></details>
+            <label class="pluttu-consentimento">{{ form.incluir_conversa }}<span>{{ form.incluir_conversa.label }}</span></label>
+        </section>
+        {% endif %}
+        <p class="ajuda-nota">Não inclua senhas, documentos ou informações de pagamento. Sua mensagem será vinculada à conta de {{ user.first_name|default:user.username }}.</p>
+        <div class="ajuda-acoes">
+            <a class="ajuda-link" href="{% url 'meus_chamados' %}">Meus chamados</a>
+            <button class="ajuda-botao ajuda-botao--laranja" type="submit">Enviar mensagem</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

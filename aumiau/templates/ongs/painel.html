@@ -1,0 +1,15 @@
+{% extends 'ongs/base.html' %}
+{% block title %}Painel da ONG | AuMiau{% endblock %}
+{% block ongs_content %}
+<section class="ongs-container ongs-panel">
+    <div class="ongs-heading-row"><div><p class="ongs-eyebrow">Seu espaço de cuidado</p><h1>Painel da ONG</h1><p>Acompanhe seus cadastros, a análise e os pets de cada organização.</p></div><a href="{% url 'ongs:cadastrar' %}" class="ongs-button">Cadastrar ONG</a></div>
+    {% for ong in ongs %}
+    <article class="ongs-panel-card">
+        <header class="ongs-heading-row"><div><span class="ongs-status ongs-status--{{ ong.status }}">{{ ong.get_status_display }}</span><h2>{{ ong.nome }}</h2><p>📍 {{ ong.cidade }}, {{ ong.estado }}</p></div><div class="ongs-actions"><a class="ongs-text-link" href="{% url 'ongs:detalhe' ong.pk %}">Ver perfil →</a><a class="ongs-button ongs-button--outline" href="{% url 'ongs:editar' ong.pk %}">Editar cadastro</a></div></header>
+        {% if ong.status == 'pendente' %}<p class="ongs-notice">Seu cadastro está em análise. Assim que for aprovado, a ONG aparecerá na busca e você poderá anunciar seus pets.</p>{% elif ong.status == 'rejeitada' or ong.status == 'suspensa' %}<div class="ongs-notice"><strong>Revise seu cadastro para solicitar uma nova análise.</strong>{% if ong.motivo_rejeicao %}<p>{{ ong.motivo_rejeicao }}</p>{% endif %}</div>{% endif %}
+        <div class="ongs-heading-row"><h3>Pets da ONG <span class="ongs-muted">({{ ong.pets_do_painel|length }})</span></h3>{% if ong.status == 'aprovada' %}<a class="ongs-button" href="{% url 'pets:anunciar' %}?ong={{ ong.pk }}">+ Anunciar pet</a>{% endif %}</div>
+        {% if ong.pets_do_painel %}<ul class="ongs-pet-list">{% for pet in ong.pets_do_painel %}<li><div><strong>{{ pet.nome }}</strong><span>{{ pet.get_especie_display }} · {{ pet.idade_formatada }}</span>{% if pet.motivo_rejeicao %}<p>{{ pet.motivo_rejeicao }}</p>{% endif %}</div><span class="ongs-status ongs-status--{{ pet.status }}">{{ pet.get_status_display }}</span><a class="ongs-text-link" href="{% url 'pets:editar' pet.pk %}">Gerenciar pet →</a></li>{% endfor %}</ul>{% else %}<p class="ongs-panel-empty">Sua ONG ainda não tem pets cadastrados.{% if ong.status == 'aprovada' %} Anuncie o primeiro pet para começar.{% endif %}</p>{% endif %}
+    </article>
+    {% empty %}<div class="ongs-empty ongs-empty--panel"><span aria-hidden="true">🐾</span><h2>Vamos apresentar sua ONG?</h2><p>Cadastre sua organização para acompanhar a aprovação e reunir seus pets neste espaço.</p><a class="ongs-button" href="{% url 'ongs:cadastrar' %}">Cadastrar minha ONG</a></div>{% endfor %}
+</section>
+{% endblock %}

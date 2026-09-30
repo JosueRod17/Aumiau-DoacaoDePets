@@ -1,10 +1,14 @@
+from copy import deepcopy
 from django import forms
 from django.contrib.auth import get_user_model
 from django.forms import inlineformset_factory
 from django.db.models import Q
 
 from ongs.models import Ong
+from ongs.forms import CadastroOngForm
 from pets.models import FotoPet, Pet
+from pets.forms import PetForm
+from pets.identidade import configurar_identidade, limpar_identidade
 from usuarios.models import UF_CHOICES
 
 from .permissions import GRUPO_SUPERVISORES
@@ -36,6 +40,7 @@ class PetSupervisorForm(forms.ModelForm):
             'raca',
             'genero',
             'porte',
+            'data_nascimento',
             'idade_anos',
             'idade_meses',
             'responsavel',
@@ -66,6 +71,10 @@ class PetSupervisorForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         Usuario = get_user_model()
+        for nome in ('raca', 'raca_outra', 'data_nascimento', 'nascimento_desconhecido', 'idade_anos', 'idade_meses'):
+            self.fields[nome] = deepcopy(PetForm.base_fields[nome])
+        configurar_identidade(self)
+        self.order_fields(['nome', 'especie', 'raca', 'raca_outra', 'genero', 'porte', 'data_nascimento', 'nascimento_desconhecido', 'idade_anos', 'idade_meses'])
 
         responsaveis = (
             Usuario.objects
@@ -114,6 +123,7 @@ class PetSupervisorForm(forms.ModelForm):
 
     def clean(self):
         dados = super().clean()
+        limpar_identidade(self, dados)
         responsavel = dados.get('responsavel')
         ong = dados.get('ong')
 
@@ -179,19 +189,23 @@ FotoPetSupervisorFormSet = inlineformset_factory(
 )
 
 
-class OngSupervisorForm(forms.ModelForm):
+class OngSupervisorForm(CadastroOngForm):
     estado = forms.ChoiceField(
         label='UF',
         choices=[('', 'Selecione a UF'), *UF_CHOICES],
     )
 
-    class Meta:
+    class Meta(CadastroOngForm.Meta):
         model = Ong
         fields = (
             'nome',
+            'cnpj',
+            'foto',
             'estado',
             'cidade',
             'descricao',
+            'email',
+            'telefone',
         )
         widgets = {
             'descricao': forms.Textarea(attrs={'rows': 6}),

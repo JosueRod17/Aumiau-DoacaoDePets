@@ -1,0 +1,44 @@
+{% extends 'ongs/base.html' %}
+{% block title %}ONGs parceiras | AuMiau{% endblock %}
+{% block ongs_content %}
+<section class="ongs-hero">
+    <p class="ongs-eyebrow">Quem cuida com amor</p>
+    <h1>Encontre uma ONG parceira</h1>
+    <p>Conheça organizações e protetores que transformam vidas todos os dias.</p>
+    <form class="ongs-search" method="get" role="search">
+        <label for="ongs-busca" class="ongs-sr-only">Busque por nome, cidade ou estado</label>
+        <span aria-hidden="true">🔍</span>
+        <input id="ongs-busca" name="q" value="{{ busca }}" placeholder="Busque por nome, cidade ou estado..." type="search">
+        {% if regiao != 'todas' %}<input type="hidden" name="regiao" value="{{ regiao }}">{% endif %}
+        <button class="ongs-button ongs-button--orange" type="submit">Buscar ONGs</button>
+    </form>
+</section>
+<div class="ongs-container ongs-directory">
+    <div class="ongs-stats" aria-label="Nossa rede de proteção">
+        <div><strong>{{ total_ongs }}</strong><span>ONGs parceiras</span></div>
+        <div><strong>{{ total_pets }}</strong><span>Pets cadastrados</span></div>
+        <div><strong>{{ total_adocoes }}</strong><span>Adoções realizadas</span></div>
+    </div>
+    <div class="ongs-heading-row">
+        <div><h2>ONGs parceiras</h2><p>Encontre quem está perto de você e veja os pets disponíveis para adoção.</p></div>
+        {% if user.is_authenticated %}<a class="ongs-text-link" href="{% url 'ongs:painel' %}">Painel da ONG →</a>{% endif %}
+    </div>
+    <nav class="ongs-filters" aria-label="Filtrar ONGs por região">
+        {% for valor, rotulo in regioes %}<a href="?regiao={{ valor }}&amp;q={{ busca|urlencode }}" {% if regiao == valor %}class="is-active" aria-current="page"{% endif %}>{{ rotulo }}</a>{% endfor %}
+    </nav>
+    {% if busca %}<p class="ongs-result-count">{{ pagina.paginator.count }} resultado{{ pagina.paginator.count|pluralize }} para “{{ busca }}” · <a href="{% url 'ongs:lista' %}">Limpar busca</a></p>{% endif %}
+    <div class="ongs-grid">
+        {% for ong in ongs %}
+        {% include 'ongs/partials/card.html' with mostrar_contagem=True %}
+        {% empty %}
+        <div class="ongs-empty"><span aria-hidden="true">🐾</span><h3>Nenhuma ONG encontrada</h3><p>Tente outra cidade, estado ou nome. Novas organizações aparecerão aqui após a aprovação.</p><a class="ongs-text-link" href="{% url 'ongs:lista' %}">Ver todas as ONGs</a></div>
+        {% endfor %}
+    </div>
+    {% if pagina.has_other_pages %}<nav class="ongs-pagination" aria-label="Paginação de ONGs">
+        {% if pagina.has_previous %}<a href="?pagina={{ pagina.previous_page_number }}&amp;q={{ busca|urlencode }}&amp;regiao={{ regiao }}">← Anterior</a>{% endif %}
+        <span>Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>
+        {% if pagina.has_next %}<a href="?pagina={{ pagina.next_page_number }}&amp;q={{ busca|urlencode }}&amp;regiao={{ regiao }}">Próxima →</a>{% endif %}
+    </nav>{% endif %}
+    <section class="ongs-cta"><div><h2>Sua ONG ainda não está no AuMiau?</h2><p>Cadastre gratuitamente seus animais e conecte-os a famílias que querem adotar.</p></div><a class="ongs-button ongs-button--orange" href="{% url 'ongs:cadastrar' %}">Cadastrar ONG</a></section>
+</div>
+{% endblock %}

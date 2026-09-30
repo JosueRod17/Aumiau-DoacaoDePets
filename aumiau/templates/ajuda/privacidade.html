@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Privacidade | AuMiau{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/ajuda.css' %}">{% endblock %}
+{% block content %}
+<div class="ajuda-container ajuda-container--estreito">
+    <a class="ajuda-voltar" href="{% url 'ajuda' %}">← Central de ajuda</a>
+    <p class="ajuda-etiqueta">SOBRE SEUS DADOS</p><h1>Privacidade</h1>
+    <p class="ajuda-descricao">Saiba como os recursos atuais do AuMiau utilizam as informações que você fornece.</p>
+    <article class="ajuda-painel ajuda-documento">
+        <h2>Informações do cadastro</h2>
+        <p>A conta armazena nome, e-mail, telefone, cidade e estado, além da data de aceite e da versão dos termos. A senha é armazenada pelo sistema de autenticação em formato de hash. O CPF informado é verificado pelos seus dígitos e convertido em um identificador protegido por HMAC; somente esse identificador e os quatro últimos dígitos são guardados, sem armazenar o CPF completo. Essa verificação não confirma a titularidade nem a situação cadastral na Receita Federal.</p>
+        <p>Quando o acesso pelo Google estiver configurado, o site poderá receber o identificador da conta Google, o nome e o e-mail verificado. O identificador permite reconhecer a conta vinculada, e o nome e o e-mail integram o cadastro. Tokens de acesso do Google não são armazenados no cadastro.</p>
+        <h2>Anúncios e organizações</h2>
+        <p>As informações e fotos dos pets publicados, assim como os dados de apresentação e contato das ONGs aprovadas, podem ser vistos nas páginas públicas correspondentes. Evite incluir documentos, endereço residencial completo ou informações sensíveis em textos e imagens públicos.</p>
+        <p>O cadastro de ONG solicita o CNPJ da organização e consulta os dados cadastrais disponíveis na BrasilAPI. Essa consulta não comprova que a pessoa que preencheu o formulário representa a organização. O CNPJ pertence ao cadastro da instituição.</p>
+        <h2>Mensagens para a central de ajuda</h2>
+        <p>Os chamados guardam o assunto, a categoria, a mensagem, a conta que enviou, a situação e a resposta administrativa. A consulta pela área Meus chamados fica restrita ao titular da conta. A administração também pode consultar e responder essas mensagens no painel de atendimento. Não envie senhas ou dados de pagamento.</p>
+        <p>O Pluttu responde com orientações da central de ajuda, sem enviar suas perguntas a um serviço externo de inteligência artificial. As últimas seis perguntas e respostas ficam na sessão do site. Você pode limpar essa conversa. Ao abrir um chamado, o histórico só fica anexado para a equipe se você revisar e autorizar sua inclusão.</p>
+        <h2>Sessão e serviços externos</h2>
+        <p>O site usa cookies para manter sua sessão e proteger o envio de formulários. As páginas carregam fontes do Google Fonts e o preenchimento de cidades pode consultar o serviço BrasilAPI, que fornece dados de municípios do IBGE. Ao abrir links de contato externos, como WhatsApp, você passa a usar o serviço escolhido e suas próprias condições.</p>
+        <h2>Atualização e solicitações</h2>
+        <p>Você pode atualizar os dados disponíveis ou solicitar a exclusão em Minha conta. A exclusão anonimiza sua conta, remove chamados pessoais e retira os dados pessoais e fotos dos anúncios sob sua responsabilidade. Os anúncios são arquivados e as ONGs vinculadas são suspensas, com remoção dos contatos e da descrição; os dados da instituição, incluindo seu CNPJ, permanecem no cadastro. O identificador protegido do CPF só é preservado para impedir um novo cadastro quando há banimento registrado.</p>
+        <p>Para dúvidas sobre outras informações vinculadas ao cadastro, <a class="ajuda-link" href="{% url 'chamado_novo' %}">registre um chamado</a> e acompanhe a resposta pelo site.</p>
+    </article>
+</div>
+{% endblock %}

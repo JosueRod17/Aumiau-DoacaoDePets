@@ -6,6 +6,7 @@ from django.contrib.auth.forms import (AuthenticationForm, PasswordChangeForm, U
 from django.db.models import Q
 
 from .models import UF_CHOICES
+from .documentos import validar_cpf_disponivel
 
 
 User = get_user_model()
@@ -90,6 +91,11 @@ class LoginEmailForm(AuthenticationForm):
 
 
 class CadastroUsuarioForm(UserCreationForm):
+    cpf = forms.CharField(
+        label='CPF', max_length=14,
+        help_text='Validamos os dígitos do documento. Seu CPF não aparece publicamente.',
+        widget=forms.TextInput(attrs={'placeholder': '000.000.000-00', 'inputmode': 'numeric', 'autocomplete': 'off'}),
+    )
     nome_completo = forms.CharField(
         label='Nome completo',
         max_length=150,
@@ -163,6 +169,7 @@ class CadastroUsuarioForm(UserCreationForm):
         fields = (
             'nome_completo',
             'email',
+            'cpf',
             'telefone',
             'estado',
             'cidade',
@@ -202,6 +209,9 @@ class CadastroUsuarioForm(UserCreationForm):
             )
 
         return email
+
+    def clean_cpf(self):
+        return validar_cpf_disponivel(self.cleaned_data['cpf'])
 
     def clean_telefone(self):
         telefone = re.sub(
@@ -387,6 +397,10 @@ class EditarContaForm(forms.Form):
 
         preparar_select_cidade(self)
 
+        if not usuario.has_usable_password():
+            self.fields['senha_atual'].required = False
+            self.fields['confirmacao_senha_atual'].required = False
+
     def clean_telefone(self):
         telefone = re.sub(
             r'\D',
@@ -468,3 +482,50 @@ class EditarContaForm(forms.Form):
         )
 
         return self.usuario
+
+
+class CadastroGoogleForm(CadastroUsuarioForm):
+    """Dados restantes; nome/e-mail Google são sempre provenientes da sessão verificada."""
+    password1 = None
+    password2 = None
+
+    class Meta(CadastroUsuarioForm.Meta):
+        fields = ('nome_completo', 'email', 'cpf', 'telefone', 'estado', 'cidade', 'aceite_termos')
+
+    def __init__(self, *args, identidade, **kwargs):
+        # Evita o __init__ do formulário de senha, que espera password1/password2.
+        UserCreationForm.__init__(self, *args, **kwargs)
+        self.initial.update({'nome_completo': identidade.get('name', ''), 'email': identidade['email']})
+        self.fields['email'].disabled = True
+        preparar_select_cidade(self)
+
+    def save(self, commit=True):
+        usuario = User(email=self.cleaned_data['email'], username=self.cleaned_data['email'])
+        partes = self.cleaned_data['nome_completo'].strip().split(maxsplit=1)
+        usuario.first_name = partes[0]
+        usuario.last_name = partes[1] if len(partes) > 1 else ''
+        usuario.set_unusable_password()
+        if commit:
+            usuario.save()
+        return usuario
+
+
+class ExcluirContaForm(forms.Form):
+    senha = forms.CharField(label='Senha atual', strip=False, widget=forms.PasswordInput(attrs={'autocomplete': 'current-password'}))
+    confirmacao = forms.BooleanField(label='Entendi que esta exclusão é definitiva e desejo excluir minha conta.')
+
+    def __init__(self, *args, usuario, google_confirmado=False, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.usuario = usuario
+        self.google_confirmado = google_confirmado
+        if not usuario.has_usable_password():
+            del self.fields['senha']
+
+    def clean(self):
+        dados = super().clean()
+        if self.usuario.has_usable_password():
+            if dados.get('senha') and not self.usuario.check_password(dados['senha']):
+                self.add_error('senha', 'A senha está incorreta.')
+        elif not self.google_confirmado:
+            raise forms.ValidationError('Confirme sua identidade pelo Google antes de excluir a conta.')
+        return dados

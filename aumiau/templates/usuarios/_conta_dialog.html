@@ -4,16 +4,6 @@
 
     <section class="conta-card">
 
-        {% if messages %}
-            <div class="conta-mensagens" aria-live="polite">
-                {% for message in messages %}
-                    <p class="conta-mensagem conta-mensagem--{{ message.tags }}">
-                        {{ message }}
-                    </p>
-                {% endfor %}
-            </div>
-        {% endif %}
-
         <div class="conta-painel" data-conta-panel="menu" {% if painel_conta != 'menu' %}hidden{% endif %}>
 
             <header class="conta-cabecalho">
@@ -42,6 +32,7 @@
                     </span>
                 </button>
 
+                {% if user.has_usable_password %}
                 <button type="button" class="conta-opcao" data-conta-show="senha">
                     <span class="conta-opcao__texto">
                         <strong>Alterar senha</strong>
@@ -52,46 +43,61 @@
                         →
                     </span>
                 </button>
+                {% else %}
+                <a class="conta-opcao" href="{% url 'usuarios:google_senha' %}">
+                    <span class="conta-opcao__texto"><strong>Criar senha</strong><small>Entre também com e-mail e senha</small></span>
+                    <span class="conta-opcao__seta" aria-hidden="true">→</span>
+                </a>
+                {% endif %}
 
-                <button type="button" class="conta-opcao" disabled>
+                <a class="conta-opcao" href="{% url 'pets:meus_pets' %}">
                     <span class="conta-opcao__texto">
                         <strong>Meus anúncios</strong>
                         <small>Gerencie os pets que anunciou</small>
                     </span>
 
-                    <span class="conta-em-breve">Em breve</span>
-                </button>
+                    <span class="conta-opcao__seta" aria-hidden="true">→</span>
+                </a>
 
-                <button type="button" class="conta-opcao" disabled>
+                <a class="conta-opcao" href="{% url 'ongs:painel' %}">
                     <span class="conta-opcao__texto">
-                        <strong>Pedidos de adoção</strong>
-                        <small>Acompanhe suas solicitações</small>
+                        <strong>Minhas ONGs</strong>
+                        <small>Acompanhe suas organizações e os pets vinculados</small>
                     </span>
 
-                    <span class="conta-em-breve">Em breve</span>
-                </button>
+                    <span class="conta-opcao__seta" aria-hidden="true">→</span>
+                </a>
 
-                <button type="button" class="conta-opcao" disabled>
+                <a class="conta-opcao" href="{% url 'meus_chamados' %}">
                     <span class="conta-opcao__texto">
-                        <strong>Pets favoritos</strong>
-                        <small>Veja os animais que você salvou</small>
+                        <strong>Meus chamados</strong>
+                        <small>Acompanhe suas mensagens e as respostas da equipe</small>
                     </span>
 
-                    <span class="conta-em-breve">Em breve</span>
-                </button>
+                    <span class="conta-opcao__seta" aria-hidden="true">→</span>
+                </a>
             </div>
+
+            {% if google_configurado and not user.conta_google %}
+            <form method="post" action="{% url 'usuarios:google_iniciar' %}" class="conta-google-confirmar">
+                {% csrf_token %}
+                <input type="hidden" name="finalidade" value="vincular">
+                <input type="hidden" name="next" value="{% url 'home' %}?conta=1">
+                <button type="submit" class="login-google">Vincular Google</button>
+            </form>
+            {% endif %}
 
             <div class="conta-zona-risco">
                 <p>Zona de risco</p>
 
-                <button type="button" class="conta-opcao conta-opcao--perigo" disabled>
+                <a href="{% url 'usuarios:excluir' %}" class="conta-opcao conta-opcao--perigo">
                     <span class="conta-opcao__texto">
                         <strong>Excluir minha conta</strong>
-                        <small>Exclui permanentemente seus dados</small>
+                        <small>Revise e confirme a exclusão dos seus dados</small>
                     </span>
 
-                    <span class="conta-em-breve">Em breve</span>
-                </button>
+                    <span class="conta-opcao__seta" aria-hidden="true">→</span>
+                </a>
             </div>
         </div>
 
@@ -102,7 +108,7 @@
                 </h2>
 
                 <p>
-                    Altere seus dados e confirme usando sua senha atual.
+                    Altere seus dados{% if user.has_usable_password %} e confirme usando sua senha atual{% endif %}.
                 </p>
             </header>
 
@@ -179,6 +185,7 @@
                     {% endfor %}
                 </div>
 
+                {% if user.has_usable_password %}
                 <div class="auth-campo">
                     <label for="{{ form.senha_atual.id_for_label }}">
                         {{ form.senha_atual.label }}
@@ -202,6 +209,8 @@
                         <p class="auth-erro">{{ error }}</p>
                     {% endfor %}
                 </div>
+
+                {% endif %}
 
                 <div class="conta-acoes conta-largura-total">
                     <button type="button" class="conta-botao conta-botao--cancelar" data-conta-show="menu">

@@ -14,7 +14,7 @@
         <tbody>
             {% for pet in pets %}
                 <tr>
-                    <td>
+                    <td data-label="Pet">
                         <a href="{% url 'supervisores:pet_detalhe' pet.id %}" class="supervisor-pet-resumo">
                             <span class="supervisor-pet-resumo__foto">
                                 {% if pet.foto_principal %}
@@ -35,7 +35,7 @@
                         </a>
                     </td>
 
-                    <td>
+                    <td data-label="Responsável">
                         {% if pet.ong %}
                             {{ pet.ong.nome }}
                         {% elif pet.responsavel %}
@@ -45,17 +45,17 @@
                         {% endif %}
                     </td>
 
-                    <td>{{ pet.cidade }}/{{ pet.estado }}</td>
+                    <td data-label="Localização">{{ pet.cidade }}/{{ pet.estado }}</td>
 
-                    <td>
+                    <td data-label="Status">
                         <span class="supervisor-status supervisor-status--{{ pet.status }}">
                             {{ pet.get_status_display }}
                         </span>
                     </td>
 
-                    <td>{{ pet.criado_em|date:"d/m/Y" }}</td>
+                    <td data-label="Cadastro">{{ pet.criado_em|date:"d/m/Y" }}</td>
 
-                    <td>
+                    <td data-label="Ações">
                         <a href="{% url 'supervisores:pet_detalhe' pet.id %}" class="supervisor-tabela__acao">
                             {% if pet.status == 'pendente' %}Analisar{% else %}Ver detalhes{% endif %}
                         </a>

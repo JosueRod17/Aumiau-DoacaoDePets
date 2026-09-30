@@ -1,0 +1,7 @@
+{% if show %}
+<nav class="toplinks" aria-labelledby="date-hierarchy-label">
+    <span id="date-hierarchy-label">Filtrar por {{ field_name }}</span>
+    {% if back %}<a href="{{ back.link }}" class="date-back">‹ {{ back.title }}</a>{% endif %}
+    {% for choice in choices %}{% if choice.link %}<a href="{{ choice.link }}">{{ choice.title }}</a>{% else %}{{ choice.title }}{% endif %}{% endfor %}
+</nav>
+{% endif %}

@@ -1,5 +1,8 @@
 from django.db import models
 from django.conf import settings
+from django.core.validators import RegexValidator
+
+from .cnpj import validar_cnpj
 
 
 class Ong(models.Model):
@@ -10,9 +13,25 @@ class Ong(models.Model):
         SUSPENSA = 'suspensa', 'Suspensa'
 
     nome = models.CharField(max_length=120)
+    codigo_demonstracao = models.CharField(max_length=40, unique=True, null=True, blank=True, editable=False)
+    foto = models.ImageField('foto da ONG', upload_to='ongs/%Y/%m/', blank=True)
+    cnpj = models.CharField('CNPJ', max_length=14, unique=True, null=True, blank=True, validators=[validar_cnpj])
+    razao_social = models.CharField('razão social consultada', max_length=200, blank=True)
+    cnpj_situacao = models.CharField('situação cadastral consultada', max_length=40, blank=True)
+    cnpj_consultado_em = models.DateTimeField('consulta de CNPJ realizada em', null=True, blank=True)
+    cnpj_confirmado_manualmente = models.BooleanField('CNPJ conferido documentalmente pela equipe', default=False)
     cidade = models.CharField(max_length=100)
     estado = models.CharField(max_length=2)
     descricao = models.TextField(blank=True)
+    responsavel = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,
+        null=True, blank=True, related_name='ongs_responsaveis',
+    )
+    email = models.EmailField('e-mail público', blank=True)
+    telefone = models.CharField(
+        'telefone público', max_length=11, blank=True,
+        validators=[RegexValidator(r'^\d{10,11}$', 'Informe um telefone com DDD.')],
+    )
     aprovada = models.BooleanField(default=False)
     status = models.CharField(
         max_length=12,
@@ -38,6 +57,10 @@ class Ong(models.Model):
 
     def __str__(self):
         return self.nome
+
+    @property
+    def cnpj_requer_conferencia(self):
+        return bool(self.cnpj and not self.cnpj_consultado_em and not self.cnpj_confirmado_manualmente)
 
     def save(self, *args, **kwargs):
         self.aprovada = self.status == self.Status.APROVADA

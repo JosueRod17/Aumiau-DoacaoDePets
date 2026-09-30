@@ -1,0 +1,19 @@
+{% extends "admin/actions.html" %}
+
+{% block actions-form %}
+    {% for field in action_form %}
+        {% if field.name == 'action' %}
+            <label>Ação:
+                <select name="{{ field.html_name }}" aria-label="Ação">
+                    {% for value, label in field.field.choices %}
+                        <option value="{{ value }}"{% if field.value == value %} selected{% endif %}>{% if value == '' %}Selecione uma opção{% else %}{{ label }}{% endif %}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        {% elif field.label %}
+            <label>{{ field.label }} {{ field }}</label>
+        {% else %}
+            {{ field }}
+        {% endif %}
+    {% endfor %}
+{% endblock %}

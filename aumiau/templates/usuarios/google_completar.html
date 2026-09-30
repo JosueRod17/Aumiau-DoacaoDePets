@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Concluir cadastro | AuMiau{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/auth.css' %}">{% endblock %}
+{% block content %}
+<section class="auth-pagina">
+    <div class="conta-card conta-pagina-card">
+        <header class="conta-cabecalho"><h1>Quase pronto!</h1><p>O Google confirmou seu e-mail. Complete os dados abaixo para criar sua conta no AuMiau.</p></header>
+        <form method="post" class="conta-form" data-uf-cidades-form>
+            {% csrf_token %}
+            {% if form.non_field_errors %}<div class="auth-erros-gerais conta-largura-total">{{ form.non_field_errors }}</div>{% endif %}
+            {% for campo in form %}
+                {% if campo.name != 'aceite_termos' %}
+                <div class="auth-campo">
+                    {{ campo.label_tag }}{{ campo }}
+                    {% if campo.help_text %}<small class="conta-ajuda">{{ campo.help_text }}</small>{% endif %}
+                    {% for erro in campo.errors %}<p class="auth-erro">{{ erro }}</p>{% endfor %}
+                    {% if campo.name == 'cidade' %}<p class="localidade-status" data-cidades-status aria-live="polite"></p>{% endif %}
+                </div>
+                {% endif %}
+            {% endfor %}
+            <div class="auth-termos conta-largura-total">
+                <div class="auth-termos__linha">{{ form.aceite_termos }}<label for="{{ form.aceite_termos.id_for_label }}">Li e aceito os <a href="{% url 'termos' %}" target="_blank" rel="noopener">Termos de Uso</a> e a <a href="{% url 'privacidade' %}" target="_blank" rel="noopener">Política de Privacidade</a>.</label></div>
+                {% for erro in form.aceite_termos.errors %}<p class="auth-erro">{{ erro }}</p>{% endfor %}
+            </div>
+            <button class="auth-botao conta-largura-total" type="submit">Concluir cadastro</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

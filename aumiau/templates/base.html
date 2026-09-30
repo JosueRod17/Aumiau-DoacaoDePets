@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}?v=2">
     <meta charset="UTF-8">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,22 +11,28 @@
     </title>
 
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/publico.css' %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
+    <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
     <header class="site-header">
         <a class="logo-horizontal" href="{% url 'home' %}">
             <img src="{% static 'img/aumiau-logo-horizontal.png' %}" alt="AuMiau - adoção de pets">
         </a>
 
-        <nav class="main-nav" aria-label="Navegação principal">
-            <a href="{% url 'home' %}#adocao">Adoção</a>
-            <a href="{% url 'pets:anunciar' %}">Anunciar</a>
-            <a href="{% url 'home' %}#ongs">ONGs</a>
-            <a href="{% url 'home' %}#ajuda">Ajuda</a>
+        <button class="mobile-nav-toggle" type="button" aria-expanded="false" aria-controls="site-navigation" aria-label="Abrir menu" data-mobile-nav-toggle>
+            <span aria-hidden="true">☰</span> <span data-mobile-nav-label>Menu</span>
+        </button>
+
+        <nav class="main-nav" id="site-navigation" aria-label="Navegação principal">
+            <a href="{% url 'pets:lista' %}" {% if request.resolver_match.url_name == 'lista' and request.resolver_match.namespace == 'pets' %}aria-current="page"{% endif %}>Adoção</a>
+            <a href="{% url 'pets:anunciar' %}" {% if request.resolver_match.url_name == 'anunciar' %}aria-current="page"{% endif %}>Anunciar</a>
+            <a href="{% url 'ongs:lista' %}" {% if request.resolver_match.namespace == 'ongs' %}aria-current="page"{% endif %}>ONGs</a>
+            <a href="{% url 'ajuda' %}" {% if request.resolver_match.url_name == 'ajuda' %}aria-current="page"{% endif %}>Ajuda</a>
         </nav>
 
         <div class="acoes-header">
@@ -64,6 +71,10 @@
                             Minha conta
                         </a>
                         {% endif %}
+
+                        <a href="{% url 'pets:meus_pets' %}" class="perfil-menu__link">Meus anúncios</a>
+                        <a href="{% url 'ongs:painel' %}" class="perfil-menu__link">Minhas ONGs</a>
+                        <a href="{% url 'meus_chamados' %}" class="perfil-menu__link">Meus chamados</a>
 
                         {% if tem_acesso_supervisor %}
                         <a href="{% url 'supervisores:dashboard' %}" class="perfil-menu__conta">
@@ -104,11 +115,16 @@
         </div>
     </header>
 
-    <main>
+    <main id="conteudo">
+        {% if messages %}
+        <div class="mensagens-site" aria-live="polite">
+            {% for message in messages %}<p class="mensagem-site mensagem-site--{{ message.tags }}">{{ message }}</p>{% endfor %}
+        </div>
+        {% endif %}
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="rodape" id="ajuda">
+    <footer class="rodape">
         <div class="rodape-conteudo">
             <div class="rodape-marca">
                 <a href="{% url 'home' %}">
@@ -116,45 +132,45 @@
                 </a>
 
                 <p>
-                    Aproximando pessoas, protetores e animais
-                    que procuram um novo lar.
+                    Conectando corações e patinhas desde 2026.
+                    Toda adoção é uma história de amor.
                 </p>
             </div>
 
             <nav class="rodape-coluna" aria-label="Navegação do rodapé">
-                <h2>Explore</h2>
+                <h2>ADOÇÃO</h2>
 
-                <a href="{% url 'home' %}#adocao">
-                    Pets para adoção
+                <a href="{% url 'pets:lista' %}?especie=cachorro">
+                    Cachorros
                 </a>
 
-                <a href="{% url 'home' %}#como-funciona">
-                    Como funciona
+                <a href="{% url 'pets:lista' %}?especie=gato">
+                    Gatos
                 </a>
 
-                <a href="{% url 'home' %}#ongs">
-                    ONGs parceiras
+                <a href="{% url 'pets:lista' %}?especie=outros">
+                    Outros animais
                 </a>
 
-                <a href="{% url 'home' %}#anunciar">
-                    Seja parceiro
+                <a href="{% url 'pets:lista' %}?necessidades_especiais=1">
+                    Pets com necessidades especiais
                 </a>
             </nav>
 
             <div class="rodape-coluna">
-                <h2>Conta</h2>
-                <span class="rodape-indisponivel">Entrar — em breve</span>
-                <span class="rodape-indisponivel">Criar conta — em breve</span>
-                <span class="rodape-indisponivel">Anunciar pet — em breve</span>
+                <h2>ONGs</h2>
+                <a href="{% url 'ongs:cadastrar' %}">Cadastrar ONG</a>
+                <a href="{% url 'pets:anunciar' %}">Anunciar pet</a>
+                <a href="{% url 'ongs:painel' %}">Painel da ONG</a>
+                <a href="{% url 'ongs:lista' %}">ONGs parceiras</a>
             </div>
 
             <div class="rodape-coluna">
-                <h2>Ajuda</h2>
-
-                <p>
-                    A central de ajuda e os canais de contato
-                    serão adicionados nas próximas etapas.
-                </p>
+                <h2>SUPORTE</h2>
+                <a href="{% url 'ajuda' %}">Central de ajuda</a>
+                <a href="{% url 'chamado_novo' %}">Fale conosco</a>
+                <a href="{% url 'termos' %}">Termos de uso</a>
+                <a href="{% url 'privacidade' %}">Privacidade</a>
             </div>
         </div>
 
@@ -166,6 +182,7 @@
 
     <script src="{% static 'js/password-toggle.js' %}?v=2" defer></script>
     <script src="{% static 'js/uf-cidades.js' %}?v=1" defer></script>
+    <script src="{% static 'js/site-nav.js' %}" defer></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

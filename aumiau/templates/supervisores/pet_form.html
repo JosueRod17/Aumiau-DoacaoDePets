@@ -1,6 +1,7 @@
 {% extends 'supervisores/base.html' %}
+{% load static %}
 
-{% block title %}{% if criando %}Cadastrar pet{% else %}Editar {{ pet.nome }}{% endif %} | Painel Admin AuMiau{% endblock %}
+{% block title %}{% if criando %}Cadastrar pet{% else %}Editar {{ pet.nome }}{% endif %} | AuMiau Admin{% endblock %}
 
 {% block content %}
     <a href="{% if pet %}{% url 'supervisores:pet_detalhe' pet.id %}{% else %}{% url 'supervisores:pets_lista' %}{% endif %}" class="supervisor-voltar">
@@ -16,49 +17,68 @@
         </div>
     </header>
 
-    <form method="post" enctype="multipart/form-data" class="supervisor-formulario">
+    <form method="post" enctype="multipart/form-data" class="supervisor-formulario supervisor-formulario--pet" data-pet-identity>
         {% csrf_token %}
 
         {% if form.non_field_errors %}
             <div class="supervisor-formulario__erro-geral" role="alert">{{ form.non_field_errors }}</div>
         {% endif %}
 
-        <section class="supervisor-card supervisor-formulario__secao">
+        {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+
+        <p class="supervisor-formulario__orientacao">Os campos marcados com <span aria-hidden="true">*</span> são obrigatórios. Informe uma pessoa ou uma ONG como responsável pelo anúncio.</p>
+
+        <section class="supervisor-card supervisor-formulario__secao" aria-labelledby="pet-identificacao">
             <header class="supervisor-card__cabecalho">
                 <div>
-                    <span class="supervisor-card__etiqueta">Informações</span>
-                    <h2>Dados do pet</h2>
-                    <p>Os campos marcados com * são obrigatórios.</p>
+                    <span class="supervisor-card__etiqueta">01 · Identificação</span>
+                    <h2 id="pet-identificacao">Quem é o pet?</h2>
+                    <p>Nome, espécie e características que ajudam a encontrar uma família.</p>
                 </div>
             </header>
-
             <div class="supervisor-formulario__grade">
-                {% for field in form %}
-                    <div class="supervisor-campo{% if field.name == 'descricao' or field.name == 'descricao_necessidades_especiais' %} supervisor-campo--largo{% endif %}{% if field.errors %} has-error{% endif %}">
-                        {% if field.field.widget.input_type == 'checkbox' %}
-                            <label class="supervisor-checkbox" for="{{ field.id_for_label }}">
-                                {{ field }}
-                                <span>{{ field.label }}</span>
-                            </label>
-                        {% else %}
-                            <label for="{{ field.id_for_label }}">
-                                {{ field.label }}{% if field.field.required %} <span aria-hidden="true">*</span>{% endif %}
-                            </label>
-                            {{ field }}
-                        {% endif %}
-
-                        {% if field.help_text %}<small class="supervisor-campo__ajuda">{{ field.help_text }}</small>{% endif %}
-                        {% for error in field.errors %}<small class="supervisor-campo__erro">{{ error }}</small>{% endfor %}
-                    </div>
-                {% endfor %}
+                {% include 'supervisores/partials/_campo_pet.html' with field=form.nome %}
+                {% include 'supervisores/partials/_campo_pet.html' with field=form.especie %}
+                {% include 'supervisores/partials/_campo_pet.html' with field=form.raca %}
+                {% include 'supervisores/partials/_campo_pet.html' with field=form.raca_outra %}
+                {% include 'supervisores/partials/_campo_pet.html' with field=form.genero %}
+                {% include 'supervisores/partials/_campo_pet.html' with field=form.porte %}
             </div>
         </section>
 
-        <section class="supervisor-card supervisor-formulario__secao">
+        <section class="supervisor-card supervisor-formulario__secao" aria-labelledby="pet-idade">
+            <header class="supervisor-card__cabecalho"><div><span class="supervisor-card__etiqueta">02 · Idade</span><h2 id="pet-idade">Nascimento ou idade aproximada</h2><p>Se a data não for conhecida, informe uma estimativa em anos e meses.</p></div></header>
+            <div class="supervisor-formulario__grade">
+                {% include 'supervisores/partials/_campo_pet.html' with field=form.nascimento_desconhecido largo=True %}
+                {% include 'supervisores/partials/_campo_pet.html' with field=form.data_nascimento %}
+                {% include 'supervisores/partials/_campo_pet.html' with field=form.idade_anos %}
+                {% include 'supervisores/partials/_campo_pet.html' with field=form.idade_meses %}
+            </div>
+        </section>
+
+        <section class="supervisor-card supervisor-formulario__secao" aria-labelledby="pet-responsavel">
+            <header class="supervisor-card__cabecalho"><div><span class="supervisor-card__etiqueta">03 · Responsabilidade</span><h2 id="pet-responsavel">Responsável e localização</h2><p>Vincule o anúncio a uma pessoa ou a uma ONG e informe onde o pet está.</p></div></header>
+            <div class="supervisor-formulario__grade">
+                {% include 'supervisores/partials/_campo_pet.html' with field=form.responsavel %}
+                {% include 'supervisores/partials/_campo_pet.html' with field=form.ong %}
+                {% include 'supervisores/partials/_campo_pet.html' with field=form.estado %}
+                {% include 'supervisores/partials/_campo_pet.html' with field=form.cidade %}
+            </div>
+        </section>
+
+        <section class="supervisor-card supervisor-formulario__secao" aria-labelledby="pet-historia">
+            <header class="supervisor-card__cabecalho"><div><span class="supervisor-card__etiqueta">04 · Apresentação</span><h2 id="pet-historia">História e foto principal</h2><p>Conte um pouco sobre o pet e escolha a foto que aparece na lista de anúncios.</p></div></header>
+            <div class="supervisor-formulario__grade">
+                {% include 'supervisores/partials/_campo_pet.html' with field=form.descricao largo=True %}
+                {% include 'supervisores/partials/_campo_pet.html' with field=form.foto_principal largo=True %}
+            </div>
+        </section>
+
+        <section class="supervisor-card supervisor-formulario__secao" aria-labelledby="pet-galeria">
             <header class="supervisor-card__cabecalho">
                 <div>
-                    <span class="supervisor-card__etiqueta">Galeria</span>
-                    <h2>Fotos adicionais</h2>
+                    <span class="supervisor-card__etiqueta">05 · Galeria</span>
+                    <h2 id="pet-galeria">Fotos adicionais</h2>
                     <p>Você pode manter até 6 fotos extras, com no máximo 5 MB cada.</p>
                 </div>
             </header>
@@ -94,6 +114,23 @@
             </div>
         </section>
 
+        <section class="supervisor-card supervisor-formulario__secao" aria-labelledby="pet-saude">
+            <header class="supervisor-card__cabecalho"><div><span class="supervisor-card__etiqueta">06 · Saúde</span><h2 id="pet-saude">Cuidados e necessidades</h2><p>Marque as informações confirmadas sobre a saúde do pet.</p></div></header>
+            <div class="supervisor-formulario__grade supervisor-formulario__grade--saude">
+                {% include 'supervisores/partials/_campo_pet.html' with field=form.vacinado %}
+                {% include 'supervisores/partials/_campo_pet.html' with field=form.castrado %}
+                {% include 'supervisores/partials/_campo_pet.html' with field=form.vermifugado %}
+                {% include 'supervisores/partials/_campo_pet.html' with field=form.microchipado %}
+                {% include 'supervisores/partials/_campo_pet.html' with field=form.necessidades_especiais largo=True %}
+                {% include 'supervisores/partials/_campo_pet.html' with field=form.descricao_necessidades_especiais largo=True %}
+            </div>
+        </section>
+
+        <section class="supervisor-card supervisor-formulario__secao" aria-labelledby="pet-exibicao">
+            <header class="supervisor-card__cabecalho"><div><span class="supervisor-card__etiqueta">07 · Exibição</span><h2 id="pet-exibicao">Destaque no site</h2><p>O destaque aparece apenas quando o anúncio estiver publicado.</p></div></header>
+            {% include 'supervisores/partials/_campo_pet.html' with field=form.destaque %}
+        </section>
+
         <div class="supervisor-formulario__acoes">
             <a href="{% if pet %}{% url 'supervisores:pet_detalhe' pet.id %}{% else %}{% url 'supervisores:pets_lista' %}{% endif %}" class="supervisor-botao supervisor-botao--contorno">Cancelar</a>
             <button type="submit" class="supervisor-botao supervisor-botao--primario">
@@ -102,3 +139,4 @@
         </div>
     </form>
 {% endblock %}
+{% block extra_js %}{{ block.super }}{{ form.catalogo_racas|json_script:'pet-breed-catalog' }}<script src="{% static 'js/pets.js' %}?v=2" defer></script>{% endblock %}

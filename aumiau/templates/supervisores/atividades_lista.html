@@ -1,6 +1,6 @@
 {% extends 'supervisores/base.html' %}
 
-{% block title %}Histórico | Painel Admin AuMiau{% endblock %}
+{% block title %}Histórico | AuMiau Admin{% endblock %}
 
 {% block content %}
     <header class="supervisor-pagina-cabecalho">
@@ -46,11 +46,11 @@
                 <tbody>
                     {% for atividade in atividades %}
                         <tr>
-                            <td><time datetime="{{ atividade.criado_em|date:'c' }}">{{ atividade.criado_em|date:"d/m/Y H:i" }}</time></td>
-                            <td>{% firstof atividade.supervisor.get_full_name atividade.supervisor.username "Conta removida" %}</td>
-                            <td><span class="supervisor-status supervisor-status--neutro">{{ atividade.get_acao_display }}</span></td>
-                            <td>{{ atividade.entidade|capfirst }} #{{ atividade.objeto_id|default:"—" }}</td>
-                            <td>{{ atividade.descricao }}</td>
+                            <td data-label="Data"><time datetime="{{ atividade.criado_em|date:'c' }}">{{ atividade.criado_em|date:"d/m/Y H:i" }}</time></td>
+                            <td data-label="Responsável">{% firstof atividade.supervisor.get_full_name atividade.supervisor.username "Conta removida" %}</td>
+                            <td data-label="Ação"><span class="supervisor-status supervisor-status--neutro">{{ atividade.get_acao_display }}</span></td>
+                            <td data-label="Registro">{{ atividade.entidade|capfirst }} #{{ atividade.objeto_id|default:"—" }}</td>
+                            <td data-label="Descrição">{{ atividade.descricao }}</td>
                         </tr>
                     {% empty %}
                         <tr><td colspan="5"><div class="supervisor-vazio supervisor-vazio--tabela"><strong>Nenhuma atividade encontrada.</strong><p>As ações realizadas no painel aparecerão aqui.</p></div></td></tr>

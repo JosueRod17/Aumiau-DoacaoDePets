@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Meus chamados | AuMiau{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/ajuda.css' %}">{% endblock %}
+{% block content %}
+<div class="ajuda-container ajuda-container--estreito">
+    <a class="ajuda-voltar" href="{% url 'ajuda' %}">← Central de ajuda</a>
+    <div class="ajuda-titulo-linha"><div><p class="ajuda-etiqueta">MINHA CONTA</p><h1>Meus chamados</h1></div><a class="ajuda-botao ajuda-botao--laranja" href="{% url 'chamado_novo' %}">Nova mensagem</a></div>
+    <p class="ajuda-descricao">Consulte suas mensagens e acompanhe as respostas da administração.</p>
+    <div class="ajuda-lista">
+        {% for chamado in pagina %}
+        <a class="ajuda-chamado" href="{% url 'chamado_detalhe' chamado.pk %}">
+            <div><small>#{{ chamado.pk }} · {{ chamado.get_categoria_display }}</small><h2>{{ chamado.assunto }}</h2><span>{{ chamado.criado_em|date:"d/m/Y, H:i" }}</span></div>
+            <span class="ajuda-status ajuda-status--{{ chamado.status }}">{{ chamado.get_status_display }}</span>
+        </a>
+        {% empty %}
+        <div class="ajuda-vazio ajuda-painel"><h2>Você ainda não enviou mensagens</h2><p>Quando precisar de ajuda ou quiser compartilhar uma sugestão, registre seu primeiro chamado.</p><a class="ajuda-botao ajuda-botao--laranja" href="{% url 'chamado_novo' %}">Enviar mensagem</a></div>
+        {% endfor %}
+    </div>
+    {% if pagina.has_other_pages %}
+    <nav class="ajuda-paginacao" aria-label="Páginas de chamados">
+        {% if pagina.has_previous %}<a class="ajuda-link" href="?page={{ pagina.previous_page_number }}">← Anterior</a>{% endif %}
+        <span>Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>
+        {% if pagina.has_next %}<a class="ajuda-link" href="?page={{ pagina.next_page_number }}">Próxima →</a>{% endif %}
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

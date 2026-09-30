@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: aumiau
+    runtime: python
+    plan: free
+    buildCommand: bash build.sh
+    startCommand: gunicorn --chdir aumiau aumiau.wsgi:application --bind 0.0.0.0:$PORT
+    envVars:
+      - key: AUMIAU_DATA_MODE
+        value: shared
+      - key: DJANGO_DEBUG
+        value: 'false'
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DOCUMENT_HASH_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: S3_BUCKET_NAME
+        sync: false
+      - key: S3_ACCESS_KEY_ID
+        sync: false
+      - key: S3_SECRET_ACCESS_KEY
+        sync: false
+      - key: S3_ENDPOINT_URL
+        sync: false
+      - key: S3_REGION_NAME
+        value: auto
+      - key: S3_ADDRESSING_STYLE
+        value: path

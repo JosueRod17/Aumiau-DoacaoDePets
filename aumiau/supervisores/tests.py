@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
+from unittest.mock import patch
 
 from pets.models import Pet
 from ongs.models import Ong
@@ -376,6 +378,7 @@ class FluxosSupervisorTests(TestCase):
                 'genero': Pet.Genero.FEMEA,
                 'porte': Pet.Porte.PEQUENO,
                 'idade_anos': 2,
+                'nascimento_desconhecido': 'on',
                 'idade_meses': 3,
                 'responsavel': self.usuario.pk,
                 'ong': '',
@@ -417,11 +420,14 @@ class FluxosSupervisorTests(TestCase):
             ).exists()
         )
 
-    def test_supervisor_cadastra_ong_e_registra_atividade(self):
+    @patch('ongs.forms.consultar_cnpj')
+    def test_supervisor_cadastra_ong_e_registra_atividade(self, consulta):
+        consulta.return_value = {'razao_social': 'ONG de teste', 'situacao': 'ATIVA', 'consultado_em': timezone.now()}
         resposta = self.client.post(
             reverse('supervisores:ong_criar'),
             {
                 'nome': 'Amor Animal',
+                'cnpj': '19131243000197',
                 'estado': 'PE',
                 'cidade': 'Recife',
                 'descricao': 'Proteção e adoção responsável.',
@@ -484,7 +490,9 @@ class FluxosSupervisorTests(TestCase):
         self.assertLessEqual(len(atividade.descricao), 255)
         self.assertTrue(atividade.descricao.endswith('...'))
 
-    def test_supervisor_edita_pet_e_ong(self):
+    @patch('ongs.forms.consultar_cnpj')
+    def test_supervisor_edita_pet_e_ong(self, consulta):
+        consulta.return_value = {'razao_social': 'ONG de teste', 'situacao': 'ATIVA', 'consultado_em': timezone.now()}
         pet = self.criar_pet()
         ong = Ong.objects.create(
             nome='Nome antigo',
@@ -497,10 +505,11 @@ class FluxosSupervisorTests(TestCase):
             {
                 'nome': 'Paçoca atualizado',
                 'especie': Pet.Especie.CACHORRO,
-                'raca': 'Vira-lata',
+                'raca': 'Sem raça definida',
                 'genero': Pet.Genero.MACHO,
                 'porte': Pet.Porte.MEDIO,
                 'idade_anos': 4,
+                'nascimento_desconhecido': 'on',
                 'idade_meses': 0,
                 'responsavel': self.usuario.pk,
                 'ong': '',
@@ -521,6 +530,7 @@ class FluxosSupervisorTests(TestCase):
             reverse('supervisores:ong_editar', args=[ong.pk]),
             {
                 'nome': 'Nome atualizado',
+                'cnpj': '19131243000197',
                 'estado': 'PE',
                 'cidade': 'Olinda',
                 'descricao': 'Descrição atualizada.',

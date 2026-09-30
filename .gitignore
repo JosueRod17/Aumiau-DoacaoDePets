@@ -24,7 +24,8 @@ staticfiles/
 !.env.example
 
 # IDEs
-.vscode/
+.vscode/*
+!.vscode/settings.json
 .idea/
 
 # Sistema operacional
@@ -42,3 +43,4 @@ htmlcov/
 build/
 dist/
 *.egg-info/
+.design-reference/

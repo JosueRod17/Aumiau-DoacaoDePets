@@ -1,0 +1,7 @@
+<form method="post" action="{% url 'usuarios:google_iniciar' %}" class="conta-google-confirmar">
+    {% csrf_token %}
+    <input type="hidden" name="finalidade" value="reautenticar">
+    <input type="hidden" name="next" value="{{ request.path }}">
+    <p>Para continuar, confirme sua identidade usando a conta Google vinculada ao AuMiau.</p>
+    <button type="submit" class="login-google">Confirmar identidade com Google</button>
+</form>

@@ -17,6 +17,32 @@ class AuMiauAdminSite(AdminSite):
 
     index_template = 'admin/aumiau_index.html'
 
+    def each_context(self, request):
+        context = super().each_context(request)
+        route = getattr(request.resolver_match, 'url_name', '') or ''
+        sections = {
+            'pets_pet': 'Pets',
+            'pets_fotopet': 'Fotos dos pets',
+            'ongs_ong': 'ONGs parceiras',
+            'auth_user': 'Usuários',
+            'auth_group': 'Grupos e permissões',
+            'usuarios_perfil': 'Perfis',
+            'adocoes_chamadoajuda': 'Chamados de ajuda',
+        }
+        titles = {
+            'index': 'Visão geral',
+            'password_change': 'Alterar senha',
+            'password_change_done': 'Senha alterada',
+            'pets_pet_add': 'Novo anúncio',
+            'pets_pet_change': 'Editar anúncio',
+            'pets_pet_delete': 'Excluir anúncio',
+            'pets_pet_history': 'Histórico do anúncio',
+        }
+        for model, section in sections.items():
+            titles[f'{model}_changelist'] = section
+        context['aumiau_admin_title'] = titles.get(route, '')
+        return context
+
     def has_permission(self, request):
         return bool(
             request.user.is_active

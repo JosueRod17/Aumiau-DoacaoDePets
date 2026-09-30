@@ -653,8 +653,8 @@
     top: 16px;
     right: 16px;
     display: grid;
-    width: 38px;
-    height: 38px;
+    width: 44px;
+    height: 44px;
     padding: 0;
     place-items: center;
     color: var(--text);
@@ -896,7 +896,17 @@ html.auth-modal-aberto, html.auth-modal-aberto body {
 .conta-opcao__seta {
     color: var(--purple);
     font-size: 22px;
+    flex: 0 0 24px;
+    text-align: center;
 }
+
+.conta-opcao { text-decoration: none; }
+.conta-pagina-card { max-width: 720px; margin: 0 auto; border-radius: 24px; }
+.conta-cabecalho h1 { margin: 0; color: var(--text); font-size: 30px; line-height: 1.2; overflow-wrap: anywhere; }
+.conta-exclusao-aviso { margin: 24px 0; padding-left: 22px; color: var(--text-muted); line-height: 1.7; }
+.conta-google-confirmar { margin-top: 24px; }
+.conta-botao--excluir { background: #a3322b; color: #fff; border: 1px solid #a3322b; }
+.conta-botao--excluir:hover { background: #82251f; }
 
 .conta-em-breve {
     flex: none;
@@ -1002,11 +1012,16 @@ html.auth-modal-aberto, html.auth-modal-aberto body {
 }
 
 .conta-botao {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     min-height: 48px;
     padding: 0 24px;
     border-radius: 999px;
     font: inherit;
     font-weight: 700;
+    text-align: center;
+    text-decoration: none;
     cursor: pointer;
 }
 
@@ -1225,5 +1240,49 @@ html.auth-modal-aberto, html.auth-modal-aberto body {
 
     .cadastro-conteudo {
         padding: 30px 20px;
+    }
+}
+
+/* Formularios e janelas continuam utilizaveis nas telas pequenas. */
+@media (max-width: 760px) {
+    .auth-campo input:not([type="checkbox"]),
+    .auth-campo select,
+    .cadastro-form .auth-campo :is(input:not([type="checkbox"]), select),
+    .login-form .auth-campo input:not([type="checkbox"]),
+    .conta-form .auth-campo :is(input:not([type="checkbox"]), select) {
+        font-size: 16px;
+    }
+
+    .senha-toggle {
+        right: 4px;
+        width: 44px;
+        height: 44px;
+    }
+
+    .auth-erro,
+    .auth-erros-gerais,
+    .conta-ajuda,
+    .conta-mensagem {
+        overflow-wrap: anywhere;
+    }
+}
+
+@media (max-width: 520px) {
+    .auth-dialog .login-conteudo,
+    .auth-dialog .cadastro-conteudo {
+        padding-top: 76px;
+    }
+
+    .auth-dialog--conta .conta-card {
+        padding-top: 76px;
+    }
+
+    .conta-cabecalho h1,
+    .conta-cabecalho h2 {
+        font-size: 26px;
+    }
+
+    .auth-card h1 {
+        font-size: 28px;
     }
 }

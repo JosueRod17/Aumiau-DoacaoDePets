@@ -1,0 +1,7 @@
+{% if page_obj.has_other_pages %}
+<nav class="pet-pagination" aria-label="Páginas de resultados">
+    {% if page_obj.has_previous %}<a href="?{{ querystring }}&amp;page={{ page_obj.previous_page_number }}" aria-label="Página anterior">← Anterior</a>{% endif %}
+    <span aria-current="page">{{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}<a href="?{{ querystring }}&amp;page={{ page_obj.next_page_number }}" aria-label="Próxima página">Próxima →</a>{% endif %}
+</nav>
+{% endif %}

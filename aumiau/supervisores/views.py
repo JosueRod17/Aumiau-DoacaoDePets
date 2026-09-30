@@ -259,11 +259,7 @@ def pets_lista(request):
     titulo_lista = titulos_por_status.get(status, 'Todos os pets')
 
     contexto = {
-        'pagina_ativa': (
-            'moderacao'
-            if status == Pet.Status.PENDENTE
-            else 'pets'
-        ),
+        'pagina_ativa': 'pets',
         'titulo_pagina': titulo_lista,
         'pets': pagina,
         'pagina': pagina,
@@ -391,11 +387,7 @@ def pet_detalhe(request, pet_id):
         request,
         'supervisores/pet_detalhe.html',
         {
-            'pagina_ativa': (
-                'moderacao'
-                if pet.status == Pet.Status.PENDENTE
-                else 'pets'
-            ),
+            'pagina_ativa': 'pets',
             'titulo_pagina': f'Análise de {pet.nome}',
             'pet': pet,
             'pode_moderar': request.user.has_perm(
@@ -622,6 +614,7 @@ def ongs_lista(request):
 def _salvar_formulario_ong(request, ong, criando=False):
     form = OngSupervisorForm(
         request.POST or None,
+        request.FILES or None,
         instance=ong,
     )
 
@@ -766,6 +759,12 @@ def moderar_ong(request, ong_id, acao):
                 ong_id=ong.pk,
             )
 
+        if acao == 'aprovar' and ong.cnpj_requer_conferencia:
+            if request.POST.get('confirmar_cnpj') != '1':
+                messages.error(request, 'Confira o comprovante do CNPJ e confirme a conferência antes de aprovar.')
+                return redirect('supervisores:ong_detalhe', ong_id=ong.pk)
+            ong.cnpj_confirmado_manualmente = True
+
         ong.status = novos_status[acao]
         ong.motivo_rejeicao = (
             motivo if acao in {'rejeitar', 'suspender'} else ''
@@ -775,6 +774,7 @@ def moderar_ong(request, ong_id, acao):
         ong.save(update_fields=[
             'status',
             'aprovada',
+            'cnpj_confirmado_manualmente',
             'motivo_rejeicao',
             'moderado_por',
             'moderado_em',
@@ -913,84 +913,42 @@ def usuario_detalhe(request, usuario_id):
 @require_POST
 @supervisor_permission_required('supervisores.gerenciar_usuarios')
 def alterar_status_usuario(request, usuario_id, acao):
-    if acao not in {'ativar', 'inativar'}:
+    from usuarios.models import Perfil
+    from usuarios.services import alterar_situacao_usuario
+    situacoes = {'ativar': Perfil.Situacao.ATIVA, 'inativar': Perfil.Situacao.SUSPENSA,
+                 'suspender': Perfil.Situacao.SUSPENSA, 'banir': Perfil.Situacao.BANIDA}
+    destino = 'supervisores:usuario_detalhe'
+    if acao not in situacoes:
         messages.error(request, 'Ação de usuário inválida.')
-        return redirect(
-            'supervisores:usuario_detalhe',
-            usuario_id=usuario_id,
-        )
-
+        return redirect(destino, usuario_id=usuario_id)
     motivo = request.POST.get('motivo', '').strip()
-
     if not motivo:
-        messages.error(
-            request,
-            'Informe o motivo da alteração da conta.',
-        )
-        return redirect(
-            'supervisores:usuario_detalhe',
-            usuario_id=usuario_id,
-        )
-
+        messages.error(request, 'Informe o motivo da alteração da conta.')
+        return redirect(destino, usuario_id=usuario_id)
     with transaction.atomic():
-        usuario = get_object_or_404(
-            _usuarios_comuns().select_for_update(),
-            pk=usuario_id,
-        )
-
+        usuario = get_object_or_404(_usuarios_comuns().select_for_update(), pk=usuario_id)
         if usuario.pk == request.user.pk:
-            messages.error(
-                request,
-                'Você não pode alterar o estado da própria conta.',
-            )
-            return redirect(
-                'supervisores:usuario_detalhe',
-                usuario_id=usuario.pk,
-            )
-
-        novo_estado = acao == 'ativar'
-
-        if usuario.is_active == novo_estado:
-            messages.info(
-                request,
-                'A conta já está com a situação solicitada.',
-            )
-            return redirect(
-                'supervisores:usuario_detalhe',
-                usuario_id=usuario.pk,
-            )
-
-        usuario.is_active = novo_estado
-        usuario.save(update_fields=['is_active'])
-
+            messages.error(request, 'Você não pode alterar o estado da própria conta.')
+            return redirect(destino, usuario_id=usuario_id)
+        perfil = getattr(usuario, 'perfil', None)
+        atual = perfil.situacao if perfil else (Perfil.Situacao.ATIVA if usuario.is_active else Perfil.Situacao.SUSPENSA)
+        if atual == situacoes[acao]:
+            messages.info(request, 'A conta já está com a situação solicitada.')
+            return redirect(destino, usuario_id=usuario_id)
+        try:
+            usuario = alterar_situacao_usuario(usuario, situacoes[acao])
+        except ValueError as erro:
+            messages.error(request, str(erro))
+            return redirect(destino, usuario_id=usuario_id)
+        verbo = {'ativar': 'Reativou', 'inativar': 'Suspendeu', 'suspender': 'Suspendeu', 'banir': 'Baniu'}[acao]
         registrar_atividade(
             request.user,
-            (
-                RegistroAtividade.Acao.ATIVOU
-                if usuario.is_active
-                else RegistroAtividade.Acao.DESATIVOU
-            ),
-            'usuario',
-            usuario,
-            (
-                f'{"Ativou" if usuario.is_active else "Inativou"} '
-                f'a conta {usuario.get_username()}. Motivo: {motivo}'
-            ),
+            RegistroAtividade.Acao.ATIVOU if usuario.is_active else RegistroAtividade.Acao.DESATIVOU,
+            'usuario', usuario, f'{verbo} a conta {usuario.get_username()}. Motivo: {motivo}',
         )
-
-    messages.success(
-        request,
-        (
-            'Conta reativada com sucesso.'
-            if usuario.is_active
-            else 'Conta inativada com sucesso.'
-        ),
-    )
-
-    return redirect(
-        'supervisores:usuario_detalhe',
-        usuario_id=usuario.pk,
-    )
+    messages.success(request, {'ativar': 'Conta reativada com sucesso.', 'inativar': 'Conta suspensa com sucesso.',
+                              'suspender': 'Conta suspensa com sucesso.', 'banir': 'Conta banida. Novos cadastros com o mesmo CPF serão bloqueados.'}[acao])
+    return redirect(destino, usuario_id=usuario_id)
 
 
 @supervisor_permission_required('supervisores.view_registroatividade')

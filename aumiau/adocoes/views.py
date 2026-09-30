@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -15,9 +15,11 @@ def home(request):
     localizacao = request.GET.get('localizacao', '').strip()
     login_next = request.GET.get('next', '')
 
-    pets = Pet.objects.filter(status=Pet.Status.PUBLICADO,)
+    pets = Pet.objects.publicos().select_related('ong')
     ongs_aprovadas = Ong.objects.filter(
         status=Ong.Status.APROVADA,
+    ).annotate(
+        pets_disponiveis=Count('pets', filter=Q(pets__status=Pet.Status.PUBLICADO)),
     )
 
     if localizacao:
@@ -117,9 +119,10 @@ def home(request):
                     )
 
     contexto = {
-        'pets': pets[:4],
+        'pets': pets[:12],
         'localizacao': localizacao,
-        'total_pets': Pet.objects.filter(status=Pet.Status.PUBLICADO,).count(),
+        'total_pets': Pet.objects.publicos().count(),
+        'total_adotados': Pet.objects.filter(status=Pet.Status.ADOTADO).count(),
         'ongs': ongs_aprovadas[:4],
         'total_ongs': ongs_aprovadas.count(),
 

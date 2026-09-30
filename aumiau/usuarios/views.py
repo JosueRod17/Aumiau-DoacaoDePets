@@ -1,5 +1,8 @@
 from django.conf import settings
 from django.contrib.auth import login
+from django.contrib import messages
+from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.db import IntegrityError, transaction
 from django.shortcuts import redirect, render, resolve_url
@@ -9,8 +12,10 @@ from django.utils.http import url_has_allowed_host_and_scheme
 
 from supervisores.permissions import usuario_e_supervisor
 
-from .forms import CadastroUsuarioForm, LoginEmailForm
+from .forms import CadastroUsuarioForm, ExcluirContaForm, LoginEmailForm
 from .models import Perfil
+from .documentos import assinatura_cpf
+from .services import excluir_conta as excluir_conta_servico
 
 
 class LoginUsuarioView(LoginView):
@@ -35,6 +40,11 @@ def cadastro(request):
         return redirect('home')
 
     form = CadastroUsuarioForm(request.POST or None)
+    destino = request.POST.get('next', '') if request.method == 'POST' else request.GET.get('next', '')
+    if not url_has_allowed_host_and_scheme(
+        url=destino, allowed_hosts={request.get_host()}, require_https=request.is_secure(),
+    ):
+        destino = ''
 
     if request.method == 'POST' and form.is_valid():
         try:
@@ -45,6 +55,8 @@ def cadastro(request):
 
                 Perfil.objects.create(
                     usuario=usuario,
+                    cpf_hash=assinatura_cpf(form.cleaned_data['cpf']),
+                    cpf_final=form.cleaned_data['cpf'][-4:],
                     telefone=form.cleaned_data['telefone'],
                     cidade=cidade,
                     estado=estado,
@@ -54,8 +66,8 @@ def cadastro(request):
 
         except IntegrityError:
             form.add_error(
-                'email',
-                'Não foi possível criar a conta. Verifique o e-mail.',
+                None,
+                'Não foi possível criar a conta. Verifique o e-mail e o CPF.',
             )
 
         else:
@@ -74,5 +86,18 @@ def cadastro(request):
     return render(
         request,
         'usuarios/cadastro.html',
-        {'form': form},
+        {'form': form, 'next': destino},
     )
+
+
+@login_required
+def excluir(request):
+    from .google import reautenticacao_recente
+    google_confirmado = reautenticacao_recente(request)
+    form = ExcluirContaForm(request.POST or None, usuario=request.user, google_confirmado=google_confirmado)
+    if request.method == 'POST' and form.is_valid():
+        excluir_conta_servico(request.user)
+        logout(request)
+        messages.success(request, 'Sua conta foi excluída. Seus anúncios foram retirados e seus dados pessoais removidos.')
+        return redirect('home')
+    return render(request, 'usuarios/excluir.html', {'form': form, 'google_confirmado': google_confirmado})

@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Pluttu | AuMiau{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/ajuda.css' %}">{% endblock %}
+{% block content %}<div class="ajuda-container ajuda-container--estreito"><a class="ajuda-voltar" href="{% url 'ajuda' %}">← Central de ajuda</a>{% include 'ajuda/partials/pluttu.html' %}</div>{% endblock %}
+{% block extra_js %}<script src="{% static 'js/ajuda.js' %}" defer></script>{% endblock %}

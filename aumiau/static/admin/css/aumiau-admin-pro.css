@@ -838,6 +838,153 @@ body a:focus-visible, #header button:focus-visible {
     outline-offset: 3px;
 }
 
+/* Django 6: o contêiner do campo é filho direto de .form-row. */
+.aumiau-upload { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; max-width: 100%; }
+.aumiau-upload__button { padding: 10px 14px; border: 1px solid var(--aumiau-borda); border-radius: 9px; color: var(--aumiau-roxo); background: var(--aumiau-superficie); white-space: nowrap; }
+.aumiau-upload__name { overflow-wrap: anywhere; font-size: 12px; color: var(--aumiau-texto-suave); }
+.aumiau-upload input[type="file"] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.aumiau-upload:focus-within { outline: 2px solid var(--aumiau-roxo); outline-offset: 3px; border-radius: 9px; }
+
+body.change-form .aligned .form-row > .flex-container:not(.checkbox-row):not(.form-multiline) {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 9px;
+    min-width: 0;
+}
+
+body.change-form .aligned .checkbox-row .checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+body.change-form .aligned .checkbox-row label {
+    margin: 0;
+    padding: 0;
+}
+
+body.change-form .aligned .help,
+body.change-form .aligned ul.errorlist {
+    margin-left: 0;
+    padding-left: 0;
+}
+
+body.change-form .related-widget-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    max-width: 100%;
+    float: none;
+}
+
+body.change-form .related-widget-wrapper .select2-container {
+    flex: 1 1 200px;
+    min-width: 0;
+    max-width: 100%;
+}
+
+body.change-form .aligned .related-widget-wrapper > select:not([multiple]) {
+    flex: 1 1 200px;
+    width: auto;
+    min-width: 0;
+}
+
+body.change-form .related-widget-wrapper-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 28px;
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+}
+
+body.change-form .related-widget-wrapper-link:hover {
+    background: var(--aumiau-creme);
+}
+
+body.change-form .aligned input[type="file"] {
+    padding: 10px;
+    line-height: 1.5;
+}
+
+body.change-form input[type="file"]::file-selector-button {
+    margin-right: 10px;
+    padding: 8px 12px;
+    border: 1px solid var(--aumiau-borda);
+    border-radius: 8px;
+    background: var(--aumiau-superficie);
+    color: var(--aumiau-roxo);
+    font: inherit;
+    cursor: pointer;
+}
+
+body.model-pet.change-form #pet_form > div > fieldset.module.aligned:not(.collapse) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: visible;
+}
+
+body.model-pet.change-form #pet_form > div > fieldset.module > .fieldset-heading,
+body.model-pet.change-form #pet_form > div > fieldset.module > .description,
+body.model-pet.change-form .form-row.field-descricao,
+body.model-pet.change-form .form-row.field-descricao_necessidades_especiais,
+body.model-pet.change-form .form-row.field-foto_principal,
+body.model-pet.change-form .form-row.field-preview_foto,
+body.model-pet.change-form .form-row.field-motivo_rejeicao {
+    grid-column: 1 / -1;
+}
+
+body.model-pet.change-form .form-row {
+    min-width: 0;
+}
+
+body.model-pet.change-form .aligned .readonly img {
+    max-width: 100%;
+    height: auto !important;
+}
+
+body.model-pet.change-form .inline-group .tabular {
+    overflow-x: auto;
+}
+
+body.model-pet.change-form .inline-group .tabular td {
+    vertical-align: top;
+}
+
+body.model-pet.change-form [hidden] {
+    display: none !important;
+}
+
+body.change-list #changelist-filter a.aumiau-filter-action {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 0;
+    background-image: none;
+    line-height: 1.5;
+}
+
+.aumiau-filter-action svg {
+    flex: 0 0 18px;
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+@media (max-width: 900px) {
+    body.model-pet.change-form #pet_form > div > fieldset.module.aligned:not(.collapse) {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
 /* RESPONSIVIDADE */
 
 @media (max-width: 1000px) {

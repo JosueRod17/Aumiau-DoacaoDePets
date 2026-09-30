@@ -7,6 +7,9 @@
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'css/auth.css' %}?v=10">
+    <link rel="stylesheet" href="{% static 'css/pets.css' %}">
+    <link rel="stylesheet" href="{% static 'css/ongs.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home-cards.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -23,7 +26,7 @@
                 Cada adoção é uma vida transformada.
             </p>
 
-            <form class="pesquisar-modo" method="get">
+            <form class="pesquisar-modo" method="get" action="{% url 'pets:lista' %}">
                 <div class="pesquisar-cidade">
                     <span class="pesquisar-cidade-icon" aria-hidden="true">📍</span>
 
@@ -37,7 +40,7 @@
 
             <ul class="estatisticas" aria-label="Números da AuMiau">
                 <li>
-                    <strong>0</strong>
+                    <strong>{{ total_adotados }}</strong>
                     <span>Pets Adotados</span>
                 </li>
 
@@ -91,25 +94,40 @@
         </ol>
     </section>
 
-    <section class="pets-disponiveis" id="adocao" aria-labelledby="pets-titulo">
+    <section class="pets-disponiveis" id="adocao" aria-labelledby="pets-titulo" data-home-carousel>
         <div class="pets-cabecalho">
-            <p class="secao-etiqueta">Prontos para um lar!</p>
-            <h2 id="pets-titulo">Pets esperando por você</h2>
+            <div>
+                <p class="secao-etiqueta">Prontos para um lar!</p>
+                <h2 id="pets-titulo">Pets esperando por você</h2>
+            </div>
+            <div class="home-pet-actions">
+                <a class="link-secao" href="{% url 'pets:lista' %}">Ver todos os pets →</a>
+                {% if pets %}
+                <div class="home-carousel-controls" aria-label="Navegação do carrossel de pets">
+                    <button type="button" data-carousel-prev aria-label="Ver pets anteriores" aria-controls="home-pet-track" disabled>←</button>
+                    <button type="button" data-carousel-next aria-label="Ver próximos pets" aria-controls="home-pet-track">→</button>
+                </div>
+                {% endif %}
+            </div>
         </div>
 
-        <div class="grade-pets">
+        <nav class="home-pet-filters" aria-label="Explorar pets por espécie">
+            <a class="is-active" href="{% url 'pets:lista' %}">Todos</a>
+            <a href="{% url 'pets:lista' %}?especie=cachorro">Cachorros</a>
+            <a href="{% url 'pets:lista' %}?especie=gato">Gatos</a>
+            <a href="{% url 'pets:lista' %}?especie=outros">Outros</a>
+        </nav>
+
+        {% if pets %}
+        <div class="home-pet-carousel">
+          <div class="home-pet-track" id="home-pet-track" data-carousel-track tabindex="0" role="region" aria-label="Pets esperando por você">
             {% for pet in pets %}
-            <article class="card-pet">
-                <div class="card-pet-imagem" aria-hidden="true">🐾</div>
-
-                <div class="card-pet-conteudo">
-                    <span class="card-pet-especie">{{ pet.get_especie_display }}</span>
-                    <h3>{{ pet.nome }}</h3>
-                    <p>📍 {{ pet.cidade }}, {{ pet.estado|upper }}</p>
-                </div>
-            </article>
-
-            {% empty %}
+                {% include 'pets/partials/card.html' %}
+            {% endfor %}
+          </div>
+          <p class="home-carousel-status" data-carousel-status aria-live="polite"></p>
+        </div>
+        {% else %}
             <div class="pets-vazio">
                 <span class="pets-vazio-icone" aria-hidden="true">🐾</span>
                 <h3>Nenhum pet disponível por enquanto</h3>
@@ -125,45 +143,22 @@
 
                 {% endif %}
             </div>
-            {% endfor %}
-        </div>
+        {% endif %}
     </section>
 
     <section class="ongs-parceiras" id="ongs" aria-labelledby="ongs-titulo">
         <div class="ongs-conteudo">
             <div class="ongs-cabecalho">
                 <div>
-                    <p class="secao-etiqueta">Quem cuida com amor</p>
                     <h2 id="ongs-titulo">ONGs parceiras</h2>
                 </div>
 
-                <p class="ongs-total">
-                    {{ total_ongs }} ONG{{ total_ongs|pluralize }}
-                </p>
+                <a class="ongs-total" href="{% url 'ongs:lista' %}">Ver todas as ONGs ({{ total_ongs }}) →</a>
             </div>
 
             <div class="grade-ongs">
                 {% for ong in ongs %}
-                    <article class="card-ong">
-                        <div class="card-ong-topo">
-                            <span class="card-ong-icone" aria-hidden="true">🐾</span>
-                            <span class="card-ong-status">Parceira</span>
-                        </div>
-
-                        <h3>{{ ong.nome }}</h3>
-
-                        <p class="card-ong-localizacao">
-                            {{ ong.cidade }} · {{ ong.estado|upper }}
-                        </p>
-
-                            {% if ong.descricao %}
-                            <p class="card-ong-descricao">
-                                {{ ong.descricao|truncatechars:80 }}
-                            </p>
-                        {% endif %}
-
-                    </article>
-                        
+                    {% include 'ongs/partials/card.html' with compacto=True %}
                     {% empty %}
                     <div class="ongs-vazio">
                         <span aria-hidden="true">🐾</span>
@@ -210,18 +205,17 @@
                 </h2>
 
                 <p>
-                    Em breve você poderá cadastrar sua organização
-
-                    e divulgar pets que procuram um novo lar.
+                    Cadastre sua organização e divulgue pets que procuram um novo lar.
+                    Acompanhe seus cadastros pelo painel da ONG.
                 </p>
             </div>
 
             <div class="cta-ong-acao">
-                <button type="button" disabled>
+                <a class="botao" href="{% url 'ongs:cadastrar' %}">
                     Quero ser parceiro
-                </button>
+                </a>
     
-                <small>Cadastro disponível na próxima etapa</small>
+                <small>Cadastro gratuito · sujeito à análise</small>
             </div>
         </div>
     </section>
@@ -237,4 +231,5 @@
 
 {% block extra_js %}
     <script src="{% static 'js/auth-dialogs.js' %}?v=5" defer></script>
+    <script src="{% static 'js/home-carousel.js' %}" defer></script>
 {% endblock %}

@@ -1,0 +1,167 @@
+[
+  {
+    "filename": "cachorro-01.jpg",
+    "url": "https://images.pexels.com/photos/23849245/pexels-photo-23849245.jpeg?auto=compress&cs=tinysrgb&w=1000",
+    "source": "https://www.pexels.com/photo/portrait-of-dog-23849245/",
+    "author": "SOYD CONTENIDO",
+    "license": "Pexels License",
+    "license_url": "https://www.pexels.com/license/",
+    "species": "cachorro",
+    "purpose": "pet",
+    "note": "Foto ilustrativa de banco de imagens; não representa animal ou instituição realmente anunciados no AuMiau."
+  },
+  {
+    "filename": "cachorro-02.jpg",
+    "url": "https://images.pexels.com/photos/19905781/pexels-photo-19905781.jpeg?auto=compress&cs=tinysrgb&w=1000",
+    "source": "https://www.pexels.com/photo/portrait-of-dog-19905781/",
+    "author": "FurtherMore Studio",
+    "license": "Pexels License",
+    "license_url": "https://www.pexels.com/license/",
+    "species": "cachorro",
+    "purpose": "pet",
+    "note": "Foto ilustrativa de banco de imagens; não representa animal ou instituição realmente anunciados no AuMiau."
+  },
+  {
+    "filename": "cachorro-03.jpg",
+    "url": "https://images.pexels.com/photos/16755218/pexels-photo-16755218.jpeg?auto=compress&cs=tinysrgb&w=1000",
+    "source": "https://www.pexels.com/photo/portrait-of-dog-16755218/",
+    "author": "Genie Music",
+    "license": "Pexels License",
+    "license_url": "https://www.pexels.com/license/",
+    "species": "cachorro",
+    "purpose": "pet",
+    "note": "Foto ilustrativa de banco de imagens; não representa animal ou instituição realmente anunciados no AuMiau."
+  },
+  {
+    "filename": "cachorro-04.jpg",
+    "url": "https://images.pexels.com/photos/15413759/pexels-photo-15413759.jpeg?auto=compress&cs=tinysrgb&w=1000",
+    "source": "https://www.pexels.com/photo/portrait-of-a-dog-15413759/",
+    "author": "Theerapat Sonphong",
+    "license": "Pexels License",
+    "license_url": "https://www.pexels.com/license/",
+    "species": "cachorro",
+    "purpose": "pet",
+    "note": "Foto ilustrativa de banco de imagens; não representa animal ou instituição realmente anunciados no AuMiau."
+  },
+  {
+    "filename": "cachorro-05.jpg",
+    "url": "https://images.pexels.com/photos/12354148/pexels-photo-12354148.jpeg?auto=compress&cs=tinysrgb&w=1000",
+    "source": "https://www.pexels.com/photo/portrait-of-brown-dog-12354148/",
+    "author": "Justus Menke",
+    "license": "Pexels License",
+    "license_url": "https://www.pexels.com/license/",
+    "species": "cachorro",
+    "purpose": "pet",
+    "note": "Foto ilustrativa de banco de imagens; não representa animal ou instituição realmente anunciados no AuMiau."
+  },
+  {
+    "filename": "cachorro-06.jpg",
+    "url": "https://images.pexels.com/photos/16614994/pexels-photo-16614994.jpeg?auto=compress&cs=tinysrgb&w=1000",
+    "source": "https://www.pexels.com/photo/portrait-of-a-brown-dog-16614994/",
+    "author": "Victor Miyata",
+    "license": "Pexels License",
+    "license_url": "https://www.pexels.com/license/",
+    "species": "cachorro",
+    "purpose": "pet",
+    "note": "Foto ilustrativa de banco de imagens; não representa animal ou instituição realmente anunciados no AuMiau."
+  },
+  {
+    "filename": "gato-01.jpg",
+    "url": "https://images.pexels.com/photos/18299633/pexels-photo-18299633.jpeg?auto=compress&cs=tinysrgb&w=1000",
+    "source": "https://www.pexels.com/photo/portrait-of-cat-18299633/",
+    "author": "Chalta Phirta",
+    "license": "Pexels License",
+    "license_url": "https://www.pexels.com/license/",
+    "species": "gato",
+    "purpose": "pet",
+    "note": "Foto ilustrativa de banco de imagens; não representa animal ou instituição realmente anunciados no AuMiau."
+  },
+  {
+    "filename": "gato-02.jpg",
+    "url": "https://images.pexels.com/photos/16449886/pexels-photo-16449886.jpeg?auto=compress&cs=tinysrgb&w=1000",
+    "source": "https://www.pexels.com/photo/portrait-of-cat-16449886/",
+    "author": "Antoun Boustani",
+    "license": "Pexels License",
+    "license_url": "https://www.pexels.com/license/",
+    "species": "gato",
+    "purpose": "pet",
+    "note": "Foto ilustrativa de banco de imagens; não representa animal ou instituição realmente anunciados no AuMiau."
+  },
+  {
+    "filename": "gato-03.jpg",
+    "url": "https://images.pexels.com/photos/15547193/pexels-photo-15547193.jpeg?auto=compress&cs=tinysrgb&w=1000",
+    "source": "https://www.pexels.com/photo/portrait-of-a-black-and-white-cat-15547193/",
+    "author": "Leo Tavares",
+    "license": "Pexels License",
+    "license_url": "https://www.pexels.com/license/",
+    "species": "gato",
+    "purpose": "pet",
+    "note": "Foto ilustrativa de banco de imagens; não representa animal ou instituição realmente anunciados no AuMiau."
+  },
+  {
+    "filename": "gato-04.jpg",
+    "url": "https://images.pexels.com/photos/16368427/pexels-photo-16368427.jpeg?auto=compress&cs=tinysrgb&w=1000",
+    "source": "https://www.pexels.com/photo/portrait-of-a-cute-kitten-16368427/",
+    "author": "Doğu Tuncer",
+    "license": "Pexels License",
+    "license_url": "https://www.pexels.com/license/",
+    "species": "gato",
+    "purpose": "pet",
+    "note": "Foto ilustrativa de banco de imagens; não representa animal ou instituição realmente anunciados no AuMiau."
+  },
+  {
+    "filename": "coelho-01.jpg",
+    "url": "https://images.pexels.com/photos/12574128/pexels-photo-12574128.jpeg?auto=compress&cs=tinysrgb&w=1000",
+    "source": "https://www.pexels.com/photo/close-up-photo-of-a-rabbit-12574128/",
+    "author": "Andy Lee",
+    "license": "Pexels License",
+    "license_url": "https://www.pexels.com/license/",
+    "species": "coelho",
+    "purpose": "pet",
+    "note": "Foto ilustrativa de banco de imagens; não representa animal ou instituição realmente anunciados no AuMiau."
+  },
+  {
+    "filename": "ave-01.jpg",
+    "url": "https://images.pexels.com/photos/7154573/pexels-photo-7154573.jpeg?auto=compress&cs=tinysrgb&w=1000",
+    "source": "https://www.pexels.com/photo/close-up-photo-of-cockatiel-7154573/",
+    "author": "Jiří Mikoláš",
+    "license": "Pexels License",
+    "license_url": "https://www.pexels.com/license/",
+    "species": "ave",
+    "purpose": "pet",
+    "note": "Foto ilustrativa de banco de imagens; não representa animal ou instituição realmente anunciados no AuMiau."
+  },
+  {
+    "filename": "ong-01.jpg",
+    "url": "https://images.pexels.com/photos/12195409/pexels-photo-12195409.jpeg?auto=compress&cs=tinysrgb&w=1000",
+    "source": "https://www.pexels.com/photo/cute-dogs-on-concrete-pavement-12195409/",
+    "author": "Mia X",
+    "license": "Pexels License",
+    "license_url": "https://www.pexels.com/license/",
+    "species": "cachorro",
+    "purpose": "ong",
+    "note": "Foto ilustrativa de banco de imagens; não representa animal ou instituição realmente anunciados no AuMiau."
+  },
+  {
+    "filename": "ong-02.jpg",
+    "url": "https://images.pexels.com/photos/15375962/pexels-photo-15375962.jpeg?auto=compress&cs=tinysrgb&w=1000",
+    "source": "https://www.pexels.com/photo/close-up-of-dogs-15375962/",
+    "author": "Arijit Dey",
+    "license": "Pexels License",
+    "license_url": "https://www.pexels.com/license/",
+    "species": "cachorro",
+    "purpose": "ong",
+    "note": "Foto ilustrativa de banco de imagens; não representa animal ou instituição realmente anunciados no AuMiau."
+  },
+  {
+    "filename": "ong-03.jpg",
+    "url": "https://images.pexels.com/photos/32710703/pexels-photo-32710703.jpeg?auto=compress&cs=tinysrgb&w=1000",
+    "source": "https://www.pexels.com/photo/adorable-canine-companionship-with-two-dogs-32710703/",
+    "author": "Daigoro Folz",
+    "license": "Pexels License",
+    "license_url": "https://www.pexels.com/license/",
+    "species": "cachorro",
+    "purpose": "ong",
+    "note": "Foto ilustrativa de banco de imagens; não representa animal ou instituição realmente anunciados no AuMiau."
+  }
+]

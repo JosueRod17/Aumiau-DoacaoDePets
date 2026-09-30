@@ -1,0 +1,17 @@
+/* Elementos compartilhados pelas páginas públicas. */
+[hidden] { display: none !important; }
+.pular-conteudo { position: absolute; top: -80px; left: 16px; z-index: 100; padding: 12px 20px; background: white; color: var(--purple); border: 2px solid var(--purple); border-radius: 8px; }
+.pular-conteudo:focus { top: 8px; }
+:focus-visible { outline: 3px solid var(--purple); outline-offset: 4px; }
+.main-nav a[aria-current="page"] { color: var(--purple); font-weight: 700; }
+.mensagens-site { width: min(1260px, calc(100% - 40px)); margin: 20px auto; }
+.mensagem-site { padding: 16px 20px; background: #f2e9ff; border: 1px solid #dbc8f2; border-radius: 14px; line-height: 1.5; }
+.mensagem-site--error { background: #fff0ed; border-color: #eab6ad; }
+.perfil-menu__link { padding: 10px 6px; font-size: 13px; border-bottom: 1px solid var(--border); }
+.perfil-menu__link:hover { color: var(--purple); }
+.link-secao { display: inline-flex; color: var(--purple); font-size: 14px; font-weight: 600; margin-top: 18px; }
+.link-secao:hover { text-decoration: underline; }
+.cta-ong-acao .botao { height: auto; padding: 14px 24px; color: white; background: var(--orange); }
+.cta-ong-acao .botao:hover { filter: brightness(.95); }
+.conta-menu a.conta-opcao { text-decoration: none; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; } }

@@ -1,6 +1,6 @@
 {% extends 'supervisores/base.html' %}
 
-{% block title %}Equipe | Painel Admin AuMiau{% endblock %}
+{% block title %}Equipe | AuMiau Admin{% endblock %}
 
 {% block content %}
     <header class="supervisor-pagina-cabecalho">
@@ -35,11 +35,11 @@
                 <tbody>
                     {% for usuario in usuarios_equipe %}
                         <tr>
-                            <td>{% firstof usuario.get_full_name usuario.username %}<small class="supervisor-tabela__secundario">@{{ usuario.username }}</small></td>
-                            <td>{{ usuario.email|default:"Não informado" }}</td>
-                            <td>{% if usuario.is_active %}<span class="supervisor-status supervisor-status--publicado">Ativa</span>{% else %}<span class="supervisor-status supervisor-status--arquivado">Inativa</span>{% endif %}</td>
-                            <td>{% if usuario.total_grupos_supervisor %}<span class="supervisor-status supervisor-status--adotado">Supervisor</span>{% else %}<span class="supervisor-status supervisor-status--neutro">Usuário</span>{% endif %}</td>
-                            <td>
+                            <td data-label="Usuário">{% firstof usuario.get_full_name usuario.username %}<small class="supervisor-tabela__secundario">@{{ usuario.username }}</small></td>
+                            <td data-label="E-mail">{{ usuario.email|default:"Não informado" }}</td>
+                            <td data-label="Conta">{% if usuario.is_active %}<span class="supervisor-status supervisor-status--publicado">Ativa</span>{% else %}<span class="supervisor-status supervisor-status--arquivado">Inativa</span>{% endif %}</td>
+                            <td data-label="Acesso ao painel">{% if usuario.total_grupos_supervisor %}<span class="supervisor-status supervisor-status--adotado">Supervisor</span>{% else %}<span class="supervisor-status supervisor-status--neutro">Usuário</span>{% endif %}</td>
+                            <td data-label="Ações">
                                 <form method="post" action="{% url 'supervisores:alterar_supervisor' usuario.id usuario.total_grupos_supervisor|yesno:'remover,promover' %}">
                                     {% csrf_token %}
                                     <button type="submit" class="supervisor-tabela__botao {% if usuario.total_grupos_supervisor %}supervisor-tabela__botao--neutro{% else %}supervisor-tabela__botao--aprovar{% endif %}" data-confirm="{% if usuario.total_grupos_supervisor %}Remover o acesso de {{ usuario.username }}?{% else %}Conceder acesso de supervisor a {{ usuario.username }}?{% endif %}">

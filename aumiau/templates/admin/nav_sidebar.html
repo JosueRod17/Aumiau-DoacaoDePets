@@ -39,7 +39,7 @@
                         </svg>
                     </span>
 
-                    <span>Dashboard</span>
+                    <span>Visão geral</span>
                 </a>
             </section>
 
@@ -49,7 +49,7 @@
                 </p>
 
                 {% if perms.pets.view_pet or perms.pets.change_pet %}
-                    <a href="{% url 'admin:pets_pet_changelist' %}" class="aumiau-nav-link {% if current == 'pets_pet_add' or current == 'pets_pet_change' or current == 'pets_pet_delete' or current == 'pets_pet_history' %}is-active{% elif current == 'pets_pet_changelist' and request.GET.status__exact != 'pendente' %}is-active{% endif %}">
+                    <a href="{% url 'admin:pets_pet_changelist' %}" class="aumiau-nav-link {% if current == 'pets_pet_add' or current == 'pets_pet_change' or current == 'pets_pet_delete' or current == 'pets_pet_history' or current == 'pets_pet_changelist' %}is-active{% endif %}">
                         <span class="aumiau-nav-icon">
                             <svg viewBox="0 0 24 24" aria-hidden="true">
                                 <circle cx="7" cy="7.5" r="2.2"></circle>
@@ -61,18 +61,6 @@
                         </span>
 
                         <span>Pets</span>
-                    </a>
-
-                    <a href="{% url 'admin:pets_pet_changelist' %}?status__exact=pendente" class="aumiau-nav-link {% if current == 'pets_pet_changelist' and request.GET.status__exact == 'pendente' %}is-active{% endif %}">
-                        <span class="aumiau-nav-icon">
-                            <svg viewBox="0 0 24 24" aria-hidden="true">
-                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path>
-                                <path d="M12 8v5"></path>
-                                <path d="M12 17h.01"></path>
-                            </svg>
-                        </span>
-
-                        <span>Moderação</span>
                     </a>
 
                 {% elif perms.pets.add_pet %}

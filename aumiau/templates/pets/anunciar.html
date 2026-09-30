@@ -1,18 +1,58 @@
 {% extends 'base.html' %}
-
-{% block title %}Anunciar pet | AuMiau{% endblock %}
-
+{% load static %}
+{% block title %}{% if editando %}Editar {{ pet.nome }}{% else %}Anunciar pet{% endif %} | AuMiau{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/pets.css' %}">{% endblock %}
 {% block content %}
-<section class="pagina-restrita">
-    <div class="pagina-restrita__card">
-        <p class="secao-etiqueta">Área protegida</p>
-
-        <h1>Anunciar um pet</h1>
-
-        <p>
-            Você está autenticado. O formulário de cadastro
-            de pets será construído na próxima etapa.
-        </p>
+<section class="pet-page">
+    <nav class="pet-breadcrumb" aria-label="Caminho da página"><a href="{% url 'home' %}">Início</a><span>·</span><a href="{% url 'pets:meus_pets' %}">Meus anúncios</a><span>·</span><span>{% if editando %}Editar{% else %}Anunciar{% endif %}</span></nav>
+    <header class="pet-page-heading"><h1>{% if editando %}Editar o anúncio de {{ pet.nome }}{% else %}Anuncie um pet para adoção{% endif %}</h1><p>Preencha as informações com carinho. Quanto mais completo o perfil, maiores as chances de encontrar uma família.</p></header>
+    <p class="pet-step"><span>1</span> Dados cadastrais</p>
+    <div class="pet-form-layout">
+        <div>
+            <form class="pet-panel pet-form" method="post" enctype="multipart/form-data" data-pet-form novalidate>
+                {% csrf_token %}
+                <div class="pet-alert pet-alert--error" role="alert" tabindex="-1" data-form-errors {% if not form.errors %}hidden{% endif %}><strong>Confira as informações antes de continuar.</strong><p>Os campos que precisam de atenção estão indicados abaixo.</p>{{ form.non_field_errors }}</div>
+                <fieldset><legend>1. Informações principais</legend><p class="pet-help">Conte-nos um pouco sobre o animal. Campos com * são obrigatórios.</p>
+                    <div class="pet-form-grid">
+                        {% include 'pets/partials/campo.html' with field=form.nome %}
+                        {% include 'pets/partials/campo.html' with field=form.especie %}
+                        {% include 'pets/partials/campo.html' with field=form.raca %}
+                        <div data-other-breed>{% include 'pets/partials/campo.html' with field=form.raca_outra %}</div>
+                    </div>
+                    <div class="pet-birth-fields"><div data-birth-date>{% include 'pets/partials/campo.html' with field=form.data_nascimento %}</div><label class="pet-confirm">{{ form.nascimento_desconhecido }}<span>{{ form.nascimento_desconhecido.label }}</span></label><div class="pet-age-fields" data-estimated-age>{% include 'pets/partials/campo.html' with field=form.idade_anos %}{% include 'pets/partials/campo.html' with field=form.idade_meses %}</div><p class="pet-help">Se não souber a data, informe a idade aproximada. Para menos de um mês, informe 0.</p></div>
+                    <div class="pet-form-grid pet-form-grid--choices">
+                        <fieldset class="pet-choice-field"><legend>Sexo</legend><div class="pet-chip-options">{{ form.genero }}</div><div class="pet-errors" data-field-errors="genero">{{ form.genero.errors }}</div></fieldset>
+                        <fieldset class="pet-choice-field"><legend>Porte *</legend><div class="pet-chip-options">{{ form.porte }}</div><div class="pet-errors" data-field-errors="porte">{{ form.porte.errors }}</div></fieldset>
+                    </div>
+                    <fieldset class="pet-choice-field"><legend>Características</legend><div class="pet-chip-checks">
+                        <label>{{ form.vacinado }}<span>Vacinado</span></label><label>{{ form.castrado }}<span>Castrado</span></label><label>{{ form.vermifugado }}<span>Vermifugado</span></label><label>{{ form.microchipado }}<span>Microchipado</span></label><label>{{ form.necessidades_especiais }}<span>Cuidados especiais</span></label>
+                    </div></fieldset>
+                    {% include 'pets/partials/campo.html' with field=form.descricao_necessidades_especiais %}
+                    {% include 'pets/partials/campo.html' with field=form.descricao %}
+                </fieldset>
+                <fieldset><legend>2. Fotos do pet</legend><p class="pet-help">Uma boa foto faz toda a diferença. JPG ou PNG · até 5 MB por foto.</p>
+                    <div class="pet-upload">{% include 'pets/partials/campo.html' with field=form.foto_principal %}<div class="pet-upload-previews" data-main-upload-preview></div>{% if pet.foto_principal %}<small>Uma nova imagem substituirá a foto principal atual.</small>{% endif %}</div>
+                    <div class="pet-upload">{% include 'pets/partials/campo.html' with field=form.galeria %}<small>Até 6 fotos adicionais. Selecione várias de uma vez.</small><div class="pet-upload-previews" data-gallery-preview></div></div>
+                    {% if pet.fotos.all %}<div class="pet-existing-photos">{% for foto in pet.fotos.all %}<label><img src="{{ foto.imagem.url }}" alt="Foto {{ forloop.counter }} de {{ pet.nome }}"><span><input type="checkbox" name="remover_fotos" value="{{ foto.pk }}"> Remover foto {{ forloop.counter }}</span></label>{% endfor %}</div>{% endif %}<div class="pet-errors" data-field-errors="remover_fotos">{{ form.remover_fotos.errors }}</div>
+                </fieldset>
+                <fieldset><legend>3. Localização e responsável</legend><p class="pet-help">Informe onde o pet está e como os interessados poderão conversar com você.</p>
+                    <div class="pet-form-grid">{% include 'pets/partials/campo.html' with field=form.estado %}{% include 'pets/partials/campo.html' with field=form.cidade %}</div>
+                    {% include 'pets/partials/campo.html' with field=form.ong %}
+                    <p class="pet-help">Você pode selecionar uma ONG aprovada que esteja sob sua responsabilidade.</p>
+                    <div data-individual-contact><div class="pet-form-grid">{% include 'pets/partials/campo.html' with field=form.email_contato %}{% include 'pets/partials/campo.html' with field=form.telefone_contato %}</div><p class="pet-help">Informe pelo menos um contato. Estes dados serão exibidos publicamente no anúncio aprovado.</p></div>
+                    <p class="pet-help" data-ong-contact hidden>O anúncio usará os contatos públicos cadastrados na ONG.</p>
+                </fieldset>
+                <label class="pet-confirm">{{ form.confirmar }}<span>{{ form.confirmar.label }}</span></label><div class="pet-errors" data-field-errors="confirmar">{{ form.confirmar.errors }}</div>
+                <div class="pet-form-actions"><button class="pet-button pet-button--outline" type="submit" name="acao" value="rascunho">Salvar rascunho</button><button class="pet-button" type="submit" name="acao" value="enviar">Enviar para análise →</button></div>
+                <p class="pet-help">O rascunho salva os dados básicos sem exigir foto, história ou contato.</p>
+            </form>
+            <p class="pet-review-note">Todos os anúncios passam por uma revisão antes de serem publicados. Alterações também serão analisadas. Mantenha as informações verdadeiras e atualizadas.</p>
+        </div>
+        <aside class="pet-form-aside">
+            <div class="pet-panel pet-preview"><p class="pet-eyebrow">PRÉVIA DO ANÚNCIO</p><div class="pet-preview-photo">{% if pet.foto_principal %}<img src="{{ pet.foto_principal.url }}" alt="Prévia da foto principal" data-main-preview>{% else %}<img alt="Prévia da foto principal" data-main-preview hidden><span class="pet-no-photo" data-preview-placeholder><span aria-hidden="true">🐾</span> A foto do seu pet aparece aqui</span>{% endif %}</div><h2 data-preview-name>{{ form.nome.value|default:'Nome do pet' }}</h2><p data-preview-details>Raça · idade · porte</p><p data-preview-location>📍 Cidade, UF</p><div class="pet-tags" data-preview-tags></div><span class="pet-button pet-preview-cta">Quero adotar ❤</span><small>Prévia ilustrativa. O anúncio aparecerá após a aprovação.</small></div>
+            <div class="pet-tip"><h2>Dica para um bom anúncio</h2><p>Use fotos claras, descreva a personalidade do animal e informe necessidades especiais. Isso ajuda as famílias a decidir com mais segurança.</p></div>
+        </aside>
     </div>
 </section>
 {% endblock %}
+{% block extra_js %}{{ form.catalogo_racas|json_script:'pet-breed-catalog' }}<script src="{% static 'js/pets.js' %}?v=2" defer></script>{% endblock %}

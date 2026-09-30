@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ pet.nome }} para adoção | AuMiau{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/pets.css' %}">{% endblock %}
+{% block content %}
+<section class="pet-page pet-detail-page">
+    <nav class="pet-breadcrumb" aria-label="Caminho da página"><a href="{% url 'home' %}">Início</a><span>·</span><a href="{% url 'pets:lista' %}">Pets para adoção</a><span>·</span><span>{{ pet.nome }}</span></nav>
+    {% if gerenciavel %}<div class="pet-owner-bar"><span>{% if not publico %}Prévia privada · {% endif %}<strong>{{ pet.get_status_display }}</strong>{% if not publico %} — este anúncio não está disponível na busca pública.{% endif %}</span><a href="{% url 'pets:editar' pet.pk %}">Editar anúncio →</a></div>{% endif %}
+    <div class="pet-detail-layout">
+        <div class="pet-gallery"><div class="pet-gallery-main">{% if pet.foto_principal %}<img src="{{ pet.foto_principal.url }}" alt="{{ pet.nome }}" data-gallery-main>{% else %}<span class="pet-no-photo"><span aria-hidden="true">🐾</span>Foto não disponível</span>{% endif %}</div>
+            {% if pet.fotos.all %}<div class="pet-gallery-thumbs" aria-label="Fotos de {{ pet.nome }}">{% if pet.foto_principal %}<a href="{{ pet.foto_principal.url }}" data-gallery-thumbnail aria-label="Ver foto principal de {{ pet.nome }}" aria-current="true"><img src="{{ pet.foto_principal.url }}" alt="Foto principal" loading="lazy"></a>{% endif %}{% for foto in pet.fotos.all %}<a href="{{ foto.imagem.url }}" data-gallery-thumbnail aria-label="Ver foto {{ forloop.counter }} de {{ pet.nome }}"><img src="{{ foto.imagem.url }}" alt="{{ foto.legenda|default:pet.nome }}" loading="lazy"></a>{% endfor %}</div>{% endif %}
+        </div>
+        <div class="pet-profile"><div class="pet-tags pet-profile-tags"><span>{% if pet.especie == 'cachorro' %}🐶{% elif pet.especie == 'gato' %}🐱{% else %}🐾{% endif %} {{ pet.get_especie_display }}</span>{% if pet.destaque %}<span class="pet-tag-purple">Destaque</span>{% endif %}</div><h1>{{ pet.nome }}</h1><p class="pet-profile-location">📍 {{ pet.cidade }}, {{ pet.estado }}{% if pet.publicado_em %} · Publicado há {{ pet.publicado_em|timesince }}{% endif %}</p>
+            <dl class="pet-facts"><div><dt><span aria-hidden="true">🎂</span>Idade</dt><dd>{{ pet.idade_formatada }}</dd></div><div><dt><span aria-hidden="true">{% if pet.genero == 'macho' %}♂{% elif pet.genero == 'femea' %}♀{% else %}♡{% endif %}</span>Sexo</dt><dd>{{ pet.get_genero_display }}</dd></div><div><dt><span aria-hidden="true">📏</span>Porte</dt><dd>{{ pet.get_porte_display }}</dd></div><div><dt><span aria-hidden="true">🐾</span>Raça</dt><dd>{{ pet.raca }}</dd></div></dl>
+            <div class="pet-tags pet-health-tags">{% if pet.vacinado %}<span>✓ Vacinado</span>{% endif %}{% if pet.vermifugado %}<span>✓ Vermifugado</span>{% endif %}{% if pet.castrado %}<span>✓ Castrado</span>{% endif %}{% if pet.microchipado %}<span>✓ Microchipado</span>{% endif %}{% if pet.necessidades_especiais %}<span>Cuidados especiais</span>{% endif %}</div>
+            <div class="pet-story"><h2>Sobre {{ pet.nome }}</h2><div>{{ pet.descricao|default:'A história deste pet ainda não foi informada.'|linebreaks }}</div>{% if pet.necessidades_especiais %}<h3>Cuidados especiais</h3>{{ pet.descricao_necessidades_especiais|linebreaks }}{% endif %}</div>
+            <div class="pet-responsible"><span class="pet-responsible-icon" aria-hidden="true">🐾</span><div><strong>{% if pet.ong %}{{ pet.ong.nome }}{% elif pet.responsavel %}{{ pet.responsavel.get_full_name|default:pet.responsavel.username }}{% else %}Responsável pelo pet{% endif %}</strong><p>{% if pet.ong %}ONG parceira{% else %}Protetor responsável{% endif %} · {{ pet.cidade }}, {{ pet.estado }}</p></div>{% if pet.ong %}<a href="{% url 'ongs:detalhe' pet.ong.pk %}">Ver ONG →</a>{% endif %}</div>
+            <div class="pet-contact" id="contato">
+                <h2>Dê o primeiro passo</h2>
+                {% if whatsapp_url or email_url %}
+                    <p>Converse com {% if pet.ong %}a ONG{% else %}o responsável{% endif %} para conhecer {{ pet.nome }} e combinar a adoção.</p>
+                {% elif publico %}
+                    <p>Este anúncio não tem contato público. Envie seu interesse à equipe do AuMiau para consultar a disponibilidade de {{ pet.nome }}. A resposta ficará em Meus chamados.</p>
+                {% else %}
+                    <p>Este anúncio ainda não está disponível para adoção.</p>
+                {% endif %}
+                <div class="pet-contact-actions">
+                    {% if whatsapp_url %}<a class="pet-button" href="{{ whatsapp_url }}" target="_blank" rel="noopener noreferrer">Quero adotar · WhatsApp ❤</a>{% endif %}
+                    {% if email_url %}<details class="pet-email-options"><summary class="pet-button pet-button--outline">Falar por e-mail</summary><div><a href="{{ gmail_url }}" target="_blank" rel="noopener noreferrer">Abrir no Gmail ↗</a><a href="{{ outlook_url }}" target="_blank" rel="noopener noreferrer">Abrir no Outlook ↗</a><a href="{{ email_url }}">Usar aplicativo de e-mail</a></div></details>{% endif %}
+                    {% if not whatsapp_url and not email_url and publico %}<a class="pet-button" href="{% url 'chamado_novo' %}?pet={{ pet.pk }}">Enviar interesse à equipe ❤</a>{% endif %}
+                </div>
+                {% if telefone_contato %}<p class="pet-contact-data">Telefone: {{ telefone_contato }}</p>{% endif %}
+                {% if email_contato %}<p class="pet-contact-data">E-mail: {{ email_contato }}</p>{% endif %}
+                <small>A adoção é gratuita. Conheça o pet e converse sobre os cuidados antes de decidir.</small>
+            </div>
+        </div>
+    </div>
+    {% if outros_pets %}<section class="pet-related"><div class="pet-section-heading"><h2>Mais amigos esperando por um lar</h2><a href="{% url 'pets:lista' %}">Ver todos os pets →</a></div><div class="pet-grid">{% for pet in outros_pets %}{% include 'pets/partials/card.html' %}{% endfor %}</div></section>{% endif %}
+</section>
+{% endblock %}
+{% block extra_js %}<script src="{% static 'js/pets.js' %}" defer></script>{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Central de ajuda | AuMiau{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/ajuda.css' %}">{% endblock %}
+{% block content %}
+<section class="ajuda-hero">
+    <p class="ajuda-etiqueta">CENTRAL DE AJUDA</p>
+    <h1>Como podemos ajudar?</h1>
+    <p>Encontre respostas rápidas ou fale com a equipe AuMiau.</p>
+    <form class="ajuda-busca" method="get" action="{% url 'ajuda' %}#perguntas" role="search">
+        <span aria-hidden="true">🔍</span>
+        <label class="ajuda-sr" for="ajuda-q">Buscar na central de ajuda</label>
+        <input id="ajuda-q" type="search" name="q" value="{{ busca }}" maxlength="200" placeholder="Digite sua dúvida...">
+        {% if categoria_ativa %}<input type="hidden" name="categoria" value="{{ categoria_ativa }}">{% endif %}
+        <button type="submit" class="ajuda-botao ajuda-botao--laranja">Buscar</button>
+    </form>
+</section>
+<div class="ajuda-container">
+    {% include 'ajuda/partials/pluttu.html' %}
+    <section aria-labelledby="ajuda-categorias">
+        <h2 id="ajuda-categorias">Encontre por categoria</h2>
+        <div class="ajuda-categorias">
+            {% for categoria in categorias %}
+            <a class="ajuda-categoria{% if categoria_ativa == categoria.slug %} ajuda-categoria--ativa{% endif %}" href="{% url 'ajuda' %}?categoria={{ categoria.slug }}{% if busca %}&amp;q={{ busca|urlencode }}{% endif %}#perguntas"{% if categoria_ativa == categoria.slug %} aria-current="true"{% endif %}>
+                <span class="ajuda-categoria__icone" aria-hidden="true">{{ categoria.icone }}</span>
+                <strong>{{ categoria.nome }}</strong>
+                <span>{{ categoria.descricao }}</span>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    <div class="ajuda-grade">
+        <section id="perguntas" class="ajuda-perguntas" aria-labelledby="ajuda-faq-titulo">
+            <h2 id="ajuda-faq-titulo">Perguntas frequentes</h2>
+            {% if busca or categoria_ativa %}
+            <p class="ajuda-subtitulo">{{ perguntas|length }} resposta{{ perguntas|length|pluralize:"s" }} encontrada{{ perguntas|length|pluralize:"s" }}{% if busca %} para “{{ busca }}”{% endif %}. <a class="ajuda-link" href="{% url 'ajuda' %}#perguntas">Limpar filtros</a></p>
+            {% else %}<p class="ajuda-subtitulo">As dúvidas mais comuns de quem usa o AuMiau.</p>{% endif %}
+            <div class="ajuda-acordeons">
+                {% for item in perguntas %}
+                <details class="ajuda-pergunta">
+                    <summary>{{ item.pergunta }}<span aria-hidden="true" class="ajuda-pergunta__sinal"></span></summary>
+                    <p>{{ item.resposta }}</p>
+                </details>
+                {% empty %}
+                <div class="ajuda-vazio">
+                    <h3>Nenhuma resposta encontrada</h3>
+                    <p>Tente outra palavra ou envie sua dúvida para a central.</p>
+                    <a class="ajuda-link" href="{% url 'chamado_novo' %}">Enviar uma mensagem →</a>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        <aside class="ajuda-sac" aria-labelledby="ajuda-sac-titulo">
+            <h2 id="ajuda-sac-titulo">Ainda precisa de ajuda?</h2>
+            <p>Abra um chamado e acompanhe a resposta diretamente pela sua conta.</p>
+            <a class="ajuda-botao ajuda-botao--laranja" href="{% url 'chamado_novo' %}?categoria=sugestao">Enviar sugestão</a>
+            <a class="ajuda-botao ajuda-botao--branco" href="{% url 'meus_chamados' %}">Acompanhar meus chamados</a>
+            <small>Suas mensagens ficam salvas na sua conta.</small>
+            <small class="ajuda-sac__nota">Consulte a resposta em Meus chamados.</small>
+        </aside>
+    </div>
+    <section class="ajuda-contato" aria-labelledby="ajuda-contato-titulo">
+        <div><h2 id="ajuda-contato-titulo">Precisa falar com a gente?</h2><p>Selecione um assunto e envie sua mensagem. Você poderá acompanhar o chamado na sua conta.</p></div>
+        <form method="get" action="{% url 'chamado_novo' %}">
+            <label class="ajuda-sr" for="ajuda-assunto">Assunto da mensagem</label>
+            <select class="ajuda-input" name="categoria" id="ajuda-assunto" required>
+                <option value="" disabled selected>Selecione uma opção</option>
+                {% for valor, rotulo in assuntos %}<option value="{{ valor }}">{{ rotulo }}</option>{% endfor %}
+            </select>
+            <button class="ajuda-botao ajuda-botao--laranja" type="submit">Enviar mensagem</button>
+        </form>
+    </section>
+</div>
+{% endblock %}
+{% block extra_js %}<script src="{% static 'js/ajuda.js' %}" defer></script>{% endblock %}

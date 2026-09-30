@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Termos de uso | AuMiau{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/ajuda.css' %}">{% endblock %}
+{% block content %}
+<div class="ajuda-container ajuda-container--estreito">
+    <a class="ajuda-voltar" href="{% url 'ajuda' %}">← Central de ajuda</a>
+    <p class="ajuda-etiqueta">SOBRE A PLATAFORMA</p><h1>Termos de uso</h1>
+    <p class="ajuda-descricao">Versão 1.1. Estas informações descrevem o uso dos recursos disponíveis no AuMiau.</p>
+    <article class="ajuda-painel ajuda-documento">
+        <h2>O que o AuMiau oferece</h2>
+        <p>O AuMiau reúne anúncios de animais para adoção e perfis de ONGs. A plataforma facilita a descoberta dos animais e o contato com seus responsáveis. O cadastro de uma conta, de uma ONG ou de um anúncio não confirma uma adoção.</p>
+        <h2>Sua conta e seus cadastros</h2>
+        <p>Ao criar uma conta, informe dados corretos e mantenha sua senha em sigilo. Cadastre apenas animais sob sua responsabilidade e organizações que você representa. Use fotos e textos que você tem autorização para publicar, respeitando a privacidade das pessoas envolvidas.</p>
+        <p>O cadastro pede CPF para identificar registros duplicados e aplicar restrições de conta. A validação dos dígitos do CPF não comprova a identidade de uma pessoa. Para ONGs, o CNPJ é consultado na BrasilAPI; a consulta não comprova poderes de representação da instituição.</p>
+        <h2>Publicação e análise</h2>
+        <p>Anúncios e organizações passam por análise antes da exibição pública. A administração pode solicitar correções ou rejeitar cadastros. Confira a situação e eventuais motivos na sua área de anúncios ou ONGs. A aprovação de um cadastro não substitui a conversa e a verificação dos dados com o responsável pelo animal.</p>
+        <h2>Contato e adoção</h2>
+        <p>Combine as etapas da adoção diretamente com o responsável pelo pet. Confirme a disponibilidade, as condições de saúde, os cuidados necessários e os requisitos antes de assumir esse compromisso. O site não processa pagamentos nem transferências de doações.</p>
+        <h2>Uso responsável</h2>
+        <p>Não publique conteúdo falso, ofensivo ou dados de terceiros sem autorização. Se encontrar um problema no site ou em um anúncio, <a class="ajuda-link" href="{% url 'chamado_novo' %}">envie uma mensagem à central de ajuda</a>. Você pode acompanhar a situação e a resposta em Meus chamados.</p>
+        <p>A equipe pode suspender ou banir contas após analisar um problema relatado. Uma denúncia não aplica o banimento automaticamente. A exclusão de uma conta banida não remove a restrição de novo cadastro associada ao identificador protegido do CPF.</p>
+        <h2>Pluttu e atendimento</h2>
+        <p>O Pluttu é um assistente virtual com respostas baseadas na central de ajuda. Quando não houver uma orientação, ele oferece encaminhamento para a equipe por chamado. Você decide se inclui a conversa nesse chamado. O atendimento humano e suas respostas ficam em Meus chamados; não se trata de um chat ao vivo.</p>
+        <h2>Dados pessoais</h2>
+        <p>Leia a página de <a class="ajuda-link" href="{% url 'privacidade' %}">privacidade</a> para conhecer os dados usados pelos recursos atuais da plataforma.</p>
+    </article>
+</div>
+{% endblock %}

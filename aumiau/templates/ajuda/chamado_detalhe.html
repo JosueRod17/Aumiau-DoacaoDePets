@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Chamado #{{ chamado.pk }} | AuMiau{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/ajuda.css' %}">{% endblock %}
+{% block content %}
+<div class="ajuda-container ajuda-container--estreito">
+    <a class="ajuda-voltar" href="{% url 'meus_chamados' %}">← Meus chamados</a>
+    <p class="ajuda-etiqueta">CHAMADO #{{ chamado.pk }}</p>
+    <h1>{{ chamado.assunto }}</h1>
+    <div class="ajuda-metadados"><span class="ajuda-status ajuda-status--{{ chamado.status }}">{{ chamado.get_status_display }}</span><span>{{ chamado.get_categoria_display }}</span><span>Enviado em {{ chamado.criado_em|date:"d/m/Y, H:i" }}</span></div>
+    {% if chamado.pet %}<p class="ajuda-nota">Anúncio: {% if pet_publico %}<a class="ajuda-link" href="{% url 'pets:detalhe' chamado.pet.pk %}">{{ chamado.pet.nome }}</a>{% else %}{{ chamado.pet.nome }}{% endif %}</p>{% endif %}
+    <article class="ajuda-painel ajuda-mensagem"><h2>Sua mensagem</h2><div>{{ chamado.mensagem|linebreaks }}</div></article>
+    {% if chamado.contexto_pluttu %}<section class="ajuda-painel ajuda-mensagem"><h2>Conversa encaminhada do Pluttu</h2><p class="ajuda-nota">Histórico que você autorizou incluir neste chamado.</p><div class="pluttu-transcricao">{{ chamado.contexto_pluttu }}</div></section>{% endif %}
+    <section class="ajuda-painel ajuda-resposta" aria-labelledby="ajuda-resposta-titulo">
+        <h2 id="ajuda-resposta-titulo">Resposta da administração</h2>
+        {% if chamado.resposta %}<div>{{ chamado.resposta|linebreaks }}</div><p class="ajuda-nota">Atualizado em {{ chamado.atualizado_em|date:"d/m/Y, H:i" }}.</p>
+        {% else %}<p>Ainda não há uma resposta para este chamado. Volte a esta página para acompanhar as atualizações.</p>{% endif %}
+    </section>
+    <div class="ajuda-acoes"><a class="ajuda-link" href="{% url 'ajuda' %}">Consultar perguntas frequentes</a><a class="ajuda-botao ajuda-botao--laranja" href="{% url 'chamado_novo' %}">Nova mensagem</a></div>
+</div>
+{% endblock %}

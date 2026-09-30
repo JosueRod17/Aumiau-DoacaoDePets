@@ -103,11 +103,7 @@
                 <span></span>
             </div>
 
-            <button type="button" class="login-google" disabled title="Login com Google disponível em breve">
-                <img src="{% static 'img/google-logo.png' %}" alt="" width="16" height="16">
-
-                <span>Continuar com Google</span>
-            </button>
+            {% include 'usuarios/_google_button.html' %}
 
             <p class="login-cadastro">
                 Ainda não tem uma conta?

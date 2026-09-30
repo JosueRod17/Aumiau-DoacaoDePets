@@ -1,0 +1,255 @@
+/* Keep the Django admin navigation and every form action available on phones. */
+@media (max-width: 900px) {
+    #container {
+        min-width: 320px;
+        overflow-x: clip;
+    }
+
+    #header {
+        position: sticky;
+        z-index: 1100;
+        top: 0;
+        display: flex;
+        box-sizing: border-box;
+        min-height: 64px;
+        padding: 8px 10px 8px 64px;
+        align-items: center;
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 6px;
+    }
+
+    #branding {
+        min-width: 0;
+        flex: 1 1 auto;
+    }
+
+    #branding #site-name img {
+        width: min(30vw, 116px);
+        max-height: 44px;
+    }
+
+    #branding #site-name span {
+        display: none;
+    }
+
+    #user-tools.aumiau-top-actions {
+        flex: 0 0 auto;
+        gap: 6px;
+    }
+
+    #toggle-nav-sidebar {
+        position: fixed;
+        z-index: 1102;
+        top: 10px;
+        left: 10px;
+        display: flex;
+        width: 44px;
+        height: 44px;
+        flex: 0 0 44px;
+        color: var(--aumiau-roxo);
+        background: var(--aumiau-superficie);
+        border: 1px solid var(--aumiau-borda);
+        border-radius: 12px;
+        box-shadow: var(--aumiau-sombra);
+    }
+
+    #nav-sidebar.aumiau-sidebar {
+        position: fixed;
+        z-index: 1101;
+        top: 64px;
+        left: 0;
+        display: flex;
+        box-sizing: border-box;
+        width: min(300px, calc(100vw - 40px));
+        height: calc(100dvh - 64px);
+        max-height: none;
+        margin: 0 !important;
+        overflow-y: auto;
+        visibility: hidden;
+        transform: translateX(-105%);
+        transition: transform 180ms ease, visibility 180ms ease;
+    }
+
+    .main.shifted > #nav-sidebar.aumiau-sidebar {
+        visibility: visible;
+        transform: translateX(0);
+    }
+
+    .main.shifted::before {
+        position: fixed;
+        z-index: 1099;
+        inset: 64px 0 0;
+        background: rgba(32, 18, 12, 0.45);
+        content: "";
+    }
+
+    .main > #nav-sidebar + .content,
+    .main.shifted > #nav-sidebar + .content {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        margin: 0;
+    }
+
+    #content {
+        min-width: 0;
+        padding: 20px 14px 42px;
+    }
+
+    #changelist,
+    #changelist .changelist-form-container,
+    #changelist .changelist-form-container > div,
+    #changelist-form {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    #changelist .results,
+    .aumiau-tabela-wrapper,
+    body.change-form .inline-group .tabular {
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #changelist .results table,
+    .aumiau-tabela {
+        min-width: 620px;
+    }
+
+    body.change-form .inline-group .tabular table {
+        min-width: 560px;
+    }
+
+    .aumiau-fila__item > div,
+    .aumiau-pet > span {
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+}
+
+@media (max-width: 767px) {
+    #header #user-tools .aumiau-view-site,
+    #user-tools .aumiau-user-copy,
+    #user-tools .aumiau-user-chevron {
+        display: none;
+    }
+
+    .aumiau-user-panel {
+        position: fixed;
+        top: 64px;
+        right: 10px;
+        width: min(280px, calc(100vw - 20px));
+    }
+
+    #toolbar #changelist-search > div,
+    #changelist .actions {
+        display: flex;
+        min-width: 0;
+        align-items: stretch;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    #toolbar #changelist-search #searchbar,
+    #changelist .actions label,
+    #changelist .actions select {
+        box-sizing: border-box;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    #toolbar #changelist-search #searchbar {
+        flex: 1 1 180px;
+        width: auto;
+    }
+
+    #toolbar #changelist-search input[type="submit"],
+    #changelist .actions button,
+    #changelist .actions input[type="submit"] {
+        min-height: 44px;
+    }
+
+    #changelist-filter {
+        box-sizing: border-box;
+        width: 100%;
+    }
+
+    body.change-form .aligned .form-row > div,
+    body.change-form .aligned .form-row > .flex-container:not(.checkbox-row):not(.form-multiline),
+    body.change-form .related-widget-wrapper {
+        box-sizing: border-box;
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    body.change-form .aligned input:not([type="checkbox"]):not([type="radio"]),
+    body.change-form .aligned select,
+    body.change-form .aligned textarea {
+        box-sizing: border-box;
+        max-width: 100%;
+    }
+
+    body.change-form .submit-row input,
+    body.change-form .submit-row a,
+    body.change-form .submit-row .deletelink {
+        box-sizing: border-box;
+        min-height: 44px;
+        width: 100%;
+    }
+
+    .object-tools {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .object-tools li,
+    .object-tools a {
+        max-width: 100%;
+    }
+
+    #content-main .module,
+    #changelist .module {
+        max-width: 100%;
+    }
+
+    body.dashboard .aumiau-dashboard__grade,
+    body.dashboard .aumiau-kpis {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 380px) {
+    #header {
+        padding-right: 6px;
+    }
+
+    #header .aumiau-theme-toggle {
+        width: 44px;
+        height: 44px;
+        flex-basis: 44px;
+    }
+
+    .aumiau-user-menu > summary {
+        min-width: 44px;
+        min-height: 44px;
+        padding: 3px;
+    }
+
+    #content {
+        padding-inline: 10px;
+    }
+
+    .aumiau-page-heading h1 {
+        overflow-wrap: anywhere;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #nav-sidebar.aumiau-sidebar {
+        transition: none;
+    }
+}

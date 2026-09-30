@@ -95,6 +95,13 @@
                     {% endfor %}
                 </div>
 
+                <div class="auth-campo cadastro-largura-total">
+                    <label for="{{ form.cpf.id_for_label }}">{{ form.cpf.label }}</label>
+                    {{ form.cpf }}
+                    <small class="conta-ajuda">{{ form.cpf.help_text }}</small>
+                    {% for error in form.cpf.errors %}<p class="auth-erro">{{ error }}</p>{% endfor %}
+                </div>
+
                 <div class="auth-campo">
                     <label for="{{ form.estado.id_for_label }}">
                         UF
@@ -151,9 +158,9 @@
 
                         <label for="{{ form.aceite_termos.id_for_label }}">
                             Li e aceito os
-                            <strong>Termos de Uso</strong>
+                            <a href="{% url 'termos' %}" target="_blank" rel="noopener">Termos de Uso</a>
                             e a
-                            <strong>Política de Privacidade</strong>.
+                            <a href="{% url 'privacidade' %}" target="_blank" rel="noopener">Política de Privacidade</a>.
                         </label>
                     </div>
 

@@ -1,6 +1,6 @@
 {% extends 'supervisores/base.html' %}
 
-{% block title %}Usuário | Painel Admin AuMiau{% endblock %}
+{% block title %}Usuário | AuMiau Admin{% endblock %}
 
 {% block content %}
     <a href="{% url 'supervisores:usuarios_lista' %}" class="supervisor-voltar">
@@ -16,7 +16,7 @@
         </div>
 
         <span class="supervisor-status {% if usuario_detalhe.is_active %}supervisor-status--publicado{% else %}supervisor-status--arquivado{% endif %} supervisor-status--grande">
-            {% if usuario_detalhe.is_active %}Conta ativa{% else %}Conta inativa{% endif %}
+            {% if usuario_detalhe.perfil %}{{ usuario_detalhe.perfil.get_situacao_display }}{% elif usuario_detalhe.is_active %}Conta ativa{% else %}Conta inativa{% endif %}
         </span>
     </header>
 
@@ -34,6 +34,7 @@
                     <div><dt>Nome</dt><dd>{% firstof usuario_detalhe.get_full_name "Não informado" %}</dd></div>
                     <div><dt>Usuário</dt><dd>{{ usuario_detalhe.username }}</dd></div>
                     <div><dt>E-mail</dt><dd>{{ usuario_detalhe.email|default:"Não informado" }}</dd></div>
+                    <div><dt>CPF</dt><dd>{{ usuario_detalhe.perfil.cpf_mascarado|default:"Não informado" }}</dd></div>
                     <div><dt>Telefone</dt><dd>{{ usuario_detalhe.perfil.telefone|default:"Não informado" }}</dd></div>
                     <div><dt>Localização</dt><dd>{% if usuario_detalhe.perfil.cidade %}{{ usuario_detalhe.perfil.cidade }}/{{ usuario_detalhe.perfil.estado }}{% else %}Não informada{% endif %}</dd></div>
                     <div><dt>Último acesso</dt><dd>{{ usuario_detalhe.last_login|date:"d/m/Y H:i"|default:"Nunca acessou" }}</dd></div>
@@ -57,11 +58,11 @@
                 <span class="supervisor-card__etiqueta">Conta</span>
                 <dl>
                     <div><dt>Data do cadastro</dt><dd>{{ usuario_detalhe.date_joined|date:"d/m/Y H:i" }}</dd></div>
-                    <div><dt>Estado atual</dt><dd>{% if usuario_detalhe.is_active %}Ativa{% else %}Inativa{% endif %}</dd></div>
+                    <div><dt>Estado atual</dt><dd>{% if usuario_detalhe.perfil %}{{ usuario_detalhe.perfil.get_situacao_display }}{% elif usuario_detalhe.is_active %}Ativa{% else %}Inativa{% endif %}</dd></div>
                 </dl>
             </article>
 
-            {% if pode_gerenciar %}
+            {% if pode_gerenciar and usuario_detalhe.perfil.situacao != 'excluida' %}
                 <article class="supervisor-card supervisor-moderacao">
                     <span class="supervisor-card__etiqueta">Segurança</span>
                     <h2>Gerenciar conta</h2>
@@ -70,9 +71,18 @@
                         <label for="motivo-status-usuario">Motivo da alteração</label>
                         <textarea id="motivo-status-usuario" name="motivo" rows="3" required placeholder="Registre o motivo desta ação"></textarea>
                         <button type="submit" class="supervisor-acao {% if usuario_detalhe.is_active %}supervisor-acao--rejeitar{% else %}supervisor-acao--aprovar{% endif %}" data-confirm="{% if usuario_detalhe.is_active %}Inativar{% else %}Reativar{% endif %} esta conta?">
-                            {% if usuario_detalhe.is_active %}Inativar conta{% else %}Reativar conta{% endif %}
+                            {% if usuario_detalhe.is_active %}Suspender conta{% else %}Reativar conta{% endif %}
                         </button>
                     </form>
+                    {% if usuario_detalhe.perfil.situacao != 'banida' %}
+                    <form method="post" action="{% url 'supervisores:alterar_status_usuario' usuario_detalhe.id 'banir' %}" class="supervisor-rejeitar-form">
+                        {% csrf_token %}
+                        <label for="motivo-banimento">Motivo do banimento</label>
+                        <textarea id="motivo-banimento" name="motivo" rows="3" required placeholder="Registre a decisão após analisar a denúncia"></textarea>
+                        <p>O banimento impede novos cadastros com o mesmo CPF informado. {% if not usuario_detalhe.perfil.cpf_final %}Esta conta antiga ainda não informou CPF; o bloqueio será restrito à conta.{% endif %}</p>
+                        <button type="submit" class="supervisor-acao supervisor-acao--rejeitar" data-confirm="Banir esta conta e arquivar seus anúncios?">Banir conta</button>
+                    </form>
+                    {% endif %}
                 </article>
             {% endif %}
         </aside>
