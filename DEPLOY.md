@@ -22,6 +22,30 @@ Para uma primeira versão gratuita sem cadastrar cartão, use **Render Free** pa
 
 Os cadastros antigos em `aumiau/db.sqlite3` e as fotos em `aumiau/media/` **não são migrados automaticamente**. Antes de importar, faça backup, escolha uma origem e preserve os caminhos das fotos ao transferi-las para o bucket. Não importe um banco antigo sobre dados novos da Neon sem planejar a mesclagem. O Git distribui código e migrações; a Neon mantém os dados entre computadores. Mantenha cópias independentes dos dados e das fotos.
 
+## Importar os cadastros deste PC
+
+O comando `importar_cadastros_locais` transfere usuários (inclusive senhas e contas administrativas), grupos, perfis, ONGs, pets, chamados e históricos. Ele só aceita um banco de destino sem cadastros. Permissões e o grupo Supervisores já criados por `migrate` são reaproveitados. As sessões não são copiadas: entre novamente no site após a transferência.
+
+1. Pare o `runserver` local e preserve uma cópia de `aumiau/db.sqlite3` e `aumiau/media/`. A pasta `.local-backups/` é ignorada pelo Git. Evite novos cadastros no site durante a migração.
+2. Preencha `.env` na raiz deste checkout com `AUMIAU_DATA_MODE=shared`, `DATABASE_URL` e os campos `S3_*` do mesmo serviço publicado. Use também os valores de `DJANGO_SECRET_KEY` e `DOCUMENT_HASH_KEY` do Render. Mantenha `DJANGO_DEBUG=true` apenas no `.env` local; no Render continua `false`. Nunca envie esse arquivo ao Git.
+3. Confira a origem e o destino, sem gravar:
+
+   ```powershell
+   python manage.py importar_cadastros_locais
+   ```
+
+4. Depois de conferir as quantidades exibidas, transfira:
+
+   ```powershell
+   python manage.py importar_cadastros_locais --aplicar
+   ```
+
+O comando lê o SQLite local mesmo estando em modo `shared`. Preserva os IDs dos usuários e seus hashes de senha, envia somente as fotos referenciadas e verifica o conteúdo de cada foto por SHA-256 após o envio. As fotos recebem um prefixo exclusivo `migracoes/...` no bucket, atualizado nos registros. Durante a gravação, novos cadastros aguardam a conclusão da transação PostgreSQL; se surgirem dados antes dela, o comando interrompe a importação. Falhas durante a transferência revertem a transação e tentam remover os arquivos dessa execução. Uma interrupção forçada do processo pode exigir a remoção manual de arquivos remanescentes sob esse prefixo.
+
+Não repita a importação após o sucesso: o próprio comando recusa um destino já preenchido. Uma origem com identificadores de CPF (`cpf_hash`) exige conferir primeiro a chave histórica usada para produzi-los; nesse caso o comando interrompe, pois copiar uma chave nova não converte os hashes antigos.
+
+Confira no site o login existente, as ONGs e os pets. O status de moderação é preservado: pets em análise ou adotados continuam fora da listagem pública. O comando é executado neste PC; não precisa de shell do Render nem de novo deploy para transferir os dados.
+
 Limites atuais: o [Render Free](https://render.com/docs/free) hiberna após 15 minutos sem acesso, pode demorar cerca de um minuto para acordar e oferece 750 horas de instância por mês por workspace. O banco gratuito do próprio Render expira em 30 dias; não o use para cadastros. A [Neon Free](https://neon.com/blog/neon-backend-is-ga) oferece 0,5 GB de banco, 100 CU-h por mês e 5 GB de Object Storage por projeto. A [API S3 da Neon](https://neon.com/docs/storage/s3-compatibility) cobre as operações e URLs assinadas usadas pelo projeto, mas a integração específica com `django-storages` deve ser conferida com um upload e uma leitura reais após configurar a conta. Se houver incompatibilidade, o [Cloudflare R2 Standard](https://developers.cloudflare.com/r2/pricing/) é uma alternativa com cota gratuita de 10 GB-mês; sua [ativação exige checkout de assinatura](https://developers.cloudflare.com/r2/get-started/) e pode gerar cobranças acima da cota.
 
 O plano gratuito é adequado para testes públicos e volume inicial pequeno. Para operação contínua com cadastros reais, acompanhe as cotas e planeje uma hospedagem paga com disponibilidade e backups apropriados.
