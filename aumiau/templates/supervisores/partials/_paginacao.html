@@ -1,7 +1,7 @@
 {% if pagina.paginator.num_pages > 1 %}
     <nav class="supervisor-paginacao" aria-label="Paginação">
         {% if pagina.has_previous %}
-            <a href="?pagina={{ pagina.previous_page_number }}{% if busca %}&busca={{ busca|urlencode }}{% endif %}{% if status_atual %}&status={{ status_atual }}{% endif %}{% if situacao_atual %}&situacao={{ situacao_atual }}{% endif %}{% if acao_atual %}&acao={{ acao_atual }}{% endif %}">
+            <a href="?pagina={{ pagina.previous_page_number }}{% if busca %}&amp;busca={{ busca|urlencode }}{% endif %}{% if status_atual %}&amp;status={{ status_atual }}{% endif %}{% if situacao_atual %}&amp;situacao={{ situacao_atual }}{% endif %}{% if acao_atual %}&amp;acao={{ acao_atual }}{% endif %}">
                 Anterior
             </a>
         {% else %}
@@ -15,7 +15,7 @@
                 {% elif numero == pagina.number %}
                     <span class="is-current" aria-current="page">{{ numero }}</span>
                 {% else %}
-                    <a href="?pagina={{ numero }}{% if busca %}&busca={{ busca|urlencode }}{% endif %}{% if status_atual %}&status={{ status_atual }}{% endif %}{% if situacao_atual %}&situacao={{ situacao_atual }}{% endif %}{% if acao_atual %}&acao={{ acao_atual }}{% endif %}">
+                    <a href="?pagina={{ numero }}{% if busca %}&amp;busca={{ busca|urlencode }}{% endif %}{% if status_atual %}&amp;status={{ status_atual }}{% endif %}{% if situacao_atual %}&amp;situacao={{ situacao_atual }}{% endif %}{% if acao_atual %}&amp;acao={{ acao_atual }}{% endif %}">
                         {{ numero }}
                     </a>
                 {% endif %}
@@ -23,7 +23,7 @@
         </div>
 
         {% if pagina.has_next %}
-            <a href="?pagina={{ pagina.next_page_number }}{% if busca %}&busca={{ busca|urlencode }}{% endif %}{% if status_atual %}&status={{ status_atual }}{% endif %}{% if situacao_atual %}&situacao={{ situacao_atual }}{% endif %}{% if acao_atual %}&acao={{ acao_atual }}{% endif %}">
+            <a href="?pagina={{ pagina.next_page_number }}{% if busca %}&amp;busca={{ busca|urlencode }}{% endif %}{% if status_atual %}&amp;status={{ status_atual }}{% endif %}{% if situacao_atual %}&amp;situacao={{ situacao_atual }}{% endif %}{% if acao_atual %}&amp;acao={{ acao_atual }}{% endif %}">
                 Próxima
             </a>
         {% else %}

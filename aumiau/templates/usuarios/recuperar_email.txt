@@ -1,0 +1,11 @@
+Olá!
+
+Recebemos um pedido para redefinir a senha da sua conta no AuMiau.
+Abra o link abaixo para escolher uma nova senha:
+
+{{ protocol }}://{{ domain }}{% url 'usuarios:recuperar_confirmar' uidb64=uid token=token %}
+
+O link expira em uma hora e só pode ser usado uma vez.
+Se você não solicitou esta alteração, ignore esta mensagem. Sua senha permanece a mesma.
+
+Equipe AuMiau

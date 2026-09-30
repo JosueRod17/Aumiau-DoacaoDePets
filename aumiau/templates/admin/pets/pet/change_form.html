@@ -1,4 +1,18 @@
 {% extends 'admin/change_form.html' %}
+{% block object-tools-items %}
+{{ block.super }}
+{% if has_change_permission and original.status == 'pendente' %}
+<li><form method="post" action="{% url 'admin:pets_pet_publicar' original.pk %}">{% csrf_token %}<button type="submit" class="button">Aprovar e publicar</button></form></li>
+{% endif %}
+{% if has_change_permission and original.status != 'arquivado' %}
+<li>
+    <form method="post" action="{% url 'admin:pets_pet_arquivar' original.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="button">Arquivar anúncio</button>
+    </form>
+</li>
+{% endif %}
+{% endblock %}
 {% block extrahead %}
 {{ block.super }}
 {{ adminform.form.catalogo_racas|json_script:'pet-breed-catalog' }}

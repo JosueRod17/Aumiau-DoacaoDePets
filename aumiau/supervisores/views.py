@@ -12,6 +12,7 @@ from django.views.decorators.http import require_POST
 
 from ongs.models import Ong
 from pets.models import Pet
+from adocoes.models import ChamadoAjuda
 
 from .forms import (
     FotoPetSupervisorFormSet,
@@ -74,6 +75,7 @@ def dashboard(request):
     ultimos_30_dias = agora - timedelta(days=30)
 
     pode_ver_pets = request.user.has_perm('pets.view_pet')
+    pode_ver_chamados = request.user.has_perm('adocoes.view_chamadoajuda')
     pode_ver_ongs = request.user.has_perm('ongs.view_ong')
     pode_ver_usuarios = request.user.has_perms((
         'auth.view_user',
@@ -87,6 +89,8 @@ def dashboard(request):
         'pagina_ativa': 'dashboard',
         'titulo_pagina': 'Visão geral',
         'pode_ver_pets': pode_ver_pets,
+        'pode_ver_chamados': pode_ver_chamados,
+        'chamados_pendentes': 0,
         'pode_ver_ongs': pode_ver_ongs,
         'pode_ver_usuarios': pode_ver_usuarios,
         'pode_ver_atividades': pode_ver_atividades,
@@ -176,6 +180,11 @@ def dashboard(request):
                 .order_by('-criado_em')[:6]
             ),
         })
+
+    if pode_ver_chamados:
+        contexto['chamados_pendentes'] = ChamadoAjuda.objects.filter(
+            status__in=[ChamadoAjuda.Status.ABERTO, ChamadoAjuda.Status.EM_ANALISE],
+        ).count()
 
     if pode_ver_ongs:
         totais_ongs = Ong.objects.aggregate(
@@ -448,7 +457,9 @@ def moderar_pet(request, pet_id, acao):
 
     with transaction.atomic():
         pet = get_object_or_404(
-            Pet.objects.select_for_update().select_related('ong'),
+            # PostgreSQL não permite FOR UPDATE sobre o lado opcional do JOIN.
+            # A moderação bloqueia somente o pet; a ONG é consultada se houver.
+            Pet.objects.select_for_update(),
             pk=pet_id,
         )
 

@@ -1,0 +1,51 @@
+{% extends 'supervisores/base.html' %}
+
+{% block content %}
+    <header class="supervisor-pagina-cabecalho">
+        <div>
+            <span class="supervisor-etiqueta">Atendimento</span>
+            <h1>Chamados de ajuda</h1>
+            <p>{{ total_resultados }} chamado{{ total_resultados|pluralize }} encontrado{{ total_resultados|pluralize }}. Consulte mensagens e responda aos usuários.</p>
+        </div>
+    </header>
+
+    <section class="supervisor-card supervisor-card--lista">
+        <form method="get" class="supervisor-filtros">
+            <label class="supervisor-busca">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+                <input type="search" name="busca" value="{{ busca }}" aria-label="Buscar chamados" placeholder="Número, assunto, usuário ou pet">
+            </label>
+            <label class="supervisor-select">
+                <span class="sr-only">Filtrar por situação</span>
+                <select name="status">
+                    <option value="">Todas as situações</option>
+                    <option value="pendentes" {% if status_atual == 'pendentes' %}selected{% endif %}>Aguardando atendimento</option>
+                    {% for valor, rotulo in status_opcoes %}<option value="{{ valor }}" {% if status_atual == valor %}selected{% endif %}>{{ rotulo }}</option>{% endfor %}
+                </select>
+            </label>
+            <button type="submit" class="supervisor-botao supervisor-botao--primario">Filtrar</button>
+            {% if busca or status_atual %}<a href="{% url 'supervisores:chamados_lista' %}" class="supervisor-filtros__limpar">Limpar filtros</a>{% endif %}
+        </form>
+
+        <div class="supervisor-tabela-wrapper" role="region" aria-label="Lista de chamados" tabindex="0">
+            <table class="supervisor-tabela">
+                <thead><tr><th scope="col">Chamado</th><th scope="col">Usuário</th><th scope="col">Categoria</th><th scope="col">Situação</th><th scope="col">Recebido em</th><th scope="col"><span class="sr-only">Ações</span></th></tr></thead>
+                <tbody>
+                    {% for chamado in chamados %}
+                        <tr>
+                            <td data-label="Chamado"><div class="supervisor-entidade"><span><strong><a href="{% url 'supervisores:chamado_detalhe' chamado.pk %}">#{{ chamado.pk }} · {{ chamado.assunto }}</a></strong>{% if chamado.pet %}<small>Pet: {{ chamado.pet.nome }}</small>{% endif %}</span></div></td>
+                            <td data-label="Usuário">{% firstof chamado.usuario.get_full_name chamado.usuario.username %}</td>
+                            <td data-label="Categoria">{{ chamado.get_categoria_display }}</td>
+                            <td data-label="Situação"><span class="supervisor-status">{{ chamado.get_status_display }}</span></td>
+                            <td data-label="Recebido em">{{ chamado.criado_em|date:"d/m/Y H:i" }}</td>
+                            <td data-label="Ações"><a class="supervisor-tabela__acao" href="{% url 'supervisores:chamado_detalhe' chamado.pk %}">{% if perms.adocoes.change_chamadoajuda %}Atender{% else %}Ver detalhes{% endif %}</a></td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="6"><div class="supervisor-vazio supervisor-vazio--tabela"><strong>Nenhum chamado encontrado.</strong><p>Altere os filtros ou aguarde novas mensagens.</p></div></td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% include 'supervisores/partials/_paginacao.html' %}
+    </section>
+{% endblock %}

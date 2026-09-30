@@ -1,0 +1,8 @@
+{% extends 'base.html' %}{% load static %}
+{% block title %}Definir nova senha | AuMiau{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/ajuda.css' %}">{% endblock %}
+{% block content %}<div class="ajuda-container ajuda-container--estreito"><h1>Definir nova senha</h1>
+{% if validlink %}<form method="post" class="ajuda-form ajuda-painel">{% csrf_token %}{{ form.non_field_errors }}
+{% for field in form %}<div class="ajuda-campo"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{{ field.errors }}{% if field.help_text %}<div class="ajuda-nota">{{ field.help_text|safe }}</div>{% endif %}</div>{% endfor %}
+<button type="submit" class="ajuda-botao ajuda-botao--laranja">Salvar nova senha</button></form>
+{% else %}<div class="ajuda-aviso"><p>Este link é inválido, expirou ou já foi usado.</p><a class="ajuda-link" href="{% url 'usuarios:recuperar' %}">Solicitar outro link</a></div>{% endif %}</div>{% endblock %}

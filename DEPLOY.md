@@ -51,3 +51,10 @@ Limites atuais: o [Render Free](https://render.com/docs/free) hiberna após 15 m
 O plano gratuito é adequado para testes públicos e volume inicial pequeno. Para operação contínua com cadastros reais, acompanhe as cotas e planeje uma hospedagem paga com disponibilidade e backups apropriados.
 
 Ao executar `python manage.py check --deploy` localmente com `DJANGO_DEBUG=false`, o Django pode avisar sobre redirecionamento SSL e HSTS. O [Render redireciona HTTP para HTTPS](https://render.com/docs/native-runtimes) no proxy; HSTS deve ser ativado somente depois de confirmar o domínio e o certificado em produção.
+
+## Recuperação de senha e atendimento
+
+Consulte [EMAIL.md](EMAIL.md) para ativar o envio gratuito de recuperação pela API Brevo.
+O deploy executa `migrate`, que cria a tabela dos pedidos de adoção e atualiza as
+permissões de chamados dos supervisores. Não execute novamente a importação de cadastros
+em um banco já preenchido.

@@ -1,0 +1,5 @@
+{% if pagina.has_other_pages %}<nav class="ajuda-paginacao" aria-label="Páginas de pedidos">
+{% if pagina.has_previous %}<a href="?page={{ pagina.previous_page_number }}&amp;status={{ status_atual|urlencode }}&amp;busca={{ busca|urlencode }}">← Anterior</a>{% endif %}
+<span>Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>
+{% if pagina.has_next %}<a href="?page={{ pagina.next_page_number }}&amp;status={{ status_atual|urlencode }}&amp;busca={{ busca|urlencode }}">Próxima →</a>{% endif %}
+</nav>{% endif %}

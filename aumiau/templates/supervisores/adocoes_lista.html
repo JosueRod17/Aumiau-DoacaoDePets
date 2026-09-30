@@ -1,0 +1,9 @@
+{% extends 'supervisores/base.html' %}
+{% block content %}
+<header class="supervisor-detalhe-cabecalho"><div><h1>Pedidos de adoção</h1><p>Analise os interessados e confirme a adoção com o responsável pelo pet.</p></div></header>
+<form method="get" class="supervisor-formulario supervisor-card supervisor-formulario__secao">
+<div class="supervisor-formulario__grade"><div class="supervisor-campo"><label for="busca">Buscar pet ou interessado</label><input class="supervisor-form__controle" id="busca" name="busca" value="{{ busca }}"></div><div class="supervisor-campo"><label for="status">Situação</label><select class="supervisor-form__controle" id="status" name="status"><option value="">Todas</option>{% for valor, rotulo in status_opcoes %}<option value="{{ valor }}" {% if status_atual == valor %}selected{% endif %}>{{ rotulo }}</option>{% endfor %}</select></div></div>
+<button class="supervisor-botao supervisor-botao--primario" type="submit">Filtrar</button></form>
+{% for pedido in pagina %}<article class="supervisor-card"><header class="supervisor-card__cabecalho"><div><h2><a href="{% url 'supervisores:adocao_detalhe' pedido.pk %}">#{{ pedido.pk }} · {{ pedido.pet.nome }}</a></h2><p>{% firstof pedido.usuario.get_full_name pedido.usuario.username %} · {{ pedido.criado_em|date:'d/m/Y H:i' }}</p></div><span class="supervisor-status">{{ pedido.get_status_display }}</span></header></article>{% empty %}<div class="supervisor-card"><p>Nenhum pedido encontrado.</p></div>{% endfor %}
+{% include 'adocoes/paginacao.html' %}
+{% endblock %}

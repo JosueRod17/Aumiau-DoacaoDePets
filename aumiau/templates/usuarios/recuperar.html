@@ -1,0 +1,11 @@
+{% extends 'base.html' %}{% load static %}
+{% block title %}Recuperar senha | AuMiau{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/ajuda.css' %}">{% endblock %}
+{% block content %}<div class="ajuda-container ajuda-container--estreito">
+<a class="ajuda-voltar" href="{% url 'usuarios:login' %}">← Voltar para entrar</a><h1>Esqueci minha senha</h1>
+{% if recuperacao_disponivel %}<p class="ajuda-descricao">Informe o e-mail usado no cadastro para receber um link de recuperação.</p>
+<form method="post" class="ajuda-form ajuda-painel">{% csrf_token %}{{ form.non_field_errors }}
+{% for field in form %}<div class="ajuda-campo"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{{ field.errors }}</div>{% endfor %}
+<button type="submit" class="ajuda-botao ajuda-botao--laranja">Enviar link de recuperação</button></form>
+{% else %}<div class="ajuda-aviso" role="status">A recuperação por e-mail está temporariamente indisponível. Tente novamente mais tarde.</div>{% endif %}
+</div>{% endblock %}

@@ -26,10 +26,16 @@ CATEGORIAS_FAQ = [
 
 PERGUNTAS = [
     {
+        'id': 'recuperar_senha', 'rota': 'usuarios:recuperar', 'rotulo': 'Recuperar minha senha',
+        'categoria': 'conta', 'destaque': False,
+        'pergunta': 'Esqueci minha senha. Como recuperar o acesso?',
+        'resposta': 'Na tela de entrada, selecione Esqueci minha senha e informe o e-mail cadastrado. Se a conta estiver ativa e tiver senha, enviaremos um link válido por uma hora. Confira também o spam. Contas criadas somente pelo Google devem usar Entrar com Google.',
+    },
+    {
         'id': 'adotar', 'rota': 'pets:lista', 'rotulo': 'Encontrar um pet',
         'categoria': 'adocao', 'destaque': True,
         'pergunta': 'Como funciona o processo de adoção?',
-        'resposta': 'Encontre um pet na página de adoção e abra o anúncio para conhecer sua história e suas necessidades. Entre em contato com o responsável pelos canais disponíveis no anúncio para conversar sobre a adoção. A disponibilidade do animal e os requisitos são confirmados diretamente com o responsável.',
+        'resposta': 'Encontre um pet na página de adoção e abra o anúncio para conhecer sua história e suas necessidades. Use Solicitar adoção no anúncio e acompanhe a resposta em Minhas adoções. A equipe analisa o pedido junto ao responsável pelo pet, que confirma os requisitos e a disponibilidade. Você também pode conversar pelos contatos do anúncio.',
     },
     {
         'id': 'contato', 'rota': 'ongs:lista', 'rotulo': 'Conhecer as ONGs',
@@ -115,7 +121,9 @@ def _responder_pluttu(mensagem):
             'texto': 'Você pode encaminhar sua dúvida para uma pessoa da equipe. Abra um chamado, revise a conversa e escolha se deseja incluí-la. A resposta ficará em Meus chamados; este atendimento não é um chat ao vivo.',
             'encaminhar': True,
         }
-    if tem('denuncia', 'denunciar', 'suspeito', 'golpe', 'fraude'):
+    if tem('senha') and tem('esqueci', 'esqueceu', 'recuperar', 'recuperacao', 'perdi'):
+        topico = 'recuperar_senha'
+    elif tem('denuncia', 'denunciar', 'suspeito', 'golpe', 'fraude'):
         topico = 'denuncia'
     elif tem('analise', 'pendente', 'aprovado', 'rejeitado', 'rejeicao') or 'nao aparece' in texto:
         topico = 'analise'

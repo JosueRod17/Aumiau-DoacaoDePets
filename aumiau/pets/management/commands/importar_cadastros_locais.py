@@ -32,6 +32,7 @@ MODELOS = (
     'pets.Pet',
     'pets.FotoPet',
     'adocoes.ChamadoAjuda',
+    'adocoes.SolicitacaoAdocao',
     'supervisores.RegistroAtividade',
     'admin.LogEntry',
 )

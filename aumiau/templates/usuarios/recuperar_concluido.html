@@ -1,0 +1,4 @@
+{% extends 'base.html' %}{% load static %}
+{% block title %}Senha atualizada | AuMiau{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/ajuda.css' %}">{% endblock %}
+{% block content %}<div class="ajuda-container ajuda-container--estreito"><h1>Senha atualizada!</h1><p class="ajuda-descricao">Você já pode entrar com sua nova senha.</p><a class="ajuda-botao ajuda-botao--laranja" href="{% url 'usuarios:login' %}">Entrar na minha conta</a></div>{% endblock %}

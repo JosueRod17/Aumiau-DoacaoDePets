@@ -97,6 +97,7 @@ def excluir_conta(usuario):
         status=Ong.Status.SUSPENSA, aprovada=False, email='', telefone='', descricao='', motivo_rejeicao='', foto='',
     )
     apps.get_model('adocoes', 'ChamadoAjuda').objects.filter(usuario=usuario).delete()
+    apps.get_model('adocoes', 'SolicitacaoAdocao').objects.filter(usuario=usuario).delete()
     apps.get_model('supervisores', 'RegistroAtividade').objects.filter(
         entidade='usuario', objeto_id=usuario.pk,
     ).update(descricao='Atividade de conta posteriormente excluída.')

@@ -20,14 +20,14 @@
                 {% if whatsapp_url or email_url %}
                     <p>Converse com {% if pet.ong %}a ONG{% else %}o responsável{% endif %} para conhecer {{ pet.nome }} e combinar a adoção.</p>
                 {% elif publico %}
-                    <p>Este anúncio não tem contato público. Envie seu interesse à equipe do AuMiau para consultar a disponibilidade de {{ pet.nome }}. A resposta ficará em Meus chamados.</p>
+                    <p>Envie seu pedido de adoção de {{ pet.nome }} para análise da equipe. Acompanhe a resposta em Minhas adoções.</p>
                 {% else %}
                     <p>Este anúncio ainda não está disponível para adoção.</p>
                 {% endif %}
                 <div class="pet-contact-actions">
-                    {% if whatsapp_url %}<a class="pet-button" href="{{ whatsapp_url }}" target="_blank" rel="noopener noreferrer">Quero adotar · WhatsApp ❤</a>{% endif %}
+                    {% if publico and not gerenciavel %}<a class="pet-button" href="{% url 'solicitar_adocao' pet.pk %}">Solicitar adoção ❤</a>{% endif %}
+                    {% if whatsapp_url %}<a class="pet-button" href="{{ whatsapp_url }}" target="_blank" rel="noopener noreferrer">Conversar no WhatsApp</a>{% endif %}
                     {% if email_url %}<details class="pet-email-options"><summary class="pet-button pet-button--outline">Falar por e-mail</summary><div><a href="{{ gmail_url }}" target="_blank" rel="noopener noreferrer">Abrir no Gmail ↗</a><a href="{{ outlook_url }}" target="_blank" rel="noopener noreferrer">Abrir no Outlook ↗</a><a href="{{ email_url }}">Usar aplicativo de e-mail</a></div></details>{% endif %}
-                    {% if not whatsapp_url and not email_url and publico %}<a class="pet-button" href="{% url 'chamado_novo' %}?pet={{ pet.pk }}">Enviar interesse à equipe ❤</a>{% endif %}
                 </div>
                 {% if telefone_contato %}<p class="pet-contact-data">Telefone: {{ telefone_contato }}</p>{% endif %}
                 {% if email_contato %}<p class="pet-contact-data">E-mail: {{ email_contato }}</p>{% endif %}

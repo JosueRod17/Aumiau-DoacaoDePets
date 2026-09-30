@@ -1,0 +1,16 @@
+{% extends 'base.html' %}{% load static %}
+{% block title %}Adotar {{ pet.nome }} | AuMiau{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/ajuda.css' %}">{% endblock %}
+{% block content %}
+<div class="ajuda-container ajuda-container--estreito">
+    <a class="ajuda-voltar" href="{% url 'pets:detalhe' pet.pk %}">← Voltar ao anúncio</a>
+    <h1>Quero adotar {{ pet.nome }}</h1>
+    <p class="ajuda-descricao">Conte um pouco sobre você. A equipe analisará seu pedido junto ao responsável pelo pet. Enviar o pedido não garante a adoção.</p>
+    <form method="post" class="ajuda-form ajuda-painel">
+        {% csrf_token %}{{ form.non_field_errors }}
+        {% for field in form %}<div class="ajuda-campo"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{{ field.errors }}</div>{% endfor %}
+        <p class="ajuda-nota">A resposta ficará em Minhas adoções. Não inclua senhas ou documentos na mensagem.</p>
+        <button class="ajuda-botao ajuda-botao--laranja" type="submit">Enviar pedido de adoção</button>
+    </form>
+</div>
+{% endblock %}

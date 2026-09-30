@@ -104,6 +104,17 @@
                 {% endif %}
             </section>
 
+            {% if perms.adocoes.view_solicitacaoadocao %}<section class="aumiau-sidebar-section"><a href="{% url 'admin:adocoes_solicitacaoadocao_changelist' %}" class="aumiau-nav-link {% if 'adocoes_solicitacaoadocao' in current %}is-active{% endif %}"><span class="aumiau-nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg></span><span>Pedidos de adoção</span></a></section>{% endif %}
+            {% if perms.adocoes.view_chamadoajuda or perms.adocoes.change_chamadoajuda %}
+                <section class="aumiau-sidebar-section">
+                    <p class="aumiau-nav-label">Atendimento</p>
+                    <a href="{% url 'admin:adocoes_chamadoajuda_changelist' %}" class="aumiau-nav-link {% if current == 'adocoes_chamadoajuda_changelist' or current == 'adocoes_chamadoajuda_change' or current == 'adocoes_chamadoajuda_history' or current == 'adocoes_chamadoajuda_delete' %}is-active{% endif %}">
+                        <span class="aumiau-nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5Z"></path></svg></span>
+                        <span>Chamados de ajuda</span>
+                    </a>
+                </section>
+            {% endif %}
+
             <section class="aumiau-sidebar-section">
                 <p class="aumiau-nav-label">
                     Acesso e segurança

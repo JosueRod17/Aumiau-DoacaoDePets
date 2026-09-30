@@ -1,0 +1,12 @@
+{% extends 'supervisores/base.html' %}
+{% block content %}
+<a class="supervisor-voltar" href="{% url 'supervisores:adocoes_lista' %}">← Pedidos de adoção</a>
+<header class="supervisor-detalhe-cabecalho"><div><h1>Adoção de {{ pedido.pet.nome }}</h1><p>Pedido #{{ pedido.pk }} · {{ pedido.get_status_display }}</p></div></header>
+<article class="supervisor-card"><header class="supervisor-card__cabecalho"><div><h2>{% firstof pedido.usuario.get_full_name pedido.usuario.username %}</h2><p>{{ pedido.usuario.email }}</p></div><a href="{% url 'supervisores:pet_detalhe' pedido.pet_id %}">Ver pet</a></header><div class="supervisor-descricao">{{ pedido.mensagem|linebreaks }}<p>Situação do pet: {{ pedido.pet.get_status_display }}</p></div></article>
+{% if pedido.status == 'pendente' %}
+<form method="post" class="supervisor-formulario supervisor-card supervisor-formulario__secao">{% csrf_token %}
+<div class="supervisor-descricao"><p>Confirme os requisitos e a concordância do responsável antes de aprovar. A aprovação marca o pet como adotado e encerra os outros pedidos em análise para ele.</p></div>
+{{ form.non_field_errors }}<div class="supervisor-formulario__grade">{% for field in form %}<div class="supervisor-campo supervisor-campo--largo"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{{ field.errors }}{% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}</div>{% endfor %}</div>
+<button type="submit" class="supervisor-botao supervisor-botao--primario">Confirmar decisão</button></form>
+{% else %}<article class="supervisor-card"><div class="supervisor-descricao"><h2>Decisão registrada</h2>{{ pedido.resposta|default:'Sem mensagem adicional.'|linebreaks }}<p>{{ pedido.analisado_em|date:'d/m/Y H:i' }}</p></div></article>{% endif %}
+{% endblock %}

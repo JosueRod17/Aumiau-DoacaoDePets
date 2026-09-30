@@ -1,0 +1,47 @@
+{% extends 'supervisores/base.html' %}
+
+{% block content %}
+    <a href="{% url 'supervisores:chamados_lista' %}" class="supervisor-voltar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>Voltar para chamados</a>
+    <header class="supervisor-detalhe-cabecalho">
+        <div><span class="supervisor-etiqueta">Chamado #{{ chamado.pk }}</span><h1>{{ chamado.assunto }}</h1><p>Recebido em {{ chamado.criado_em|date:"d/m/Y H:i" }}</p></div>
+        <span class="supervisor-status supervisor-status--grande">{{ chamado.get_status_display }}</span>
+    </header>
+
+    <div class="supervisor-detalhe-principal">
+        <article class="supervisor-card">
+            <header class="supervisor-card__cabecalho"><div><h2>Mensagem recebida</h2></div></header>
+            <dl class="supervisor-informacoes">
+                <div><dt>Usuário</dt><dd>{% firstof chamado.usuario.get_full_name chamado.usuario.username %}</dd></div>
+                <div><dt>E-mail</dt><dd>{{ chamado.usuario.email|default:"Não informado" }}</dd></div>
+                <div><dt>Categoria</dt><dd>{{ chamado.get_categoria_display }}</dd></div>
+                <div><dt>Última atualização</dt><dd>{{ chamado.atualizado_em|date:"d/m/Y H:i" }}</dd></div>
+                {% if chamado.pet %}<div><dt>Pet do anúncio</dt><dd>{% if perms.pets.view_pet %}<a href="{% url 'supervisores:pet_detalhe' chamado.pet.pk %}">{{ chamado.pet.nome }}</a>{% else %}{{ chamado.pet.nome }}{% endif %}</dd></div>{% endif %}
+            </dl>
+            <div class="supervisor-descricao">{{ chamado.mensagem|linebreaks }}</div>
+            {% if chamado.contexto_pluttu %}<div class="supervisor-descricao"><h3>Conversa encaminhada do Pluttu</h3>{{ chamado.contexto_pluttu|linebreaks }}</div>{% endif %}
+        </article>
+
+        {% if pode_responder %}
+            <form method="post" class="supervisor-formulario">
+                {% csrf_token %}
+                <section class="supervisor-card supervisor-formulario__secao">
+                    <header class="supervisor-card__cabecalho"><div><h2>Atendimento</h2><p>A resposta fica disponível para o autor em Meus chamados.</p></div></header>
+                    {% if form.non_field_errors %}<div class="supervisor-formulario__erro-geral" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+                    <div class="supervisor-formulario__grade">
+                        {% for field in form %}
+                            <div class="supervisor-campo supervisor-campo--largo{% if field.errors %} has-error{% endif %}">
+                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.help_text %}<small class="supervisor-campo__ajuda" id="{{ field.id_for_label }}_helptext">{{ field.help_text }}</small>{% endif %}
+                                {% if field.errors %}<div id="{{ field.id_for_label }}_error" role="alert">{% for error in field.errors %}<small class="supervisor-campo__erro">{{ error }}</small>{% endfor %}</div>{% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
+                <div class="supervisor-formulario__acoes"><button type="submit" class="supervisor-botao supervisor-botao--primario">Salvar atendimento</button></div>
+            </form>
+        {% else %}
+            <article class="supervisor-card"><header class="supervisor-card__cabecalho"><div><h2>Resposta ao usuário</h2></div></header><div class="supervisor-descricao">{% if chamado.resposta %}{{ chamado.resposta|linebreaks }}{% else %}<p>Ainda não há resposta para este chamado.</p>{% endif %}</div></article>
+        {% endif %}
+    </div>
+{% endblock %}

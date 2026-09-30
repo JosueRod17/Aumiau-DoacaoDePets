@@ -192,7 +192,7 @@ class InteresseAdocaoTests(TestCase):
     def test_anuncio_publico_com_dados_demo_tem_acao_de_adocao(self):
         resposta = self.client.get(reverse('pets:detalhe', args=[self.pet.pk]))
         self.assertContains(resposta, 'id="contato"')
-        self.assertContains(resposta, self.url_interesse())
+        self.assertContains(resposta, reverse('solicitar_adocao', args=[self.pet.pk]))
         self.assertNotContains(resposta, 'Pet fictício de demonstração')
         self.assertContains(self.client.get(reverse('pets:lista')), 'Quero adotar')
 

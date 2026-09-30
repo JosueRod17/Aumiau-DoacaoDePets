@@ -1,0 +1,13 @@
+{% extends 'admin/base_site.html' %}
+{% block content %}
+<p><a href="{% url 'admin:adocoes_solicitacaoadocao_changelist' %}">← Pedidos de adoção</a></p>
+<div class="module aligned"><h2>{{ pedido.pet.nome }} · {{ pedido.get_status_display }}</h2>
+<div class="form-row"><strong>Interessado:</strong> {% firstof pedido.usuario.get_full_name pedido.usuario.username %} · {{ pedido.usuario.email }}</div>
+<div class="form-row">{{ pedido.mensagem|linebreaks }}<a href="{% url 'admin:pets_pet_change' pedido.pet_id %}">Ver anúncio do pet</a></div>
+{% if pedido.status == 'pendente' %}
+<form method="post">{% csrf_token %}<div class="form-row"><p>Confirme os requisitos e a concordância do responsável. A aprovação marca o pet como adotado e encerra os demais pedidos em análise.</p></div>{{ form.non_field_errors }}
+{% for field in form %}<div class="form-row">{{ field.errors }}{{ field.label_tag }}{{ field }}{% if field.help_text %}<div class="help">{{ field.help_text }}</div>{% endif %}</div>{% endfor %}
+<div class="submit-row"><input type="submit" value="Confirmar decisão" class="default"></div></form>
+{% else %}<div class="form-row"><h3>Resposta registrada</h3>{{ pedido.resposta|default:'Sem mensagem adicional.'|linebreaks }}<p>{{ pedido.analisado_em|date:'d/m/Y H:i' }}</p></div>{% endif %}
+</div>
+{% endblock %}

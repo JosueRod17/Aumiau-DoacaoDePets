@@ -45,3 +45,41 @@ class ChamadoAjuda(models.Model):
 
     def __str__(self):
         return f'#{self.pk} — {self.assunto}'
+
+
+class SolicitacaoAdocao(models.Model):
+    class Status(models.TextChoices):
+        PENDENTE = 'pendente', 'Em análise'
+        APROVADA = 'aprovada', 'Aprovada'
+        RECUSADA = 'recusada', 'Recusada'
+        CANCELADA = 'cancelada', 'Cancelada'
+
+    pet = models.ForeignKey('pets.Pet', on_delete=models.CASCADE, related_name='solicitacoes_adocao')
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='solicitacoes_adocao',
+        verbose_name='solicitante',
+    )
+    mensagem = models.TextField(max_length=5000)
+    status = models.CharField(max_length=12, choices=Status.choices, default=Status.PENDENTE)
+    resposta = models.TextField(blank=True, max_length=5000)
+    analisado_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='adocoes_analisadas',
+    )
+    analisado_em = models.DateTimeField(null=True, blank=True)
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-criado_em', '-pk']
+        verbose_name = 'solicitação de adoção'
+        verbose_name_plural = 'solicitações de adoção'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['pet', 'usuario'], condition=models.Q(status='pendente'),
+                name='adocao_pendente_pet_usuario',
+            ),
+        ]
+
+    def __str__(self):
+        return f'#{self.pk} — Adoção de {self.pet.nome}'

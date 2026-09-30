@@ -33,8 +33,19 @@ GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '').strip()
 GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', '').strip()
 GOOGLE_REDIRECT_URI = os.environ.get('GOOGLE_REDIRECT_URI', '').strip()
 
+# Links de recuperação são enviados por HTTPS em produção (SMTP é bloqueado no Render Free).
+BREVO_API_KEY = os.environ.get('BREVO_API_KEY', '').strip()
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', '').strip() or 'AuMiau <noreply@localhost>'
+EMAIL_FROM_NAME = os.environ.get('EMAIL_FROM_NAME', 'AuMiau').strip() or 'AuMiau'
+EMAIL_RECOVERY_AVAILABLE = bool(BREVO_API_KEY and os.environ.get('DEFAULT_FROM_EMAIL', '').strip())
+EMAIL_BACKEND = 'usuarios.email.BrevoEmailBackend' if EMAIL_RECOVERY_AVAILABLE else 'django.core.mail.backends.dummy.EmailBackend'
+PASSWORD_RESET_TIMEOUT = 3600
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', 'true').lower() in ('true', '1', 'yes')
+if DEBUG and not EMAIL_RECOVERY_AVAILABLE:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    EMAIL_RECOVERY_AVAILABLE = True
 
 ALLOWED_HOSTS = [host.strip() for host in os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',') if host.strip()]
 CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in os.environ.get('DJANGO_CSRF_TRUSTED_ORIGINS', '').split(',') if origin.strip()]

@@ -1,0 +1,5 @@
+{% extends 'base.html' %}{% load static %}
+{% block title %}Confira seu e-mail | AuMiau{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/ajuda.css' %}">{% endblock %}
+{% block content %}<div class="ajuda-container ajuda-container--estreito"><h1>Confira seu e-mail</h1>
+<div class="ajuda-painel"><p>Se o endereço estiver associado a uma conta ativa com senha, você receberá as instruções de recuperação. Confira também a pasta de spam.</p><p>O link é válido por uma hora e pode ser usado uma única vez. Se entrou pelo Google sem criar uma senha, continue usando o botão Entrar com Google.</p><a class="ajuda-link" href="{% url 'usuarios:login' %}">Voltar para entrar</a></div></div>{% endblock %}

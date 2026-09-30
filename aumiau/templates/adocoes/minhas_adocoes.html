@@ -1,0 +1,14 @@
+{% extends 'base.html' %}{% load static %}
+{% block title %}Minhas adoções | AuMiau{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/ajuda.css' %}">{% endblock %}
+{% block content %}
+<div class="ajuda-container ajuda-container--estreito">
+    <a class="ajuda-voltar" href="{% url 'pets:lista' %}">← Conhecer pets</a><h1>Minhas adoções</h1>
+    <p class="ajuda-descricao">Acompanhe seus pedidos e as respostas da equipe.</p>
+    <div class="ajuda-lista">
+    {% for pedido in pagina %}<a class="ajuda-chamado" href="{% url 'adocao_detalhe' pedido.pk %}"><div><small>Pedido #{{ pedido.pk }}</small><h2>{{ pedido.pet.nome }}</h2><span>{{ pedido.criado_em|date:'d/m/Y H:i' }}</span></div><span class="ajuda-status">{{ pedido.get_status_display }}</span></a>
+    {% empty %}<div class="ajuda-painel"><p>Você ainda não enviou pedidos de adoção.</p><a class="ajuda-link" href="{% url 'pets:lista' %}">Conheça os pets esperando por um lar</a></div>{% endfor %}
+    </div>
+    {% include 'adocoes/paginacao.html' %}
+</div>
+{% endblock %}

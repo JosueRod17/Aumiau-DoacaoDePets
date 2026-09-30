@@ -6,6 +6,8 @@ from .permissions import GRUPO_SUPERVISORES
 
 
 PERMISSOES_SUPERVISOR = (
+    ('adocoes', 'view_chamadoajuda'),
+    ('adocoes', 'change_chamadoajuda'),
     ('pets', 'view_pet'),
     ('pets', 'add_pet'),
     ('pets', 'change_pet'),

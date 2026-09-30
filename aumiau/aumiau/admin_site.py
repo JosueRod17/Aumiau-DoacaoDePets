@@ -28,6 +28,7 @@ class AuMiauAdminSite(AdminSite):
             'auth_group': 'Grupos e permissões',
             'usuarios_perfil': 'Perfis',
             'adocoes_chamadoajuda': 'Chamados de ajuda',
+            'adocoes_solicitacaoadocao': 'Pedidos de adoção',
         }
         titles = {
             'index': 'Visão geral',
@@ -70,6 +71,7 @@ class AuMiauAdminSite(AdminSite):
         )
 
     def index(self, request, extra_context=None):
+        from adocoes.models import ChamadoAjuda
         from ongs.models import Ong
         from pets.models import Pet
 
@@ -78,6 +80,10 @@ class AuMiauAdminSite(AdminSite):
         pet_admin = self._registry.get(Pet)
         ong_admin = self._registry.get(Ong)
         usuario_admin = self._registry.get(Usuario)
+        chamado_admin = self._registry.get(ChamadoAjuda)
+        pode_ver_chamados = bool(
+            chamado_admin and chamado_admin.has_view_or_change_permission(request)
+        )
 
         pode_ver_pets = bool(
             pet_admin
@@ -104,6 +110,8 @@ class AuMiauAdminSite(AdminSite):
 
         contexto_dashboard = {
             'pode_ver_pets': pode_ver_pets,
+            'pode_ver_chamados': pode_ver_chamados,
+            'chamados_pendentes': 0,
             'pode_adicionar_pets': pode_adicionar_pets,
             'pode_ver_ongs': pode_ver_ongs,
             'pode_ver_usuarios': pode_ver_usuarios,
@@ -203,6 +211,11 @@ class AuMiauAdminSite(AdminSite):
                     .order_by('-criado_em')[:6]
                 ),
             })
+
+        if pode_ver_chamados:
+            contexto_dashboard['chamados_pendentes'] = ChamadoAjuda.objects.filter(
+                status__in=[ChamadoAjuda.Status.ABERTO, ChamadoAjuda.Status.EM_ANALISE],
+            ).count()
 
         if pode_ver_ongs:
             contexto_dashboard.update({

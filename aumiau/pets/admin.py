@@ -1,6 +1,15 @@
 from django.contrib import admin, messages
+from django.core.exceptions import PermissionDenied
+from django.db import transaction
+from django.http import Http404
+from django.shortcuts import redirect
+from django.urls import path
 from django.utils import timezone
 from django.utils.html import format_html
+from django.views.decorators.http import require_POST
+
+from supervisores.models import RegistroAtividade
+from supervisores.services import registrar_atividade
 
 from .models import FotoPet, Pet
 from .admin_forms import PetAdminForm
@@ -188,6 +197,65 @@ class PetAdmin(admin.ModelAdmin):
     list_select_related = ('responsavel', 'ong')
     empty_value_display = '—'
 
+    def get_urls(self):
+        return [
+            path(
+                '<int:object_id>/publicar/',
+                self.admin_site.admin_view(require_POST(self.publicar_view)),
+                name='pets_pet_publicar',
+            ),
+            path(
+                '<int:object_id>/arquivar/',
+                self.admin_site.admin_view(require_POST(self.arquivar_view)),
+                name='pets_pet_arquivar',
+            ),
+        ] + super().get_urls()
+
+    def publicar_view(self, request, object_id):
+        pet = self.get_object(request, object_id)
+        if pet is None:
+            raise Http404
+        if not self.has_change_permission(request, pet):
+            raise PermissionDenied
+        self.publicar_selecionados(request, self.get_queryset(request).filter(pk=pet.pk))
+        return redirect('admin:pets_pet_change', object_id=pet.pk)
+
+    def arquivar_view(self, request, object_id):
+        pet = self.get_object(request, object_id)
+        if pet is None:
+            raise Http404
+        if not self.has_change_permission(request, pet):
+            raise PermissionDenied
+        quantidade = self._arquivar_pets(request, self.get_queryset(request).filter(pk=pet.pk))
+        self.message_user(
+            request,
+            'Anúncio arquivado.' if quantidade else 'Este anúncio já está arquivado.',
+            messages.SUCCESS if quantidade else messages.INFO,
+        )
+        return redirect('admin:pets_pet_change', object_id=pet.pk)
+
+    def _arquivar_pets(self, request, queryset):
+        agora = timezone.now()
+        with transaction.atomic():
+            # A lista usa joins com responsáveis opcionais; somente o pet deve
+            # ser bloqueado para que o arquivamento também funcione no PostgreSQL.
+            pets = list(queryset.select_related(None).select_for_update().exclude(
+                status=Pet.Status.ARQUIVADO,
+            ).order_by('pk'))
+            for pet in pets:
+                if not self.has_change_permission(request, pet):
+                    raise PermissionDenied
+                pet.status = Pet.Status.ARQUIVADO
+                pet.moderado_por = request.user
+                pet.moderado_em = agora
+                pet.save(update_fields=['status', 'moderado_por', 'moderado_em', 'atualizado_em'])
+                self.log_change(request, pet, 'Anúncio arquivado.')
+                registrar_atividade(
+                    request.user, RegistroAtividade.Acao.ARQUIVOU,
+                    'pet', pet, f'Anúncio arquivado: {pet.nome}.',
+                )
+        return len(pets)
+
     @admin.display(description='Foto')
     def miniatura(self, obj):
         if not obj.foto_principal:
@@ -285,24 +353,32 @@ class PetAdmin(admin.ModelAdmin):
             change,
         )
 
-    @admin.action(description='Publicar pets selecionados')
+    @admin.action(description='Aprovar e publicar pets em análise', permissions=['change'])
     def publicar_selecionados(self, request, queryset):
         agora = timezone.now()
-
-        quantidade = queryset.exclude(
-            status=Pet.Status.PUBLICADO,
-        ).update(
-            status=Pet.Status.PUBLICADO,
-            moderado_por=request.user,
-            moderado_em=agora,
-            publicado_em=agora,
-            motivo_rejeicao='',
-        )
-
+        quantidade = 0
+        with transaction.atomic():
+            for pet in queryset.select_related(None).select_for_update().filter(status=Pet.Status.PENDENTE).order_by('pk'):
+                if not self.has_change_permission(request, pet):
+                    raise PermissionDenied
+                if pet.ong_id and pet.ong.status != 'aprovada':
+                    continue
+                pet.status = Pet.Status.PUBLICADO
+                pet.moderado_por = request.user
+                pet.moderado_em = agora
+                pet.publicado_em = agora
+                pet.motivo_rejeicao = ''
+                pet.save(update_fields=['status', 'moderado_por', 'moderado_em', 'publicado_em',
+                                        'motivo_rejeicao', 'atualizado_em'])
+                self.log_change(request, pet, 'Anúncio aprovado e publicado.')
+                registrar_atividade(request.user, RegistroAtividade.Acao.APROVOU,
+                                   'pet', pet, f'Anúncio aprovado: {pet.nome}.')
+                quantidade += 1
         self.message_user(
             request,
-            f'{quantidade} pet(s) publicado(s).',
-            messages.SUCCESS,
+            f'{quantidade} pet(s) aprovado(s) e publicado(s).' if quantidade else
+            'Nenhum anúncio foi publicado. O pet deve estar em análise e sua ONG, se houver, aprovada.',
+            messages.SUCCESS if quantidade else messages.WARNING,
         )
 
     @admin.action(description='Marcar como adotados')
@@ -324,17 +400,9 @@ class PetAdmin(admin.ModelAdmin):
             messages.SUCCESS,
         )
 
-    @admin.action(description='Arquivar pets selecionados')
+    @admin.action(description='Arquivar pets selecionados', permissions=['change'])
     def arquivar_selecionados(self, request, queryset):
-        agora = timezone.now()
-
-        quantidade = queryset.exclude(
-            status=Pet.Status.ARQUIVADO,
-        ).update(
-            status=Pet.Status.ARQUIVADO,
-            moderado_por=request.user,
-            moderado_em=agora,
-        )
+        quantidade = self._arquivar_pets(request, queryset)
 
         self.message_user(
             request,

@@ -1,12 +1,16 @@
 from django.urls import path
 
-from . import views
+from . import adocoes, chamados, views
 
 
 app_name = 'supervisores'
 
 
 urlpatterns = [
+    path('adocoes/', adocoes.lista, name='adocoes_lista'),
+    path('adocoes/<int:pk>/', adocoes.detalhe, name='adocao_detalhe'),
+    path('chamados/', chamados.chamados_lista, name='chamados_lista'),
+    path('chamados/<int:chamado_id>/', chamados.chamado_detalhe, name='chamado_detalhe'),
     path(
         '',
         views.dashboard,

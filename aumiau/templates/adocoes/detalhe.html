@@ -1,0 +1,12 @@
+{% extends 'base.html' %}{% load static %}
+{% block title %}Pedido de adoção #{{ pedido.pk }} | AuMiau{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/ajuda.css' %}">{% endblock %}
+{% block content %}
+<div class="ajuda-container ajuda-container--estreito">
+    <a class="ajuda-voltar" href="{% url 'minhas_adocoes' %}">← Minhas adoções</a><h1>Adoção de {{ pedido.pet.nome }}</h1>
+    <p class="ajuda-descricao">Pedido #{{ pedido.pk }} · {{ pedido.criado_em|date:'d/m/Y H:i' }} · <strong>{{ pedido.get_status_display }}</strong></p>
+    <article class="ajuda-painel"><h2>Sua mensagem</h2>{{ pedido.mensagem|linebreaks }}</article>
+    <article class="ajuda-painel"><h2>Resposta da equipe</h2>{% if pedido.resposta %}{{ pedido.resposta|linebreaks }}{% elif pedido.status == 'aprovada' %}<p>Seu pedido foi aprovado! Combine os próximos passos com a equipe e o responsável pelo pet.</p>{% elif pedido.status == 'pendente' %}<p>Seu pedido está em análise. A resposta aparecerá aqui.</p>{% else %}<p>Este pedido foi encerrado.</p>{% endif %}</article>
+    {% if pedido.status == 'pendente' %}<form method="post" action="{% url 'cancelar_adocao' pedido.pk %}">{% csrf_token %}<button class="ajuda-botao" type="submit">Cancelar meu pedido</button></form>{% endif %}
+</div>
+{% endblock %}

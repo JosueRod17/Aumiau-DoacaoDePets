@@ -37,6 +37,15 @@
 
     <section class="aumiau-kpis" aria-label="Indicadores principais">
 
+        {% if perms.adocoes.view_solicitacaoadocao %}<a href="{% url 'admin:adocoes_solicitacaoadocao_changelist' %}?status__exact=pendente" class="aumiau-kpi aumiau-kpi--purple"><span>Pedidos de adoção</span><strong>{{ adocoes_pendentes_menu|default:0 }}</strong><small>Aguardando análise</small></a>{% endif %}
+        {% if pode_ver_chamados %}
+            <a href="{% url 'admin:adocoes_chamadoajuda_changelist' %}?status__in=aberto,em_analise" class="aumiau-kpi aumiau-kpi--purple">
+                <span>Chamados de ajuda</span>
+                <strong>{{ chamados_pendentes }}</strong>
+                <small>Aguardando atendimento</small>
+            </a>
+        {% endif %}
+
         {% if pode_ver_usuarios %}
             <a href="{% url 'admin:auth_user_changelist' %}" class="aumiau-kpi aumiau-kpi--purple">
                 <span>Usuários cadastrados</span>
