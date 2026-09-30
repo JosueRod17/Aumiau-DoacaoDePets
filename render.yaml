@@ -3,6 +3,7 @@ services:
     name: aumiau
     runtime: python
     plan: free
+    region: virginia
     buildCommand: bash build.sh
     startCommand: gunicorn --chdir aumiau aumiau.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
@@ -25,6 +26,6 @@ services:
       - key: S3_ENDPOINT_URL
         sync: false
       - key: S3_REGION_NAME
-        value: auto
+        sync: false
       - key: S3_ADDRESSING_STYLE
         value: path
