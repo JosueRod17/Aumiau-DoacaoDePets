@@ -10,6 +10,7 @@ from usuarios.models import Perfil
 
 from .models import SolicitacaoAdocao
 from .contato_adocao import mensagem_aprovacao
+from .chat_service import criar_conversa
 
 
 def decidir_solicitacao(*, solicitacao_id, ator, aprovar, resposta=''):
@@ -60,6 +61,7 @@ def decidir_solicitacao(*, solicitacao_id, ator, aprovar, resposta=''):
         )
 
         if aprovar:
+            criar_conversa(solicitacao)
             pet.status = Pet.Status.ADOTADO
             pet.adotado_em = agora
             pet.moderado_por = ator

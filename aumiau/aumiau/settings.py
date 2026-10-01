@@ -108,6 +108,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'supervisores.context_processors.acesso_supervisor',
                 'usuarios.context_processors.acesso_google',
+                'adocoes.context_processors.mensagens_chat',
             ],
         },
     },

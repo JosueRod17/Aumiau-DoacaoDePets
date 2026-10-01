@@ -6,7 +6,7 @@
     <a class="ajuda-voltar" href="{% url 'pets:lista' %}">← Conhecer pets</a><h1>Minhas adoções</h1>
     <p class="ajuda-descricao">Acompanhe seus pedidos e as respostas da equipe.</p>
     <div class="ajuda-lista">
-    {% for pedido in pagina %}<a class="ajuda-chamado" href="{% url 'adocao_detalhe' pedido.pk %}"><div><small>Pedido #{{ pedido.pk }}</small><h2>{{ pedido.pet.nome }}</h2><span>{{ pedido.criado_em|date:'d/m/Y H:i' }}</span>{% if pedido.status == 'aprovada' %}<p class="adocao-lista__orientacao">Adoção aprovada! Veja o contato para combinar a retirada →</p>{% elif pedido.status == 'recusada' %}<p>Confira a resposta da equipe →</p>{% endif %}</div><span class="ajuda-status adocao-status--{{ pedido.status }}">{{ pedido.get_status_display }}</span></a>
+    {% for pedido in pagina %}<a class="ajuda-chamado" href="{% url 'adocao_detalhe' pedido.pk %}"><div><small>Pedido #{{ pedido.pk }}</small><h2>{{ pedido.pet.nome }}</h2><span>{{ pedido.criado_em|date:'d/m/Y H:i' }}</span>{% if pedido.status == 'aprovada' %}<p class="adocao-lista__orientacao">Adoção aprovada! Combine a retirada com o responsável →</p>{% elif pedido.status == 'recusada' %}<p>Confira a resposta da equipe →</p>{% endif %}</div><span class="ajuda-status adocao-status--{{ pedido.status }}">{{ pedido.get_status_display }}</span></a>
     {% empty %}<div class="ajuda-painel"><p>Você ainda não enviou pedidos de adoção.</p><a class="ajuda-link" href="{% url 'pets:lista' %}">Conheça os pets esperando por um lar</a></div>{% endfor %}
     </div>
     {% include 'adocoes/paginacao.html' %}

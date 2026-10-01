@@ -35,7 +35,7 @@ PERGUNTAS = [
         'id': 'adotar', 'rota': 'pets:lista', 'rotulo': 'Encontrar um pet',
         'categoria': 'adocao', 'destaque': True,
         'pergunta': 'Como funciona o processo de adoção?',
-        'resposta': 'Encontre um pet na página de adoção e abra o anúncio para conhecer sua história e suas necessidades. Use Solicitar adoção no anúncio e acompanhe a resposta em Minhas adoções. A equipe analisa o pedido junto ao responsável pelo pet, que confirma os requisitos e a disponibilidade. Você também pode conversar pelos contatos do anúncio.',
+        'resposta': 'Encontre um pet na página de adoção e abra o anúncio para conhecer sua história e suas necessidades. Use Solicitar adoção no anúncio e acompanhe a resposta em Minhas adoções. A equipe analisa o pedido junto ao responsável pelo pet, que confirma os requisitos e a disponibilidade. Após a aprovação, abra Mensagens no menu da sua conta para conversar com o responsável e combinar o dia, horário e local da retirada.',
     },
     {
         'id': 'contato', 'rota': 'ongs:lista', 'rotulo': 'Conhecer as ONGs',

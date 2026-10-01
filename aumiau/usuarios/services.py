@@ -65,7 +65,9 @@ def _apagar_arquivos(arquivos):
 @transaction.atomic
 def excluir_conta(usuario):
     """Anonimiza a conta mantendo somente referências históricas sem identificação."""
-    usuario = get_user_model().objects.select_for_update().get(pk=usuario.pk)
+    # A chave não muda; permite a verificação de FK de um envio de chat em
+    # andamento enquanto a exclusão aguarda a trava da conversa.
+    usuario = get_user_model().objects.select_for_update(no_key=True).get(pk=usuario.pk)
     perfil, _ = Perfil.objects.get_or_create(usuario=usuario, defaults={
         'telefone': '', 'cidade': '', 'estado': '',
         'aceitou_termos_em': timezone.now(), 'versao_termos': '',
@@ -97,6 +99,13 @@ def excluir_conta(usuario):
         status=Ong.Status.SUSPENSA, aprovada=False, email='', telefone='', descricao='', motivo_rejeicao='', foto='',
     )
     apps.get_model('adocoes', 'ChamadoAjuda').objects.filter(usuario=usuario).delete()
+    Conversa = apps.get_model('adocoes', 'ConversaAdocao')
+    # Espere envios em andamento antes de coletar as mensagens da cascata.
+    # Assim nenhum envio novo aparece entre a coleta e a exclusão da conversa.
+    conversas = list(Conversa.objects.filter(
+        Q(anunciante=usuario) | Q(solicitacao__usuario=usuario),
+    ).order_by('pk').select_for_update(of=('self',)).values_list('pk', flat=True))
+    Conversa.objects.filter(pk__in=conversas).delete()
     apps.get_model('adocoes', 'SolicitacaoAdocao').objects.filter(usuario=usuario).delete()
     apps.get_model('supervisores', 'RegistroAtividade').objects.filter(
         entidade='usuario', objeto_id=usuario.pk,

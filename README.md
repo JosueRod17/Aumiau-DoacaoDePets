@@ -40,7 +40,9 @@ Em um PowerShell fora do VS Code, na raiz do repositório, use `.\.venv\Scripts\
 
 ONGs e anúncios novos ficam pendentes até a aprovação no painel do supervisor. Editar um cadastro publicado exige nova análise. Pets de uma ONG só aparecem publicamente enquanto ela estiver aprovada. O formulário permite vincular pets apenas a ONGs aprovadas do próprio usuário. Contatos públicos são informados explicitamente; os contatos privados da conta não são copiados para anúncios.
 
-As conversas sobre adoção usam o e-mail ou WhatsApp informado pelo responsável. Os chamados da central de ajuda ficam no banco e podem ser respondidos pelo administrador em `/admin/adocoes/chamadoajuda/`. Não há envio automático de e-mails.
+Após a aprovação de uma adoção, o adotante e o responsável pelo anúncio recebem uma conversa privada em **Mensagens**. O histórico fica salvo no banco, com contagem de mensagens não lidas e atualização automática enquanto a conversa está aberta. O chat permite combinar dia, horário e local da retirada; telefone e WhatsApp continuam como alternativas. Pedidos antigos aprovados também recebem uma conversa na migração, desde que tenham um responsável vinculado. Os chamados da central de ajuda continuam separados do chat. Não há envio automático de e-mails de mensagens.
+
+Cada conversa permite acesso somente aos seus dois participantes, inclusive quando um deles é administrador. Trocar o responsável por um pet não transfere o histórico para outra pessoa. Contas suspensas não podem conversar; a exclusão de uma das contas remove a conversa. O chat usa requisições periódicas e não precisa de serviço adicional para funcionar na hospedagem atual.
 
 ## Dados em computadores diferentes
 

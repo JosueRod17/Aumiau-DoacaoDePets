@@ -80,6 +80,14 @@
 
                     <span class="conta-opcao__seta" aria-hidden="true">→</span>
                 </a>
+                <a class="conta-opcao" href="{% url 'minhas_conversas' %}">
+                    <span class="conta-opcao__texto">
+                        <strong>Mensagens{% if mensagens_chat_nao_lidas %} · {{ mensagens_chat_nao_lidas }} novas{% endif %}</strong>
+                        <small>Converse sobre a retirada dos pets após a aprovação</small>
+                    </span>
+
+                    <span class="conta-opcao__seta" aria-hidden="true">→</span>
+                </a>
             </div>
 
             {% if google_configurado and not user.conta_google %}

@@ -69,6 +69,7 @@ def detalhe(request, pk):
     aprovado = pedido.status == SolicitacaoAdocao.Status.APROVADA
     return render(request, 'adocoes/detalhe.html', {
         'pedido': pedido,
+        'conversa_chat': getattr(pedido, 'conversa_chat', None) if aprovado else None,
         'contato_retirada': contato_para_retirada(pedido.pet) if aprovado else None,
         'resposta_exibida': pedido.resposta or (mensagem_aprovacao(pedido.pet) if aprovado else ''),
     })

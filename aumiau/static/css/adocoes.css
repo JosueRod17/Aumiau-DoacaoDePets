@@ -23,6 +23,8 @@
 .adocao-status--recusada { color: #96372c; background: #fbe9e5; }
 .adocao-status--cancelada { color: #585361; background: #efedf2; }
 .adocao-lista__orientacao { margin: 8px 0 0; color: #195b3b; font-size: 13px; }
+.adocao-contato-alternativo { margin-top: 24px; }
+.adocao-contato-alternativo summary { cursor: pointer; padding: 12px 0; color: var(--purple, #7134b2); font-weight: 600; }
 [data-supervisor-theme="dark"] .adocao-orientacao { color: #bde7cc; background: #173b2c; border-color: #365b47; }
 html[data-theme="dark"] .adocao-orientacao { color: #bde7cc; background: #173b2c; border-color: #365b47; }
 @media (max-width: 600px) {

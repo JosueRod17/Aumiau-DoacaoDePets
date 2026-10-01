@@ -2,8 +2,13 @@ from django.urls import path
 from . import views
 from . import ajuda
 from . import solicitacoes
+from . import chat
 
 urlpatterns = [
+    path('conversas/', chat.minhas_conversas, name='minhas_conversas'),
+    path('conversas/<int:pk>/', chat.conversa_adocao, name='conversa_adocao'),
+    path('conversas/<int:pk>/mensagens/', chat.conversa_mensagens, name='conversa_mensagens'),
+    path('conversas/<int:pk>/lidas/', chat.conversa_lidas, name='conversa_lidas'),
     path('adocoes/pet/<int:pet_id>/solicitar/', solicitacoes.solicitar, name='solicitar_adocao'),
     path('adocoes/minhas/', solicitacoes.minhas_adocoes, name='minhas_adocoes'),
     path('adocoes/<int:pk>/', solicitacoes.detalhe, name='adocao_detalhe'),

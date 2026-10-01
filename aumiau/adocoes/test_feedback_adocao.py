@@ -107,7 +107,8 @@ class FeedbackAdocaoTests(TestCase):
         self.assertEqual(contato['telefone'], '')
         self.assertEqual(contato['telefone_url'], '')
         self.assertEqual(contato['whatsapp_url'], '')
-        self.assertIn('Abra um chamado', mensagem_aprovacao(self.pet))
+        # Mesmo sem telefone, a conta do anunciante permite combinar pelo chat.
+        self.assertIn('Abra a conversa em Mensagens', mensagem_aprovacao(self.pet))
         self.pet.save(update_fields=['responsavel', 'telefone_contato'])
         pedido = self.pedido(status=SolicitacaoAdocao.Status.APROVADA)
         resposta = self.detalhe(pedido)

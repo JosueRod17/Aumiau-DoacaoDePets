@@ -36,6 +36,13 @@ def contato_para_retirada(pet):
 def mensagem_aprovacao(pet):
     contato = contato_para_retirada(pet)
     inicio = f'Seu pedido de adoção de {pet.nome} foi aprovado! '
+    anunciante = (pet.ong.responsavel if pet.ong_id else None) or pet.responsavel or pet.criado_por
+    if anunciante:
+        orientacao = (inicio + 'Abra a conversa em Mensagens no AuMiau para combinar o dia, horário e local '
+                      f"da retirada de {pet.nome} com {contato['nome']}, responsável pelo anúncio.")
+        if contato['telefone']:
+            orientacao += f" Se precisarem, o telefone de contato é {contato['telefone']}."
+        return orientacao
     if contato['telefone']:
         return (inicio + f"Entre em contato com {contato['nome']} pelo número {contato['telefone']} "
                 f'para combinar o dia, horário e local da retirada de {pet.nome}.')
