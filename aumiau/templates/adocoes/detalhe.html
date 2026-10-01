@@ -1,12 +1,31 @@
 {% extends 'base.html' %}{% load static %}
 {% block title %}Pedido de adoção #{{ pedido.pk }} | AuMiau{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'css/ajuda.css' %}">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/ajuda.css' %}"><link rel="stylesheet" href="{% static 'css/adocoes.css' %}">{% endblock %}
 {% block content %}
 <div class="ajuda-container ajuda-container--estreito">
     <a class="ajuda-voltar" href="{% url 'minhas_adocoes' %}">← Minhas adoções</a><h1>Adoção de {{ pedido.pet.nome }}</h1>
     <p class="ajuda-descricao">Pedido #{{ pedido.pk }} · {{ pedido.criado_em|date:'d/m/Y H:i' }} · <strong>{{ pedido.get_status_display }}</strong></p>
+    {% if pedido.status == 'aprovada' %}
+    <section class="adocao-orientacao adocao-feedback" aria-labelledby="adocao-aprovada-titulo">
+        <span class="adocao-feedback__icone" aria-hidden="true">✓</span>
+        <div><h2 id="adocao-aprovada-titulo">Sua adoção foi aprovada!</h2><p>{{ pedido.pet.nome }} está mais perto de um novo lar. Agora entre em contato com o responsável para combinar a retirada.</p>{% if pedido.analisado_em %}<small>Aprovada em {{ pedido.analisado_em|date:'d/m/Y H:i' }}</small>{% endif %}</div>
+    </section>
+    {% endif %}
     <article class="ajuda-painel"><h2>Sua mensagem</h2>{{ pedido.mensagem|linebreaks }}</article>
-    <article class="ajuda-painel"><h2>Resposta da equipe</h2>{% if pedido.resposta %}{{ pedido.resposta|linebreaks }}{% elif pedido.status == 'aprovada' %}<p>Seu pedido foi aprovado! Combine os próximos passos com a equipe e o responsável pelo pet.</p>{% elif pedido.status == 'pendente' %}<p>Seu pedido está em análise. A resposta aparecerá aqui.</p>{% else %}<p>Este pedido foi encerrado.</p>{% endif %}</article>
+    <article class="ajuda-painel"><h2>Resposta da equipe</h2>{% if resposta_exibida %}{{ resposta_exibida|linebreaks }}{% elif pedido.status == 'pendente' %}<p>Seu pedido está em análise. A resposta aparecerá aqui.</p>{% elif pedido.status == 'cancelada' %}<p>Você cancelou este pedido de adoção.</p>{% else %}<p>Este pedido não foi aprovado. Você pode consultar outros pets disponíveis.</p>{% endif %}</article>
+    {% if contato_retirada %}
+    <section class="ajuda-painel adocao-retirada" aria-labelledby="retirada-titulo">
+        <h2 id="retirada-titulo">Combine a retirada de {{ pedido.pet.nome }}</h2>
+        {% if contato_retirada.telefone %}
+        <p>Fale com <strong>{{ contato_retirada.nome }}</strong> para combinar o dia, horário e local para buscar o pet.</p>
+        <a class="adocao-retirada__telefone" href="{{ contato_retirada.telefone_url }}">{{ contato_retirada.telefone }}</a>
+        <div class="adocao-retirada__acoes"><a class="ajuda-botao ajuda-botao--laranja" href="{{ contato_retirada.whatsapp_url }}" target="_blank" rel="noopener noreferrer">Combinar pelo WhatsApp ↗</a><a class="ajuda-botao" href="{{ contato_retirada.telefone_url }}">Ligar para o responsável</a></div>
+        {% else %}
+        <p>O responsável ainda não possui telefone disponível. Nossa equipe pode ajudar você a combinar a retirada.</p>
+        <a class="ajuda-botao ajuda-botao--laranja" href="{% url 'chamado_novo' %}?categoria=adocao">Pedir ajuda para combinar a retirada</a>
+        {% endif %}
+    </section>
+    {% endif %}
     {% if pedido.status == 'pendente' %}<form method="post" action="{% url 'cancelar_adocao' pedido.pk %}">{% csrf_token %}<button class="ajuda-botao" type="submit">Cancelar meu pedido</button></form>{% endif %}
 </div>
 {% endblock %}

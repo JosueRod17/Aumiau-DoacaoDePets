@@ -46,7 +46,7 @@ class SolicitacaoAdocaoAdmin(admin.ModelAdmin):
         if not request.user.has_perm('supervisores.moderar_pet'):
             raise PermissionDenied
         pedido = get_object_or_404(SolicitacaoAdocao.objects.select_related('pet', 'usuario'), pk=pk)
-        form = DecisaoAdocaoForm(request.POST if request.method == 'POST' else None)
+        form = DecisaoAdocaoForm(request.POST if request.method == 'POST' else None, pet=pedido.pet)
         if request.method == 'POST' and form.is_valid():
             try:
                 decidir_solicitacao(solicitacao_id=pk, ator=request.user,
@@ -56,10 +56,16 @@ class SolicitacaoAdocaoAdmin(admin.ModelAdmin):
                 form.add_error(None, exc)
             else:
                 self.log_change(request, pedido, 'Registrou decisão sobre o pedido de adoção.')
-                self.message_user(request, 'Decisão registrada com sucesso.', messages.SUCCESS)
+                feedback = (
+                    f'Adoção de {pedido.pet.nome} aprovada! A resposta e as orientações para combinar a retirada estão em Minhas adoções do interessado.'
+                    if form.cleaned_data['acao'] == 'aprovar' else
+                    'Pedido recusado. O motivo está disponível em Minhas adoções do interessado.'
+                )
+                self.message_user(request, feedback, messages.SUCCESS)
                 return redirect('admin:adocoes_solicitacaoadocao_analisar', pk=pk)
         return TemplateResponse(request, 'admin/adocoes/analisar.html', {
             **self.admin_site.each_context(request), 'title': f'Pedido de adoção #{pk}',
             'aumiau_admin_title': 'Pedidos de adoção', 'pedido': pedido, 'form': form,
+            'resposta_exibida': pedido.resposta or (form.mensagem_aprovacao if pedido.status == SolicitacaoAdocao.Status.APROVADA else ''),
             'opts': self.model._meta,
         })

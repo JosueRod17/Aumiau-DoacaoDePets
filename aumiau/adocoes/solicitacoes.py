@@ -10,6 +10,7 @@ from django.views.decorators.http import require_http_methods, require_POST
 from pets.models import Pet
 from usuarios.models import Perfil
 from .models import SolicitacaoAdocao
+from .contato_adocao import contato_para_retirada, mensagem_aprovacao
 
 
 class SolicitarAdocaoForm(forms.Form):
@@ -65,7 +66,12 @@ def detalhe(request, pk):
     pedido = get_object_or_404(
         SolicitacaoAdocao.objects.select_related('pet'), pk=pk, usuario=request.user,
     )
-    return render(request, 'adocoes/detalhe.html', {'pedido': pedido})
+    aprovado = pedido.status == SolicitacaoAdocao.Status.APROVADA
+    return render(request, 'adocoes/detalhe.html', {
+        'pedido': pedido,
+        'contato_retirada': contato_para_retirada(pedido.pet) if aprovado else None,
+        'resposta_exibida': pedido.resposta or (mensagem_aprovacao(pedido.pet) if aprovado else ''),
+    })
 
 
 @login_required

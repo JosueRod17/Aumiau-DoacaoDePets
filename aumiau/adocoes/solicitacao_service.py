@@ -9,6 +9,7 @@ from supervisores.services import registrar_atividade
 from usuarios.models import Perfil
 
 from .models import SolicitacaoAdocao
+from .contato_adocao import mensagem_aprovacao
 
 
 def decidir_solicitacao(*, solicitacao_id, ator, aprovar, resposta=''):
@@ -46,7 +47,7 @@ def decidir_solicitacao(*, solicitacao_id, ator, aprovar, resposta=''):
         solicitacao.status = (
             SolicitacaoAdocao.Status.APROVADA if aprovar else SolicitacaoAdocao.Status.RECUSADA
         )
-        solicitacao.resposta = resposta
+        solicitacao.resposta = resposta or (mensagem_aprovacao(pet) if aprovar else '')
         solicitacao.analisado_por = ator
         solicitacao.analisado_em = agora
         campos_decisao = ['status', 'resposta', 'analisado_por', 'analisado_em', 'atualizado_em']

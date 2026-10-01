@@ -1,0 +1,34 @@
+.adocao-orientacao {
+    margin: 18px 0;
+    padding: 18px 20px;
+    border: 1px solid #bddfce;
+    border-radius: 14px;
+    background: #effaf3;
+    color: #195b3b;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+}
+.adocao-orientacao[hidden] { display: none; }
+.adocao-orientacao p { margin: 8px 0; color: inherit; }
+.adocao-orientacao small { display: block; color: inherit; }
+.adocao-feedback { display: flex; gap: 16px; align-items: flex-start; margin: 24px 0; }
+.adocao-feedback__icone { display: grid; place-items: center; flex: 0 0 40px; height: 40px; background: #d4efde; border-radius: 50%; font-size: 22px; font-weight: 700; }
+.adocao-feedback h2 { color: inherit; font-size: 22px; }
+.adocao-retirada { margin: 24px 0; overflow-wrap: anywhere; }
+.adocao-retirada__telefone { display: inline-block; margin: 8px 0 20px; color: var(--purple, #7134b2); font-size: clamp(20px, 4vw, 26px); font-weight: 700; }
+.adocao-retirada__acoes { display: flex; flex-wrap: wrap; gap: 12px; }
+.adocao-retirada__acoes .ajuda-botao { background: #effaf3; color: #195b3b; }
+.adocao-retirada__acoes .ajuda-botao--laranja { background: var(--orange); color: #fff; }
+.adocao-status--aprovada { color: #195b3b; background: #dff3e7; }
+.adocao-status--recusada { color: #96372c; background: #fbe9e5; }
+.adocao-status--cancelada { color: #585361; background: #efedf2; }
+.adocao-lista__orientacao { margin: 8px 0 0; color: #195b3b; font-size: 13px; }
+[data-supervisor-theme="dark"] .adocao-orientacao { color: #bde7cc; background: #173b2c; border-color: #365b47; }
+html[data-theme="dark"] .adocao-orientacao { color: #bde7cc; background: #173b2c; border-color: #365b47; }
+@media (max-width: 600px) {
+    .adocao-orientacao { padding: 16px; }
+    .adocao-feedback { gap: 12px; }
+    .adocao-feedback h2 { font-size: 20px; }
+    .adocao-retirada__acoes { flex-direction: column; }
+    .adocao-retirada__acoes .ajuda-botao { width: 100%; }
+}
